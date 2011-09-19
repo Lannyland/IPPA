@@ -88,11 +88,12 @@ namespace IPPA
         private void btnTest_Click(object sender, EventArgs e)
         {
             DateTime startTime = DateTime.Now;
-            Log((new CountDistModes(ref CurMap)).GetCount().ToString()+"\n");
+            CountDistModes myCount = new CountDistModes(ref CurMap);
+            Log(myCount.GetCount().ToString()+"\n");
             DateTime stopTime = DateTime.Now;
             TimeSpan duration = stopTime - startTime;
             Log("Computation took " + duration.ToString() + " seconds.\n");
-
+            myCount = null;
         }
 
         
