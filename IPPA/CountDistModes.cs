@@ -20,6 +20,7 @@ namespace IPPA
 
         private RtwMatrix mPaths;
         private int pathCount = 0;
+        private int recursiveCount = 0;
 
         #endregion
 
@@ -100,7 +101,7 @@ namespace IPPA
                         mSmallerMap[i, j] = mReachableRegion[iBig, jBig];
                         // Console.Write(mSmallerMap[i, j] + " ");
                     }
-                    Console.Write("\n");
+                    // Console.Write("\n");
                 }
             }
         }
@@ -109,10 +110,6 @@ namespace IPPA
         private void LocalHillClimbing(int C_i, int C_j, int max_r, int max_c)
         {
             pathCount++;
-            if (pathCount == 45)
-            {
-                Console.Write(" ");
-            }
             // Recursive function to move up in local hill climbing
             MoveUp(C_i, C_j, max_r, max_c, C_i, C_j);
         }
@@ -121,63 +118,72 @@ namespace IPPA
         private void MoveUp(int C_i, int C_j, int max_r, int max_c, int L_i, int L_j)
         {
             mPaths[C_i, C_j] = pathCount;
-            if (C_i == 3 && C_j == 17)
-            {
-                Console.Write("Something!");
-            }
             // Did I move up to another cell?
             Boolean blMovedUp = false;
-            // Visit unvisited neighbors and find max (8-connect)
-            for (int i = C_i - 1; i < C_i + 2; i++)
+
+            // Make sure I don't have too many recursive calls
+            recursiveCount++;
+            if (recursiveCount > 2500)
             {
-                if (i < 0 || i > max_r) 
+                // Pretend I am the peak and stop. This is most likely a uniform distribution.
+                // Restart the counter.
+                recursiveCount = 0;
+            }
+            else
+            {
+                // Visit unvisited neighbors and find a better one (8-connect)
+                for (int i = C_i - 1; i < C_i + 2; i++)
                 {
-                    // No neighber in that direction
-                }
-                else
-                {
-                    for (int j = C_j - 1; j < C_j + 2; j++)
+                    if (i < 0 || i > max_r)
                     {
-                        if (j < 0 || j > max_c               // No neighber in that direction
-                            || (i == C_i && j == C_j)        // Don't compare against self
-                            || mVisited[i, j] == 1)          // Don't worry about visited cell
+                        // No neighber in that direction
+                    }
+                    else
+                    {
+                        for (int j = C_j - 1; j < C_j + 2; j++)
                         {
-                            // No unvisited neighbor in this direction.
-                        }
-                        else
-                        {
-                            // There is an unvisited neightbor
-                            // If same or better, move to it.
-                            if (mSmallerMap[C_i, C_j] <= mSmallerMap[i, j])
+                            if (j < 0 || j > max_c               // No neighber in that direction
+                                || (i == C_i && j == C_j)        // Don't compare against self
+                                || mVisited[i, j] == 1)          // Don't worry about visited cell
                             {
-                                if (mSmallerMap[C_i, C_j] == mSmallerMap[i, j])
+                                // No unvisited neighbor in this direction.
+                            }
+                            else
+                            {
+                                // There is an unvisited neightbor
+                                // If same or better, move to it.
+                                if (mSmallerMap[C_i, C_j] <= mSmallerMap[i, j])
                                 {
-                                    // If same, then remember it
-                                    int[] point = new int[2];
-                                    point[0]=C_i;
-                                    point[1]=C_j;
-                                    lstCurPath.Add(point);
+                                    if (mSmallerMap[C_i, C_j] == mSmallerMap[i, j])
+                                    {
+                                        // If same, then remember it
+                                        int[] point = new int[2];
+                                        point[0] = C_i;
+                                        point[1] = C_j;
+                                        lstCurPath.Add(point);
+                                    }
+                                    else
+                                    {
+                                        // If next point is better, clear the list
+                                        lstCurPath.Clear();
+                                    }
+                                    // Make sure I am done with this round
+                                    int cur_i = i;
+                                    int cur_j = j;
+                                    i = C_i + 2;
+                                    j = C_j + 2;
+                                    blMovedUp = true;
+                                    // First mark it as visited
+                                    mVisited[cur_i, cur_j] = 1;
+                                    // Move up (or flat)
+                                    MoveUp(cur_i, cur_j, max_r, max_c, C_i, C_j);
                                 }
-                                else 
-                                {
-                                    // If next point is better, clear the list
-                                    lstCurPath.Clear();
-                                }
-                                // Make sure I am done with this round
-                                int cur_i = i;
-                                int cur_j = j;
-                                i = C_i + 2;
-                                j = C_j + 2;
-                                blMovedUp = true;
-                                // First mark it as visited
-                                mVisited[cur_i, cur_j] = 1;
-                                // Move up (or flat)
-                                MoveUp(cur_i, cur_j, max_r, max_c, C_i, C_j);
                             }
                         }
                     }
                 }
             }
+            
             // Didn't find any neighbor same or better, so I am the peak
             if (!blMovedUp)
             {
@@ -209,7 +215,7 @@ namespace IPPA
                             {
                                 if (j < 0 || j > max_c          // No neighber in that direction
                                     || (i == p[0] && j == p[1]) // Don't compare against self
-                                    || mModes[i,j]<=0           // Don't check this path because it doesn't have mode label yet.
+                                    || PointInPath(i,j)         // Don't check this path because it doesn't have mode label yet.
                                     || mVisited[i, j] == 0)     // Only check visited nodes
                                 {
                                 }
@@ -220,7 +226,7 @@ namespace IPPA
                                         // I am not a real mode
                                         blnRealMode = false;
                                         if (mSmallerMap[p[0], p[1]] == mSmallerMap[i, j]
-                                            && mModes[i, j] > 0)
+                                            && mModes[i, j] >= 0)
                                         {
                                             // I am part of another mode
                                             otherMode = mModes[i, j];
@@ -281,6 +287,21 @@ namespace IPPA
                 }
                 */
             }
+        }
+
+        // See if a point is in the current path mode section
+        private bool PointInPath(int i, int j)
+        {
+            bool blnInPath = false;
+            foreach (int[] p in lstCurPath)
+            {
+                if (p[0] == i && p[1] == j)
+                {
+                    blnInPath = true;
+                    break;
+                }
+            }
+            return blnInPath;
         }
 
         #endregion
