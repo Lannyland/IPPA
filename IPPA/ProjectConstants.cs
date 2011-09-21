@@ -59,9 +59,9 @@ namespace IPPA
          */
 
         // General parameters
-        public static int DIM = 60;
-        public static int FT = 1800;
-        public static string LabDir = @"C:\Lanny\MAMI\IPPA\Maps\DistMaps";
+        public static int DefaultDimension = 60;
+        public static int MaxFlightTime = 1800;
+        public static string MapsDir = @"C:\Lanny\MAMI\IPPA\Maps\DistMaps";
 
         
         // Down sample scale in CountDistModes class

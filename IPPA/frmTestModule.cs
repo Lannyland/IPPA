@@ -39,6 +39,49 @@ namespace IPPA
 
         #region Message Handlers
 
+        // When the form is loading
+        private void frmTestModule_Load(object sender, EventArgs e)
+        {
+            txtFileName1.Text = ProjectConstants.MapsDir + @"\5_modal.csv";
+
+            ntxtSX.Minimum = 0;
+            ntxtSX.Maximum = ProjectConstants.DefaultDimension - 1;
+            ntxtSY.Minimum = 0;
+            ntxtSY.Maximum = ProjectConstants.DefaultDimension - 1;
+            trbFlightTime.Minimum = 0;
+            trbFlightTime.Maximum = ProjectConstants.MaxFlightTime;
+            trbFlightTime.Value = ProjectConstants.MaxFlightTime;
+            ntxtFlightTime.Minimum = 0;
+            ntxtFlightTime.Maximum = ProjectConstants.MaxFlightTime;
+            ntxtFlightTime.Value = 150;
+
+            lstAlg.Items.Add("Complete-Coverage Path");
+            lstAlg.Items.Add("LHC-GW-CONV");
+            lstAlg.Items.Add("LHC-GW-PF");
+            lstAlg.Items.Add("PF");
+            // lstAlg.Items.Add("EA-Dir");
+            lstAlg.Items.Add("EA-Path");
+            //// Group of algorithms for set destination
+            //lstAlg.Items.Add("CC_E");
+            //lstAlg.Items.Add("CC_E Reversed");
+            //lstAlg.Items.Add("LHCGWConv_E");
+            //lstAlg.Items.Add("LHCGWConv_E Reversed");
+            //lstAlg.Items.Add("LHCGWPF_E");
+            //lstAlg.Items.Add("LHCGWPF_E Reversed");
+            //lstAlg.Items.Add("PF_E");
+            //lstAlg.Items.Add("PF_E Reversed");
+            //lstAlg.Items.Add("EA_E");
+
+            lvQueue.Clear();
+            lvQueue.View = View.Details;
+            lvQueue.LabelEdit = false;
+            lvQueue.AllowColumnReorder = false;
+            lvQueue.FullRowSelect = true;
+            lvQueue.GridLines = false;
+            lvQueue.Columns.Add("Task");
+            lvQueue.Columns[0].Width = lvQueue.Width - 5;
+
+        }
         // When the Clear Button is clicked.
         private void btnClear_Click(object sender, EventArgs e)
         {
@@ -50,7 +93,7 @@ namespace IPPA
         {
             OpenFileDialog fdlg = new OpenFileDialog();
             fdlg.Title = "Open Distribution Map File";
-            fdlg.InitialDirectory = ProjectConstants.LabDir;
+            fdlg.InitialDirectory = ProjectConstants.MapsDir;
             fdlg.Filter = "CSV files (*.CSV)|*.CSV|All files (*.*)|*.*";
             fdlg.FilterIndex = 1;
             fdlg.RestoreDirectory = false;
@@ -81,10 +124,6 @@ namespace IPPA
             map.Show();
         }
 
-        
-        
-        
-        
         private void btnTest_Click(object sender, EventArgs e)
         {
             DateTime startTime = DateTime.Now;
@@ -114,5 +153,7 @@ namespace IPPA
         }
 
         #endregion
+
+        
     }
 }
