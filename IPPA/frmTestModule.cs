@@ -55,7 +55,7 @@ namespace IPPA
             ntxtFlightTime.Maximum = ProjectConstants.MaxFlightTime;
             ntxtFlightTime.Value = 150;
 
-            lstAlg.Items.Add("Complete-Coverage Path");
+            lstAlg.Items.Add("CC");
             lstAlg.Items.Add("LHC-GW-CONV");
             lstAlg.Items.Add("LHC-GW-PF");
             lstAlg.Items.Add("PF");
@@ -124,6 +124,26 @@ namespace IPPA
             map.Show();
         }
 
+        // Add button is pressed
+        private void btnAdd_Click(object sender, EventArgs e)
+        {
+            foreach (string s in lstAlg.SelectedItems)
+            {
+                ListViewItem i = new ListViewItem(s);
+                lvQueue.Items.Add(i);
+            }
+        }
+
+        // Remove button is pressed
+        private void btnRemove_Click(object sender, EventArgs e)
+        {
+            while (lvQueue.SelectedIndices.Count > 0)
+            {
+                int i = lvQueue.SelectedIndices[0];
+                lvQueue.Items.RemoveAt(i);
+            }
+        }
+
         private void btnTest_Click(object sender, EventArgs e)
         {
             DateTime startTime = DateTime.Now;
@@ -153,6 +173,8 @@ namespace IPPA
         }
 
         #endregion
+
+
 
         
     }
