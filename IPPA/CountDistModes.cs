@@ -31,6 +31,26 @@ namespace IPPA
 
         #endregion
 
+        #region Constructor, Destructor
+
+        public CountDistModes(ref RtwMatrix reachableregion)
+        {
+            mReachableRegion = reachableregion;
+            lstCurPath = new List<DistPoint>();
+        }
+
+        //Destructor
+        ~CountDistModes()
+        {
+            // Cleaning up
+            mSmallerMap = null;
+            mVisited = null;
+            mModes = null;
+            lstCurPath.Clear();
+            lstCurPath = null;
+        }
+        #endregion
+
         #region Functions
 
         // Public method to return count
@@ -346,26 +366,6 @@ namespace IPPA
             return blnInPath;
         }
 
-        #endregion
-
-        #region Constructor, Destructor
-
-        public CountDistModes(ref RtwMatrix reachableregion)
-        {
-            mReachableRegion = reachableregion;
-            lstCurPath = new List<DistPoint>();
-        }
-
-        //Destructor
-        ~CountDistModes()
-        {
-            // Cleaning up
-            mSmallerMap = null;
-            mVisited = null;
-            mModes = null;
-            lstCurPath.Clear();
-            lstCurPath = null;
-        }
         #endregion
     }
 }
