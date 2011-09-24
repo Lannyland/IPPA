@@ -2,7 +2,7 @@
 format compact;
 
 % Read in map file
-map = csvread('C:\Lanny\MAMI\IPPA\Maps\DistMaps\Simple_BimodalClose.csv');
+map = csvread('C:\Lanny\MAMI\IPPA\Maps\DistMaps\Multimodal4.csv');
 
 % Specify specific parameters
 [height, width] =   size(map);
