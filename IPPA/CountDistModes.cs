@@ -6,10 +6,30 @@ using rtwmatrix;
 
 namespace IPPA
 {
-    class DistPoint
+    public class DistPoint
     {
         public int row;
         public int column;
+
+        #region Constructor, Destructor
+
+        // Constructor
+        public DistPoint(int _row, int _column)
+        {
+            row = _row;
+            column = _column;
+        }
+
+        public DistPoint()
+        {
+        }
+
+        // Destructor
+        ~DistPoint()
+        {
+        }
+
+        #endregion
     }
 
     class CountDistModes
@@ -33,6 +53,7 @@ namespace IPPA
 
         #region Constructor, Destructor
 
+        // Constructor
         public CountDistModes(ref RtwMatrix reachableregion)
         {
             mReachableRegion = reachableregion;
