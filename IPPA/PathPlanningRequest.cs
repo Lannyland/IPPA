@@ -108,6 +108,12 @@ namespace IPPA
             return Log;
         }
 
+        // Set Log
+        public void SetLog(string s)
+        {
+            Log += s+"\n";
+        }
+
         #endregion
 
     }

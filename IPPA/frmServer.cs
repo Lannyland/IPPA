@@ -21,9 +21,11 @@ namespace IPPA
         const int WM_VSCROLL = 0x115;
         const int SB_BOTTOM = 7;
 
+        // Private members
         private bool blnServerRunning = false;
         private List<PathPlanningRequest> lstRequestQueue = new List<PathPlanningRequest>();
-
+        private PathPlanningServer myServer = new PathPlanningServer();
+        
         #endregion
 
         #region Constructor, Destructor

@@ -212,7 +212,9 @@ namespace IPPA
             foreach (ListViewItem item in lvQueue.Items)
             {
                 PathPlanningRequest newRequest = new PathPlanningRequest();
-
+                
+                #region Setting Request Object Properties
+                
                 newRequest.UseDistributionMap = chkUseDist.Checked;
                 newRequest.UseTaskDifficultyMap = chkUseDiff.Checked;
                 newRequest.UseCoarseToFineSearch = chkCoaseToFine.Checked;
@@ -293,6 +295,8 @@ namespace IPPA
                     newRequest.BatchRun = true;
                     newRequest.RunTimes = Convert.ToInt16(ntxtRunTimes.Value);
                 }
+
+                #endregion
 
                 // Add to server queue and pass alone the object
                 frmParent.SubmitToRequestQueue(newRequest);
