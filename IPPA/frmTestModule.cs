@@ -239,7 +239,7 @@ namespace IPPA
                 {
                     newRequest.DetectionType = DType.FixPercentage;
                 }
-                newRequest.DetectionRate = (float)ntxtDetectionRate.Value;
+                newRequest.DetectionRate = Convert.ToDouble(ntxtDetectionRate.Value);
                 newRequest.DistMap = CurDistMap;
                 newRequest.DiffMap = CurDiffMap;
                 newRequest.UseEndPoint = chkUseEndPoint.Checked;

@@ -46,6 +46,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AlgLHC.cs" />
+    <Compile Include="AlgPathPlanning.cs" />
+    <Compile Include="ComputeEfficiencyLB.cs" />
     <Compile Include="CountDistModes.cs" />
     <Compile Include="frmMap.cs">
       <SubType>Form</SubType>
@@ -70,12 +73,15 @@
     <Compile Include="MyPictureBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="PathPlanningHandler.cs" />
     <Compile Include="PathPlanningRequest.cs" />
+    <Compile Include="PathPlanningServer.cs" />
     <Compile Include="PathPlanningTask.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ProjectConstants.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RtwMatrix.cs" />
+    <Compile Include="ServerQueueItem.cs" />
     <EmbeddedResource Include="frmMap.resx">
       <DependentUpon>frmMap.cs</DependentUpon>
     </EmbeddedResource>

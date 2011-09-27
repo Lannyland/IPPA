@@ -24,7 +24,7 @@ namespace IPPA
         public bool UseParallelProcessing = false;
         public UAVType VehicleType = UAVType.FixWing;
         public DType DetectionType = DType.FixPercentage;
-        public float DetectionRate = 1;
+        public double DetectionRate = 1;
         public RtwMatrix DistMap;
         public RtwMatrix DiffMap;
         public bool UseEndPoint = false;

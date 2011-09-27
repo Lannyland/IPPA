@@ -2,22 +2,39 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using rtwmatrix;
 
 namespace IPPA
 {
+    // Launched from PathPlanningHandler
+    // Performs one of the batch path planning tasks
+    // Calls the right algorithm based on PathPlanningRequest
     class PathPlanningTask
     {
         #region Members
 
-        PathPlanningRequest curRequest;
+        // Private members
+        private PathPlanningRequest curRequest;
+        private int ModeCount = 0;
+        private double RunTime = 0;
+        private RtwMatrix mDistReachable;
+        private RtwMatrix mDiffReachable;
+        private double Efficiency_LB = 0;
+        private double Efficiency = 0;
+
         #endregion
 
         #region Constructor, Destructor
 
         // Constructor
-        public PathPlanningTask(PathPlanningRequest _curRequest)
+        public PathPlanningTask(PathPlanningRequest _curRequest, int _ModeCount,
+            RtwMatrix _mDistReachable, RtwMatrix _mDiffReachable, double _Efficiency_LB)
         {
             curRequest = _curRequest;
+            ModeCount = _ModeCount;
+            mDistReachable = _mDistReachable;
+            mDiffReachable = _mDiffReachable;
+            Efficiency_LB = _Efficiency_LB;
         }
 
         // Destructor
@@ -25,32 +42,63 @@ namespace IPPA
         {
             // Cleaning up
             curRequest = null;
+            mDistReachable = null;
+            mDiffReachable = null;
         }
 
         #endregion
 
         #region Other Functions
 
+        // Performing the path planning task
         public void Run()
         {
-            int BatchCount = 1;
-            float RunTime = 0;
-            float AvgRunTime = 0;
-            float StdRunTime = 0;
-            float Efficiency = 0;
-            float AvgEfficiency = 0;
-            float StdEfficiency = 0;            
-
-            if (curRequest.BatchRun)
+            switch (curRequest.AlgToUse)
             {
-                BatchCount = curRequest.RunTimes;
-            }
-            for (int i = 0; i < BatchCount; i++)
-            {
-                // Run them sequencially and don't use multiple threads.
-
+                case AlgType.CC:
+                    // TODO handle CC
+                    break;
+                case AlgType.CC_E:
+                    // TODO handle CC_E
+                    break;
+                case AlgType.EA:
+                    // TODO handle EA
+                    break;
+                case AlgType.EA_E:
+                    // TODO handle EA_E
+                    break;
+                case AlgType.LHCGWCONV:
+                    // TODO handle LHCGWCONV
+                    break;
+                case AlgType.LHCGWCONV_E:
+                    // TODO handle LHCGWCONV_E
+                    break;
+                case AlgType.LHCGWPF:
+                    // TODO handle LHCGWPF
+                    break;
+                case AlgType.LHCGWPF_E:
+                    // TODO handle LHCGWPF_E
+                    break;
+                case AlgType.PF:
+                    // TODO handle PF
+                    break;
+                case AlgType.PF_E:
+                    // TODO handle PF_E
+                    break;
             }
         }
+
+
+        #region Getters
+        public double GetEfficiency()
+        {
+            return Efficiency;
+        }
+        public double GetRunTime()
+        {
+            return RunTime;
+        }
+        #endregion
 
         #endregion
 
