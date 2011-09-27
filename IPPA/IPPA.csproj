@@ -71,6 +71,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="PathPlanningRequest.cs" />
+    <Compile Include="PathPlanningTask.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ProjectConstants.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

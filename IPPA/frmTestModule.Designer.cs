@@ -32,18 +32,21 @@
             this.btnBrowse1 = new System.Windows.Forms.Button();
             this.txtFileName1 = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.chkParallel = new System.Windows.Forms.CheckBox();
+            this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.chkUseDist = new System.Windows.Forms.CheckBox();
-            this.chkUseDiff = new System.Windows.Forms.CheckBox();
+            this.chkParallel = new System.Windows.Forms.CheckBox();
             this.chkCoaseToFine = new System.Windows.Forms.CheckBox();
+            this.chkUseDiff = new System.Windows.Forms.CheckBox();
             this.gboxDetectionType = new System.Windows.Forms.GroupBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.ntxtDetectionRate = new System.Windows.Forms.NumericUpDown();
             this.rbtnFixedPercent = new System.Windows.Forms.RadioButton();
             this.rbtnFixedAmountPercent = new System.Windows.Forms.RadioButton();
             this.rbtnFixedAmount = new System.Windows.Forms.RadioButton();
             this.gboxUAVType = new System.Windows.Forms.GroupBox();
             this.rbtnCopter = new System.Windows.Forms.RadioButton();
             this.rbtnFixWing = new System.Windows.Forms.RadioButton();
-            this.chkDest = new System.Windows.Forms.CheckBox();
+            this.chkUseEndPoint = new System.Windows.Forms.CheckBox();
             this.ntxtEY = new System.Windows.Forms.NumericUpDown();
             this.ntxtEX = new System.Windows.Forms.NumericUpDown();
             this.label2 = new System.Windows.Forms.Label();
@@ -67,8 +70,8 @@
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.chkShowPath = new System.Windows.Forms.CheckBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.ntxtRunTimes = new System.Windows.Forms.NumericUpDown();
+            this.chkBatchRun = new System.Windows.Forms.CheckBox();
             this.btnExecute = new System.Windows.Forms.Button();
             this.btnRemove = new System.Windows.Forms.Button();
             this.btnAdd = new System.Windows.Forms.Button();
@@ -79,7 +82,9 @@
             this.btnClear = new System.Windows.Forms.Button();
             this.rtxtLog = new System.Windows.Forms.RichTextBox();
             this.groupBox1.SuspendLayout();
+            this.groupBox6.SuspendLayout();
             this.gboxDetectionType.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ntxtDetectionRate)).BeginInit();
             this.gboxUAVType.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ntxtEY)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ntxtEX)).BeginInit();
@@ -90,7 +95,7 @@
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ntxtRunTimes)).BeginInit();
             this.groupBox5.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -123,69 +128,112 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.chkParallel);
-            this.groupBox1.Controls.Add(this.chkUseDist);
-            this.groupBox1.Controls.Add(this.chkUseDiff);
-            this.groupBox1.Controls.Add(this.chkCoaseToFine);
+            this.groupBox1.Controls.Add(this.groupBox6);
             this.groupBox1.Controls.Add(this.gboxDetectionType);
             this.groupBox1.Controls.Add(this.gboxUAVType);
             this.groupBox1.Location = new System.Drawing.Point(12, 2);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(626, 102);
+            this.groupBox1.Size = new System.Drawing.Size(626, 139);
             this.groupBox1.TabIndex = 6;
             this.groupBox1.TabStop = false;
             // 
-            // chkParallel
+            // groupBox6
             // 
-            this.chkParallel.AutoSize = true;
-            this.chkParallel.Location = new System.Drawing.Point(9, 79);
-            this.chkParallel.Name = "chkParallel";
-            this.chkParallel.Size = new System.Drawing.Size(149, 17);
-            this.chkParallel.TabIndex = 22;
-            this.chkParallel.Text = "Enable parallel processing";
-            this.chkParallel.UseVisualStyleBackColor = true;
+            this.groupBox6.Controls.Add(this.chkUseDist);
+            this.groupBox6.Controls.Add(this.chkParallel);
+            this.groupBox6.Controls.Add(this.chkCoaseToFine);
+            this.groupBox6.Controls.Add(this.chkUseDiff);
+            this.groupBox6.Location = new System.Drawing.Point(6, 10);
+            this.groupBox6.Name = "groupBox6";
+            this.groupBox6.Size = new System.Drawing.Size(216, 122);
+            this.groupBox6.TabIndex = 23;
+            this.groupBox6.TabStop = false;
+            this.groupBox6.Text = "Options";
             // 
             // chkUseDist
             // 
             this.chkUseDist.AutoSize = true;
-            this.chkUseDist.Location = new System.Drawing.Point(9, 10);
+            this.chkUseDist.Location = new System.Drawing.Point(6, 19);
             this.chkUseDist.Name = "chkUseDist";
             this.chkUseDist.Size = new System.Drawing.Size(176, 17);
             this.chkUseDist.TabIndex = 15;
             this.chkUseDist.Text = "Load probability distribution map";
             this.chkUseDist.UseVisualStyleBackColor = true;
             // 
-            // chkUseDiff
+            // chkParallel
             // 
-            this.chkUseDiff.AutoSize = true;
-            this.chkUseDiff.Location = new System.Drawing.Point(9, 33);
-            this.chkUseDiff.Name = "chkUseDiff";
-            this.chkUseDiff.Size = new System.Drawing.Size(137, 17);
-            this.chkUseDiff.TabIndex = 16;
-            this.chkUseDiff.Text = "Load task-difficulty map";
-            this.chkUseDiff.UseVisualStyleBackColor = true;
+            this.chkParallel.AutoSize = true;
+            this.chkParallel.Location = new System.Drawing.Point(6, 88);
+            this.chkParallel.Name = "chkParallel";
+            this.chkParallel.Size = new System.Drawing.Size(149, 17);
+            this.chkParallel.TabIndex = 22;
+            this.chkParallel.Text = "Enable parallel processing";
+            this.chkParallel.UseVisualStyleBackColor = true;
             // 
             // chkCoaseToFine
             // 
             this.chkCoaseToFine.AutoSize = true;
-            this.chkCoaseToFine.Location = new System.Drawing.Point(9, 56);
+            this.chkCoaseToFine.Location = new System.Drawing.Point(6, 65);
             this.chkCoaseToFine.Name = "chkCoaseToFine";
             this.chkCoaseToFine.Size = new System.Drawing.Size(161, 17);
             this.chkCoaseToFine.TabIndex = 21;
             this.chkCoaseToFine.Text = "Enable coarse-to-fine search";
             this.chkCoaseToFine.UseVisualStyleBackColor = true;
             // 
+            // chkUseDiff
+            // 
+            this.chkUseDiff.AutoSize = true;
+            this.chkUseDiff.Location = new System.Drawing.Point(6, 42);
+            this.chkUseDiff.Name = "chkUseDiff";
+            this.chkUseDiff.Size = new System.Drawing.Size(137, 17);
+            this.chkUseDiff.TabIndex = 16;
+            this.chkUseDiff.Text = "Load task-difficulty map";
+            this.chkUseDiff.UseVisualStyleBackColor = true;
+            // 
             // gboxDetectionType
             // 
+            this.gboxDetectionType.Controls.Add(this.label10);
+            this.gboxDetectionType.Controls.Add(this.ntxtDetectionRate);
             this.gboxDetectionType.Controls.Add(this.rbtnFixedPercent);
             this.gboxDetectionType.Controls.Add(this.rbtnFixedAmountPercent);
             this.gboxDetectionType.Controls.Add(this.rbtnFixedAmount);
             this.gboxDetectionType.Location = new System.Drawing.Point(351, 9);
             this.gboxDetectionType.Name = "gboxDetectionType";
-            this.gboxDetectionType.Size = new System.Drawing.Size(264, 83);
+            this.gboxDetectionType.Size = new System.Drawing.Size(264, 123);
             this.gboxDetectionType.TabIndex = 19;
             this.gboxDetectionType.TabStop = false;
             this.gboxDetectionType.Text = "Detection Type";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(6, 96);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(82, 13);
+            this.label10.TabIndex = 21;
+            this.label10.Text = "Detection Rate:";
+            // 
+            // ntxtDetectionRate
+            // 
+            this.ntxtDetectionRate.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.ntxtDetectionRate.Location = new System.Drawing.Point(96, 94);
+            this.ntxtDetectionRate.Maximum = new decimal(new int[] {
+            30,
+            0,
+            0,
+            0});
+            this.ntxtDetectionRate.Name = "ntxtDetectionRate";
+            this.ntxtDetectionRate.Size = new System.Drawing.Size(73, 20);
+            this.ntxtDetectionRate.TabIndex = 20;
+            this.ntxtDetectionRate.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             // 
             // rbtnFixedPercent
             // 
@@ -226,7 +274,7 @@
             this.gboxUAVType.Controls.Add(this.rbtnFixWing);
             this.gboxUAVType.Location = new System.Drawing.Point(238, 9);
             this.gboxUAVType.Name = "gboxUAVType";
-            this.gboxUAVType.Size = new System.Drawing.Size(93, 83);
+            this.gboxUAVType.Size = new System.Drawing.Size(96, 123);
             this.gboxUAVType.TabIndex = 18;
             this.gboxUAVType.TabStop = false;
             this.gboxUAVType.Text = "UAV Type";
@@ -253,15 +301,15 @@
             this.rbtnFixWing.Text = "Fix-Wing";
             this.rbtnFixWing.UseVisualStyleBackColor = true;
             // 
-            // chkDest
+            // chkUseEndPoint
             // 
-            this.chkDest.AutoSize = true;
-            this.chkDest.Location = new System.Drawing.Point(16, 65);
-            this.chkDest.Name = "chkDest";
-            this.chkDest.Size = new System.Drawing.Size(160, 17);
-            this.chkDest.TabIndex = 3;
-            this.chkDest.Text = "Set ending point for the path";
-            this.chkDest.UseVisualStyleBackColor = true;
+            this.chkUseEndPoint.AutoSize = true;
+            this.chkUseEndPoint.Location = new System.Drawing.Point(16, 65);
+            this.chkUseEndPoint.Name = "chkUseEndPoint";
+            this.chkUseEndPoint.Size = new System.Drawing.Size(160, 17);
+            this.chkUseEndPoint.TabIndex = 3;
+            this.chkUseEndPoint.Text = "Set ending point for the path";
+            this.chkUseEndPoint.UseVisualStyleBackColor = true;
             // 
             // ntxtEY
             // 
@@ -333,6 +381,7 @@
             this.ntxtFlightTime.Name = "ntxtFlightTime";
             this.ntxtFlightTime.Size = new System.Drawing.Size(52, 20);
             this.ntxtFlightTime.TabIndex = 2;
+            this.ntxtFlightTime.ValueChanged += new System.EventHandler(this.ntxtFlightTime_ValueChanged);
             // 
             // trbFlightTime
             // 
@@ -342,6 +391,7 @@
             this.trbFlightTime.Size = new System.Drawing.Size(188, 45);
             this.trbFlightTime.TabIndex = 1;
             this.trbFlightTime.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.trbFlightTime.Scroll += new System.EventHandler(this.trbFlightTime_Scroll);
             // 
             // ntxtSY
             // 
@@ -394,7 +444,7 @@
             this.groupBox2.Controls.Add(this.txtFileName1);
             this.groupBox2.Controls.Add(this.btnBrowse1);
             this.groupBox2.Controls.Add(this.btnLoad1);
-            this.groupBox2.Location = new System.Drawing.Point(12, 104);
+            this.groupBox2.Location = new System.Drawing.Point(12, 140);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(626, 123);
             this.groupBox2.TabIndex = 7;
@@ -449,7 +499,7 @@
             this.groupBox3.Controls.Add(this.label1);
             this.groupBox3.Controls.Add(this.label3);
             this.groupBox3.Controls.Add(this.label5);
-            this.groupBox3.Controls.Add(this.chkDest);
+            this.groupBox3.Controls.Add(this.chkUseEndPoint);
             this.groupBox3.Controls.Add(this.ntxtSX);
             this.groupBox3.Controls.Add(this.ntxtEY);
             this.groupBox3.Controls.Add(this.ntxtSY);
@@ -461,7 +511,7 @@
             this.groupBox3.Controls.Add(this.label7);
             this.groupBox3.Controls.Add(this.label6);
             this.groupBox3.Controls.Add(this.btnView);
-            this.groupBox3.Location = new System.Drawing.Point(12, 228);
+            this.groupBox3.Location = new System.Drawing.Point(12, 264);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(626, 120);
             this.groupBox3.TabIndex = 8;
@@ -479,41 +529,46 @@
             // 
             // groupBox4
             // 
-            this.groupBox4.Controls.Add(this.numericUpDown1);
-            this.groupBox4.Controls.Add(this.checkBox1);
+            this.groupBox4.Controls.Add(this.ntxtRunTimes);
+            this.groupBox4.Controls.Add(this.chkBatchRun);
             this.groupBox4.Controls.Add(this.btnExecute);
             this.groupBox4.Controls.Add(this.btnRemove);
             this.groupBox4.Controls.Add(this.btnAdd);
             this.groupBox4.Controls.Add(this.lvQueue);
             this.groupBox4.Controls.Add(this.lstAlg);
-            this.groupBox4.Location = new System.Drawing.Point(12, 354);
+            this.groupBox4.Location = new System.Drawing.Point(12, 390);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(626, 124);
             this.groupBox4.TabIndex = 9;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Path Planning Algorithms";
             // 
-            // numericUpDown1
+            // ntxtRunTimes
             // 
-            this.numericUpDown1.Location = new System.Drawing.Point(563, 19);
-            this.numericUpDown1.Maximum = new decimal(new int[] {
+            this.ntxtRunTimes.Location = new System.Drawing.Point(563, 19);
+            this.ntxtRunTimes.Maximum = new decimal(new int[] {
             30,
             0,
             0,
             0});
-            this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(52, 20);
-            this.numericUpDown1.TabIndex = 6;
+            this.ntxtRunTimes.Name = "ntxtRunTimes";
+            this.ntxtRunTimes.Size = new System.Drawing.Size(52, 20);
+            this.ntxtRunTimes.TabIndex = 6;
+            this.ntxtRunTimes.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
             // 
-            // checkBox1
+            // chkBatchRun
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(474, 19);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(72, 17);
-            this.checkBox1.TabIndex = 5;
-            this.checkBox1.Text = "Batch run";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.chkBatchRun.AutoSize = true;
+            this.chkBatchRun.Location = new System.Drawing.Point(474, 19);
+            this.chkBatchRun.Name = "chkBatchRun";
+            this.chkBatchRun.Size = new System.Drawing.Size(72, 17);
+            this.chkBatchRun.TabIndex = 5;
+            this.chkBatchRun.Text = "Batch run";
+            this.chkBatchRun.UseVisualStyleBackColor = true;
             // 
             // btnExecute
             // 
@@ -523,6 +578,7 @@
             this.btnExecute.TabIndex = 4;
             this.btnExecute.Text = "Plan Flight Path(s)";
             this.btnExecute.UseVisualStyleBackColor = true;
+            this.btnExecute.Click += new System.EventHandler(this.btnExecute_Click);
             // 
             // btnRemove
             // 
@@ -552,6 +608,7 @@
             this.lvQueue.Size = new System.Drawing.Size(183, 95);
             this.lvQueue.TabIndex = 3;
             this.lvQueue.UseCompatibleStateImageBehavior = false;
+            this.lvQueue.DoubleClick += new System.EventHandler(this.lvQueue_DoubleClick);
             // 
             // lstAlg
             // 
@@ -561,13 +618,14 @@
             this.lstAlg.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.lstAlg.Size = new System.Drawing.Size(188, 95);
             this.lstAlg.TabIndex = 0;
+            this.lstAlg.DoubleClick += new System.EventHandler(this.lstAlg_DoubleClick);
             // 
             // groupBox5
             // 
             this.groupBox5.Controls.Add(this.btnTest);
             this.groupBox5.Controls.Add(this.btnClear);
             this.groupBox5.Controls.Add(this.rtxtLog);
-            this.groupBox5.Location = new System.Drawing.Point(12, 484);
+            this.groupBox5.Location = new System.Drawing.Point(12, 520);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Size = new System.Drawing.Size(626, 227);
             this.groupBox5.TabIndex = 10;
@@ -606,7 +664,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(651, 719);
+            this.ClientSize = new System.Drawing.Size(652, 758);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
@@ -616,9 +674,11 @@
             this.Text = "Test Module";
             this.Load += new System.EventHandler(this.frmTestModule_Load);
             this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.groupBox6.ResumeLayout(false);
+            this.groupBox6.PerformLayout();
             this.gboxDetectionType.ResumeLayout(false);
             this.gboxDetectionType.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ntxtDetectionRate)).EndInit();
             this.gboxUAVType.ResumeLayout(false);
             this.gboxUAVType.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ntxtEY)).EndInit();
@@ -633,7 +693,7 @@
             this.groupBox3.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ntxtRunTimes)).EndInit();
             this.groupBox5.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -645,7 +705,7 @@
         private System.Windows.Forms.Button btnBrowse1;
         private System.Windows.Forms.TextBox txtFileName1;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.CheckBox chkDest;
+        private System.Windows.Forms.CheckBox chkUseEndPoint;
         private System.Windows.Forms.NumericUpDown ntxtEY;
         private System.Windows.Forms.NumericUpDown ntxtEX;
         private System.Windows.Forms.Label label2;
@@ -688,8 +748,11 @@
         private System.Windows.Forms.RichTextBox rtxtLog;
         private System.Windows.Forms.CheckBox chkParallel;
         private System.Windows.Forms.CheckBox chkCoaseToFine;
-        private System.Windows.Forms.NumericUpDown numericUpDown1;
-        private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.NumericUpDown ntxtRunTimes;
+        private System.Windows.Forms.CheckBox chkBatchRun;
         private System.Windows.Forms.Button btnTest;
+        private System.Windows.Forms.GroupBox groupBox6;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.NumericUpDown ntxtDetectionRate;
     }
 }
