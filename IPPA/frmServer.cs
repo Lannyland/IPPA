@@ -25,7 +25,7 @@ namespace IPPA
         private bool blnServerRunning = false;
         private List<PathPlanningRequest> lstRequestQueue = new List<PathPlanningRequest>();
         private PathPlanningServer myServer = new PathPlanningServer();
-        
+                
         #endregion
 
         #region Constructor, Destructor
@@ -39,6 +39,10 @@ namespace IPPA
         // Destructor
         ~frmServer()
         {
+            // Cleaning up
+            lstRequestQueue.clear();
+            lstRequestQueue = null;
+            myServer = null;
         }
 
         #endregion
@@ -131,7 +135,11 @@ namespace IPPA
             // Add request item to queue
             lstQueue.Items.Add(newRequest.AlgToUse.ToString());
             lstRequestQueue.Add(newRequest);
-
+            // For now add request from local host
+            // TODO Later implement the real network calls
+            ServerQueueItem newItem = new ServerQueueItem(newRequest, "127.0.0.1");
+            myServer.AddRequest(newItem);
+            
             // Log activity
             Log("New path planning request queued...\n");
             Log("----------------------------------------------\n");
@@ -139,7 +147,26 @@ namespace IPPA
 
             // Eventually have a monitor thread initiate path planning tasks. 
             // For now, just call from here directly.
+            foreach (ServerQueueItem sqi in myServer.GetServerQueue())
+            {
+                // Do the path planning
+                PathPlanningHandler newHandler = new PathPlanningHandler(sqi.GetRequest());
+                newHandler.Run();
+                newHandler = null;
 
+                // Log activities
+                Log("Path planning using " + sqi.GetRequest().AlgToUse.ToString() +
+                    " algorithm completed successfully.\n");
+
+                // Remove it from server queue
+                if((myServer.GetServerQueue()).Remove(sqi))
+                {
+                    Log("Something went wrong with removing completed request from server queue.\n");
+                }
+                // Remove it from listbox queue
+                lstQueue.Items.RemoveAt(0);
+                lstRequestQueue.RemoveAt(0);
+            }            
         }
 
         // Display path planning request details
