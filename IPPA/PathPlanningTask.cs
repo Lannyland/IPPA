@@ -16,11 +16,11 @@ namespace IPPA
         // Private members
         private PathPlanningRequest curRequest;
         private int ModeCount = 0;
-        private double RunTime = 0;
         private RtwMatrix mDistReachable;
         private RtwMatrix mDiffReachable;
         private double Efficiency_LB = 0;
         private double Efficiency = 0;
+        private double RunTime = 0;
 
         #endregion
 
@@ -68,7 +68,8 @@ namespace IPPA
                     // TODO handle EA_E
                     break;
                 case AlgType.LHCGWCONV:
-                    // TODO handle LHCGWCONV
+                    // First do Global Warming
+                    AlgGlobalWarming myGW = new AlgGlobalWarming(curRequest, ModeCount, mDistReachable, mDiffReachable, Efficiency_LB);
                     break;
                 case AlgType.LHCGWCONV_E:
                     // TODO handle LHCGWCONV_E

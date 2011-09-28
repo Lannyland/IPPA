@@ -27,65 +27,67 @@ namespace IPPA
         }
     }
 
-    class LHC
+    class AlgLHC
     {
         #region Members
 
         // Private variables
+        private PathPlanningRequest curRequest;        
+        private RtwMatrix mDistReachable;
+        private RtwMatrix mDiffReachable;
+        private double Efficiency_LB = 0;
+        private double Efficiency = 0;
+        private double RunTime = 0;
+        private List<Point> Path;
 
         // Public variables
-
-        #endregion
-
-        #region Functions
 
         #endregion
 
         #region Constructor, Destructor
 
         // Constructor
-        public LHC(Point start, RtwMatrix map, RtwMatrix reachableregion, int flighttime, float upperbound, int heuType, int param)
+        public AlgLHC(PathPlanningRequest _curRequest, RtwMatrix _mDistReachable, 
+            RtwMatrix _mDiffReachable, double _Efficiency_LB)
         {
+            curRequest = _curRequest;
+            mDistReachable = _mDistReachable;
+            mDiffReachable = _mDiffReachable;
+            Efficiency_LB = _Efficiency_LB;
         }
 
         // Destructor
-        ~LHC()
+        ~AlgLHC()
         {
+            // Cleaning up
+            curRequest = null;
+            mDistReachable = null;
+            mDiffReachable = null;
         }
+
+        #endregion
+
+        #region Other Functions
+
+        #region Getters
+        public double GetEfficiency()
+        {
+            return Efficiency;
+        }
+        public double GetRunTime()
+        {
+            return RunTime;
+        }
+        public List<Point> GetPath()
+        {
+            return Path;
+        }        
+        #endregion
 
         #endregion
     }
 
-    class GlobalWarming
-    {
-        #region Members
-
-        // Main thread sets this event to stop worker thread:
-        ManualResetEvent m_EventStop;
-        // Worker thread sets this event when it is stopped:
-        ManualResetEvent m_EventStopped;
-        // Reference to main form used to make syncronous user interface calls:
-        PathPlanningSVM.frmMain m_form;
-
-        // Private variables
-        int DIM = PathPlanningSVM.ProjectConstants.DIM;
-        Point Start;
-        RtwMatrix mMap;
-        RtwMatrix mReachableRegion;
-        int T;
-        float UpperBound;
-        int HeuType;
-
-        // Public variables
-        public float BestCDF;
-        public int NodesExpanded;
-        public int PathExplored;
-        public int RepeatedVisit;
-        public List<Point> BestPoints;
-
-        #endregion
-
-        #region Functions
+    /*
 
         public void PlanPath()
         {
@@ -318,5 +320,7 @@ namespace IPPA
 
         #endregion
     }
+     */
+}
 
 

@@ -46,7 +46,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AlgGlobalWarming.cs" />
     <Compile Include="AlgLHC.cs" />
+    <Compile Include="AlgLHCGWCONV.cs" />
     <Compile Include="AlgPathPlanning.cs" />
     <Compile Include="ComputeEfficiencyLB.cs" />
     <Compile Include="CountDistModes.cs" />

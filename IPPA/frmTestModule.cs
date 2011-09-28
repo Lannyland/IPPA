@@ -27,6 +27,8 @@ namespace IPPA
         private RtwMatrix CurDiffMap;
         private frmServer frmParent;
         private frmMap map;
+        private Point Start = new Point();
+        private Point End = new Point();
 
         #endregion
 
@@ -308,6 +310,37 @@ namespace IPPA
             lvQueue.Columns[0].Width = lvQueue.Width - 5;
         }
 
+        // Starting Point x numerical box value is changed
+        private void ntxtSX_ValueChanged(object sender, EventArgs e)
+        {
+            Start.X = Convert.ToInt32(ntxtSX.Value);
+            Start.Y = Convert.ToInt32(ntxtSY.Value);
+            SetDestPoint(true, Start);
+        }
+
+        // Starting Point y numerical box value is changed
+        private void ntxtSY_ValueChanged(object sender, EventArgs e)
+        {
+            Start.X = Convert.ToInt32(ntxtSX.Value);
+            Start.Y = Convert.ToInt32(ntxtSY.Value);
+            SetDestPoint(true, Start);
+        }
+
+        // Ending Point x numerical box value is changed
+        private void ntxtEX_ValueChanged(object sender, EventArgs e)
+        {
+            End.X = Convert.ToInt32(ntxtEX.Value);
+            End.Y = Convert.ToInt32(ntxtEY.Value);
+            SetDestPoint(false, End);
+        }
+
+        // Ending Point y numerical box value is changed
+        private void ntxtEY_ValueChanged(object sender, EventArgs e)
+        {
+            End.X = Convert.ToInt32(ntxtEX.Value);
+            End.Y = Convert.ToInt32(ntxtEY.Value);
+            SetDestPoint(false, End);
+        }
 
 
 
@@ -330,6 +363,17 @@ namespace IPPA
 
         #region Other Functions
 
+        // Drawing starting point or ending point on display map
+        private void SetDestPoint(bool start, Point p)
+        {
+            if (map != null)
+            {
+                map.resetImage();
+                map.setPoint(start, p);
+                map.DrawingStartEndPoints();
+            }
+        }
+
         // Code to display logs in log rich text box (refresh and scroll to bottom)
         private void Log(string str)
         {
@@ -338,7 +382,6 @@ namespace IPPA
             SendMessage(rtxtLog.Handle, WM_VSCROLL, SB_BOTTOM, 0);
         }
 
-        #endregion
-        
+        #endregion        
     }
 }

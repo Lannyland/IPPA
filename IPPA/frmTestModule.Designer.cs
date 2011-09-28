@@ -317,6 +317,7 @@
             this.ntxtEY.Name = "ntxtEY";
             this.ntxtEY.Size = new System.Drawing.Size(43, 20);
             this.ntxtEY.TabIndex = 13;
+            this.ntxtEY.ValueChanged += new System.EventHandler(this.ntxtEY_ValueChanged);
             // 
             // ntxtEX
             // 
@@ -324,6 +325,7 @@
             this.ntxtEX.Name = "ntxtEX";
             this.ntxtEX.Size = new System.Drawing.Size(43, 20);
             this.ntxtEX.TabIndex = 11;
+            this.ntxtEX.ValueChanged += new System.EventHandler(this.ntxtEX_ValueChanged);
             // 
             // label2
             // 
@@ -399,6 +401,7 @@
             this.ntxtSY.Name = "ntxtSY";
             this.ntxtSY.Size = new System.Drawing.Size(43, 20);
             this.ntxtSY.TabIndex = 8;
+            this.ntxtSY.ValueChanged += new System.EventHandler(this.ntxtSY_ValueChanged);
             // 
             // ntxtSX
             // 
@@ -406,6 +409,7 @@
             this.ntxtSX.Name = "ntxtSX";
             this.ntxtSX.Size = new System.Drawing.Size(43, 20);
             this.ntxtSX.TabIndex = 6;
+            this.ntxtSX.ValueChanged += new System.EventHandler(this.ntxtSX_ValueChanged);
             // 
             // label5
             // 
