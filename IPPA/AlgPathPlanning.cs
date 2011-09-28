@@ -13,15 +13,17 @@ namespace IPPA
         #region Members
 
         // Private members
-        private PathPlanningRequest curRequest;
-        private RtwMatrix mDist;
-        private RtwMatrix mDiff;
-        private double Efficiency_LB = 0;
-        private double Efficiency = 0;
-        private double CDF;
-        private int NodesExpanded;
-        private int RepeatedVisit;
-        private List<Point> Path;
+        protected PathPlanningRequest curRequest;
+        protected RtwMatrix mDist;
+        protected RtwMatrix mDiff;
+        protected double Efficiency_LB = 0;
+        protected double CDF;
+        protected double RunTime = 0;
+        protected double Efficiency = 0;
+        protected int NodesExpanded = 0;
+        protected int PathExplored = 0;
+        protected int RepeatedVisit = 0;
+        protected List<Point> Path;
         
         #endregion
 
@@ -50,14 +52,22 @@ namespace IPPA
 
         #region Other Functions
 
-        #region Getters
-        public double GetEfficiency()
+        public virtual void PlanPath()
         {
-            return Efficiency;
         }
+
+        #region Getters
         public double GetCDF()
         {
             return CDF;
+        }
+        public double GetRunTime()
+        {
+            return RunTime;
+        }
+        public double GetEfficiency()
+        {
+            return Efficiency;
         }
         public int GetNodesExpanded()
         {

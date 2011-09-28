@@ -68,5 +68,7 @@ namespace IPPA
 
         // Global Warming parameters
         public static int GWCount = 40;
+        public static int ConvCount = 10;
+        public static int PFCount = 6;
     }
 }

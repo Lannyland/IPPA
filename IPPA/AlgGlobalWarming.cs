@@ -8,19 +8,14 @@ using System.Drawing;
 namespace IPPA
 {
     // Performs the Global Warming Search
-    class AlgGlobalWarming
+    class AlgGlobalWarming : AlgPathPlanning
     {
         #region Members
 
         // Private variables
-        private PathPlanningRequest curRequest;
         private int ModeCount = 0;
-        private RtwMatrix mDistReachable;
-        private RtwMatrix mDiffReachable;
-        private double Efficiency_LB = 0;
-        private double Efficiency = 0;
-        private double RunTime = 0;
-        private List<Point> Path;
+        private double BestCDF = 0;
+        private List<Point> BestPath;
 
         #endregion
 
@@ -29,28 +24,22 @@ namespace IPPA
         // Constructor
         public AlgGlobalWarming(PathPlanningRequest _curRequest, int _ModeCount, 
             RtwMatrix _mDistReachable, RtwMatrix _mDiffReachable, double _Efficiency_LB)
+            : base (_curRequest, _mDistReachable, _mDiffReachable, _Efficiency_LB)
         {
-            curRequest = _curRequest;
             ModeCount = _ModeCount;
-            mDistReachable = _mDistReachable;
-            mDiffReachable = _mDiffReachable;
-            Efficiency_LB = _Efficiency_LB;
         }
 
         // Destructor
         ~AlgGlobalWarming()
         {
             // Cleaning up
-            curRequest = null;
-            mDistReachable = null;
-            mDiffReachable = null;
         }
 
         #endregion
 
         #region Other Functions
 
-        public void Run()
+        public override void PlanPath()
         {
             // If no Coarse-to-fine and no parallel
             if (!curRequest.UseCoarseToFineSearch && !curRequest.UseParallelProcessing)
@@ -83,7 +72,7 @@ namespace IPPA
             int GWCount = IPPA.ProjectConstants.GWCount;
 
             // Make copy of map
-            RtwMatrix mGW = mDistReachable.Clone();
+            RtwMatrix mGW = mDist.Clone();
 
             // Find max value
             float[] minmax = mGW.MinMaxValue();
@@ -93,9 +82,11 @@ namespace IPPA
             // Loop many times
             for (int i = 0; i < GWCount; i++)
             {
+                // Don't rise ocean for first search
                 // Log("Orean rise " + i.ToString() + "\n");
                 if (i > 0)
                 {
+                    // Ocean rises
                     for (int a = 0; a < mGW.Rows; a++)
                     {
                         for (int b = 0; b < mGW.Columns; b++)
@@ -108,9 +99,50 @@ namespace IPPA
                         }
                     }
                 }
-            }
-            AlgLHCGWCONV myAlg = new AlgLHCGWCONV();
 
+                // After ocean rises
+                if (curRequest.AlgToUse == AlgType.LHCGWCONV)
+                {
+                    // If LHCGWCONV, search three convolution kernal sizes
+                    int dim = Math.Max(mDist.Rows, mDist.Columns);
+                    for (int j = 3; j < dim; j += (int)(dim / ProjectConstants.ConvCount))
+                    {
+                        // Log("Using kernel size " + j.ToString() + "x" + j.ToString() + "\n");
+                        AlgLHCGWCONV myAlg = new AlgLHCGWCONV(curRequest,mDist,mDiff,Efficiency_LB,j);
+                        myAlg.PlanPath();
+                        // Log(myAlg.NodesExpanded.ToString() + " nodes expanded.\n");
+                        // Log("1 full path explored.\n");
+                        // Log("Theoretical upper bound is " + Efficiency_LB.ToString() + "\n");
+                        // I am recalculating BestCDF because the Global Warming effect lowered the probabilities
+                        double RealCDF = GetTrueCDF(myAlg.GetPath());
+                        if (CDF < RealCDF)
+                        {
+                            CDF = RealCDF;
+                            Path = myAlg.GetPath();
+                        }
+                        // Log("Cumulative probability is " + CDF.ToString() + "\n");
+                        // float Efficiency = lhc.BestCDF / UpperBound * 100;
+                        // Log("Efficiency is " + Efficiency.ToString() + "%\n");
+                        // Increase node count and path count
+                        NodesExpanded += myAlg.GetNodesExpanded();
+                        PathExplored++;
+
+                        // Cleaning up                        
+                        myAlg = null;
+
+                        // If we already have the path, then no need to continue
+                        if (Math.Abs(Efficiency_LB - CDF) < 0.001)
+                        {
+                            i = GWCount;
+                            j = dim;
+                        }
+                    }
+                }
+
+            }
+
+            // Cleaning up                        
+            mGW = null;
         }
 
         // Search GW intelligently
@@ -131,21 +163,28 @@ namespace IPPA
             throw new NotImplementedException();
         }
 
+        // TODO Turn this into a seperate file so we can consider task-difficulty map and detection type
+        // Function to calculate true cummulative probability using original map
+        private double GetTrueCDF(List<Point> curPath)
+        {
+            double curCDF = 0;
 
-        #region Getters
-        public double GetEfficiency()
-        {
-            return Efficiency;
+            // Duplicate original map
+            RtwMatrix mCDF = mDist.Clone();
+
+            // Fly through the map
+            for (int i = 0; i < curRequest.T + 1; i++)
+            {
+                curCDF += mCDF[curPath[i].Y, curPath[i].X];
+                // Assuming 100% detection rate
+                mCDF[curPath[i].Y, curPath[i].X] = 0;
+            }
+
+            // Cleaning up
+            mCDF = null;
+
+            return curCDF;
         }
-        public double GetRunTime()
-        {
-            return RunTime;
-        }
-        public List<Point> GetPath()
-        {
-            return Path;
-        }
-        #endregion
 
         #endregion
     }

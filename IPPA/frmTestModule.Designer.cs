@@ -215,6 +215,7 @@
             // 
             // ntxtDetectionRate
             // 
+            this.ntxtDetectionRate.DecimalPlaces = 2;
             this.ntxtDetectionRate.Increment = new decimal(new int[] {
             1,
             0,
@@ -222,7 +223,7 @@
             65536});
             this.ntxtDetectionRate.Location = new System.Drawing.Point(96, 94);
             this.ntxtDetectionRate.Maximum = new decimal(new int[] {
-            30,
+            1,
             0,
             0,
             0});

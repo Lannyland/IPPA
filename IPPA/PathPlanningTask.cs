@@ -70,6 +70,8 @@ namespace IPPA
                 case AlgType.LHCGWCONV:
                     // First do Global Warming
                     AlgGlobalWarming myGW = new AlgGlobalWarming(curRequest, ModeCount, mDistReachable, mDiffReachable, Efficiency_LB);
+                    myGW.PlanPath();
+                    myGW = null;
                     break;
                 case AlgType.LHCGWCONV_E:
                     // TODO handle LHCGWCONV_E

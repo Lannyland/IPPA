@@ -210,6 +210,18 @@ namespace IPPA
                 return;
             }
 
+            // Make sure maps are loaded
+            if (chkUseDist.Checked && CurDistMap == null)
+            {
+                System.Windows.Forms.MessageBox.Show("Please load a probability distribution map first!");
+                return;
+            }
+            if (chkUseDiff.Checked && CurDiffMap == null)
+            {
+                System.Windows.Forms.MessageBox.Show("Please load a task-difficulty map first!");
+                return;
+            }
+
             // Generate path planning requests
             foreach (ListViewItem item in lvQueue.Items)
             {
