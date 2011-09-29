@@ -123,9 +123,6 @@ namespace IPPA
                         // Log("Cumulative probability is " + CDF.ToString() + "\n");
                         // float Efficiency = lhc.BestCDF / UpperBound * 100;
                         // Log("Efficiency is " + Efficiency.ToString() + "%\n");
-                        // Increase node count and path count
-                        NodesExpanded += myAlg.GetNodesExpanded();
-                        PathExplored++;
 
                         // Cleaning up                        
                         myAlg = null;

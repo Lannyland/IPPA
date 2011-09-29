@@ -20,9 +20,6 @@ namespace IPPA
         protected double CDF;
         protected double RunTime = 0;
         protected double Efficiency = 0;
-        protected int NodesExpanded = 0;
-        protected int PathExplored = 0;
-        protected int RepeatedVisit = 0;
         protected List<Point> Path;
         
         #endregion
