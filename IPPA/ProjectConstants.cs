@@ -62,6 +62,8 @@ namespace IPPA
         public static int DefaultDimension = 60;
         public static int MaxFlightTime = 1800;
         public static string MapsDir = @"C:\Lanny\MAMI\IPPA\Maps";
+        public static string DefaultDistMap = @"C:\Lanny\MAMI\IPPA\Maps\DistMaps\Simple_BimodalFar.csv";
+        public static string DefaultDiffMap = @"C:\Lanny\MAMI\IPPA\Maps\DiffMaps\Diff_Simple_BimodalFar1.csv";
         
         // Down sample scale in CountDistModes class
         public static int DownSampleScale = 1;

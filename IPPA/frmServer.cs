@@ -95,6 +95,7 @@ namespace IPPA
                 // Log activities
                 Log("Path planning using " + myServer.GetServerQueue()[0].GetRequest().AlgToUse.ToString() +
                     " algorithm completed successfully.\n\n");
+                Log(myServer.GetServerQueue()[0].GetRequest().GetLog());
 
                 // TODO Send activity log back to TestModuleForm
 
@@ -121,16 +122,26 @@ namespace IPPA
         private void btnDelete_Click(object sender, EventArgs e)
         {
             // Remove all selected items in listbox.
+            List<ServerQueueItem> myServerQueue = myServer.GetServerQueue();
             while (lstQueue.SelectedIndices.Count > 0)
             {
+                // Remove in listbox
                 int i = lstQueue.SelectedIndices[0];
                 Log("Removed " + lstQueue.SelectedItems[0].ToString() + "path planning request from queue.\n\n");
                 lstQueue.Items.RemoveAt(i);
                 lstRequestQueue.RemoveAt(i);
+                // Remove in server queue
+                myServerQueue.RemoveAt(i);
             }
             
             // Also clear details box
             rtxtRequestDetails.Clear();
+
+            //// Debug
+            //foreach (ServerQueueItem i in myServerQueue)
+            //{
+            //    Log(i.GetRequest().AlgToUse + "\n");
+            //}
         }
 
         // When the Clear Button is clicked.

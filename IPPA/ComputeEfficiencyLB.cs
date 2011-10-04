@@ -36,7 +36,7 @@ namespace IPPA
         private void Compute()
         {
             // TODO actually compute the Efficiency_LB
-            Efficiency_LB = 50000;
+            Efficiency_LB = 100000;
         }
 
         #region Getters

@@ -49,6 +49,7 @@
     <Compile Include="AlgGlobalWarming.cs" />
     <Compile Include="AlgLHC.cs" />
     <Compile Include="AlgLHCGWCONV.cs" />
+    <Compile Include="AlgLHCGWPF.cs" />
     <Compile Include="AlgPathPlanning.cs" />
     <Compile Include="ComputeEfficiencyLB.cs" />
     <Compile Include="CountDistModes.cs" />

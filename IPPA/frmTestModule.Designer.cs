@@ -68,6 +68,11 @@
             this.btnLoad2 = new System.Windows.Forms.Button();
             this.label8 = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.ntxtPFCount = new System.Windows.Forms.NumericUpDown();
+            this.label12 = new System.Windows.Forms.Label();
+            this.ntxtConvCount = new System.Windows.Forms.NumericUpDown();
+            this.label11 = new System.Windows.Forms.Label();
+            this.ntxtGWCount = new System.Windows.Forms.NumericUpDown();
             this.chkShowPath = new System.Windows.Forms.CheckBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.ntxtRunTimes = new System.Windows.Forms.NumericUpDown();
@@ -94,6 +99,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.ntxtSX)).BeginInit();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ntxtPFCount)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ntxtConvCount)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ntxtGWCount)).BeginInit();
             this.groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ntxtRunTimes)).BeginInit();
             this.groupBox5.SuspendLayout();
@@ -223,7 +231,7 @@
             65536});
             this.ntxtDetectionRate.Location = new System.Drawing.Point(96, 94);
             this.ntxtDetectionRate.Maximum = new decimal(new int[] {
-            1,
+            255,
             0,
             0,
             0});
@@ -363,6 +371,7 @@
             this.btnView.TabIndex = 14;
             this.btnView.Text = "View Reachable Area";
             this.btnView.UseVisualStyleBackColor = true;
+            this.btnView.Click += new System.EventHandler(this.btnView_Click);
             // 
             // label7
             // 
@@ -479,6 +488,7 @@
             this.btnBrowse2.TabIndex = 8;
             this.btnBrowse2.Text = "Bro&wse";
             this.btnBrowse2.UseVisualStyleBackColor = true;
+            this.btnBrowse2.Click += new System.EventHandler(this.btnBrowse2_Click);
             // 
             // btnLoad2
             // 
@@ -488,6 +498,7 @@
             this.btnLoad2.TabIndex = 9;
             this.btnLoad2.Text = "&Load Map";
             this.btnLoad2.UseVisualStyleBackColor = true;
+            this.btnLoad2.Click += new System.EventHandler(this.btnLoad2_Click);
             // 
             // label8
             // 
@@ -500,6 +511,11 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.ntxtPFCount);
+            this.groupBox3.Controls.Add(this.label12);
+            this.groupBox3.Controls.Add(this.ntxtConvCount);
+            this.groupBox3.Controls.Add(this.label11);
+            this.groupBox3.Controls.Add(this.ntxtGWCount);
             this.groupBox3.Controls.Add(this.chkShowPath);
             this.groupBox3.Controls.Add(this.label1);
             this.groupBox3.Controls.Add(this.label3);
@@ -521,6 +537,63 @@
             this.groupBox3.Size = new System.Drawing.Size(626, 120);
             this.groupBox3.TabIndex = 8;
             this.groupBox3.TabStop = false;
+            // 
+            // ntxtPFCount
+            // 
+            this.ntxtPFCount.Location = new System.Drawing.Point(409, 87);
+            this.ntxtPFCount.Name = "ntxtPFCount";
+            this.ntxtPFCount.Size = new System.Drawing.Size(45, 20);
+            this.ntxtPFCount.TabIndex = 25;
+            this.ntxtPFCount.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.ntxtPFCount.ValueChanged += new System.EventHandler(this.ntxtPFCount_ValueChanged);
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(227, 89);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(99, 13);
+            this.label12.TabIndex = 24;
+            this.label12.Text = "Conv/PF Iterations:";
+            // 
+            // ntxtConvCount
+            // 
+            this.ntxtConvCount.Location = new System.Drawing.Point(351, 87);
+            this.ntxtConvCount.Name = "ntxtConvCount";
+            this.ntxtConvCount.Size = new System.Drawing.Size(52, 20);
+            this.ntxtConvCount.TabIndex = 23;
+            this.ntxtConvCount.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.ntxtConvCount.ValueChanged += new System.EventHandler(this.ntxtConvCount_ValueChanged);
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(227, 66);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(75, 13);
+            this.label11.TabIndex = 22;
+            this.label11.Text = "GW Iterations:";
+            // 
+            // ntxtGWCount
+            // 
+            this.ntxtGWCount.Location = new System.Drawing.Point(351, 64);
+            this.ntxtGWCount.Name = "ntxtGWCount";
+            this.ntxtGWCount.Size = new System.Drawing.Size(52, 20);
+            this.ntxtGWCount.TabIndex = 21;
+            this.ntxtGWCount.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.ntxtGWCount.ValueChanged += new System.EventHandler(this.ntxtGWCount_ValueChanged);
             // 
             // chkShowPath
             // 
@@ -696,6 +769,9 @@
             this.groupBox2.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ntxtPFCount)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ntxtConvCount)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ntxtGWCount)).EndInit();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ntxtRunTimes)).EndInit();
@@ -759,5 +835,10 @@
         private System.Windows.Forms.GroupBox groupBox6;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.NumericUpDown ntxtDetectionRate;
+        private System.Windows.Forms.NumericUpDown ntxtPFCount;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.NumericUpDown ntxtConvCount;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.NumericUpDown ntxtGWCount;
     }
 }

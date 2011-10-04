@@ -34,6 +34,7 @@ namespace IPPA
         public AlgType AlgToUse = AlgType.EA;
         public bool BatchRun = false;
         public int RunTimes = 1;
+        public int MaxDifficulty = 0;
         
         #endregion
 
@@ -42,7 +43,6 @@ namespace IPPA
         // Constructor
         public PathPlanningRequest()
         {
-        
         }
 
         // Destructor
@@ -111,7 +111,7 @@ namespace IPPA
         // Set Log
         public void SetLog(string s)
         {
-            Log += s+"\n";
+            Log += s;
         }
 
         #endregion

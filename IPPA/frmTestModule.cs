@@ -27,8 +27,8 @@ namespace IPPA
         private RtwMatrix CurDiffMap;
         private frmServer frmParent;
         private frmMap map;
-        private Point Start = new Point();
-        private Point End = new Point();
+        private Point Start = new Point(0,0);
+        private Point End = new Point(0,0);
 
         #endregion
 
@@ -63,12 +63,12 @@ namespace IPPA
             rbtnFixWing.Checked = true;
             rbtnCopter.Checked = false;
             rbtnFixedAmount.Checked = false;
-            rbtnFixedAmountPercent.Checked = false;
-            rbtnFixedPercent.Checked = true;
+            rbtnFixedAmountPercent.Checked = true;
+            rbtnFixedPercent.Checked = false;
             ntxtDetectionRate.Value = 1;
 
-            txtFileName1.Text = ProjectConstants.MapsDir + @"\DistMaps\5_modal.csv";
-            txtFileName2.Text = ProjectConstants.MapsDir + @"\DiffMaps\test.csv";
+            txtFileName1.Text = ProjectConstants.DefaultDistMap;
+            txtFileName2.Text = ProjectConstants.DefaultDiffMap;
 
             ntxtSX.Minimum = 0;
             ntxtSX.Maximum = ProjectConstants.DefaultDimension - 1;
@@ -80,6 +80,9 @@ namespace IPPA
             ntxtFlightTime.Minimum = 0;
             ntxtFlightTime.Maximum = ProjectConstants.MaxFlightTime;
             ntxtFlightTime.Value = 150;
+            ntxtGWCount.Value = ProjectConstants.GWCount;
+            ntxtConvCount.Value = ProjectConstants.ConvCount;
+            ntxtPFCount.Value = ProjectConstants.PFCount;
 
             lstAlg.Items.Add("CC");
             lstAlg.Items.Add("LHC-GW-CONV");
@@ -107,7 +110,7 @@ namespace IPPA
             lvQueue.Columns.Add("Task");
             lvQueue.Columns[0].Width = lvQueue.Width - 5;
 
-            chkBatchRun.Checked = true;
+            chkBatchRun.Checked = false;
             ntxtRunTimes.Value = 10;
         }
         
@@ -122,7 +125,7 @@ namespace IPPA
         {
             OpenFileDialog fdlg = new OpenFileDialog();
             fdlg.Title = "Open Distribution Map File";
-            fdlg.InitialDirectory = ProjectConstants.MapsDir;
+            fdlg.InitialDirectory = ProjectConstants.MapsDir+@"\DistMaps";
             fdlg.Filter = "CSV files (*.CSV)|*.CSV|All files (*.*)|*.*";
             fdlg.FilterIndex = 1;
             fdlg.RestoreDirectory = false;
@@ -132,13 +135,11 @@ namespace IPPA
             }
         }
 
-        // When the load button for distribution is clicked.
+        // When the Load button for distribution is clicked.
         private void btnLoad1_Click(object sender, EventArgs e)
         {
             // Read in map file to matrix
             CurDistMap = MISCLib.ReadInMap(txtFileName1.Text);
-
-            // Convert matrix from RGB to HSI
 
             // Scale so RGB range [0,255]
             ImgLib.ScaleImageValues(ref CurDistMap);
@@ -151,6 +152,42 @@ namespace IPPA
             map = new frmMap();
             map.setImage(CurBMP);
             map.Show();
+        }
+
+        // When the Browse button for task-difficulty map is clicked.
+        private void btnBrowse2_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog fdlg = new OpenFileDialog();
+            fdlg.Title = "Open Task-Difficulty Map File";
+            fdlg.InitialDirectory = ProjectConstants.MapsDir + @"\DiffMaps";
+            fdlg.Filter = "CSV files (*.CSV)|*.CSV|All files (*.*)|*.*";
+            fdlg.FilterIndex = 1;
+            fdlg.RestoreDirectory = false;
+            if (fdlg.ShowDialog() == DialogResult.OK)
+            {
+                txtFileName2.Text = fdlg.FileName;
+            }
+        }
+
+        // When the Load button for task-difficulty map is clicked.
+        private void btnLoad2_Click(object sender, EventArgs e)
+        {
+            // Read in map file to matrix
+            CurDiffMap = MISCLib.ReadInMap(txtFileName2.Text);
+
+            // Scale so RGB range [0,255]
+            RtwMatrix TempDiffMap = CurDiffMap.Clone();
+            ImgLib.ScaleImageValues(ref TempDiffMap);
+
+            // Convert matrix to image
+            Bitmap CurBMP = new Bitmap(CurDiffMap.Columns, CurDiffMap.Rows);
+            ImgLib.MatrixToImage(ref TempDiffMap, ref CurBMP);
+
+            // Showing map in map form
+            frmMap frmDiffMap = new frmMap();
+            frmDiffMap.setImage(CurBMP);
+            frmDiffMap.Show();
+
         }
 
         // Add button is pressed
@@ -203,6 +240,8 @@ namespace IPPA
         // Plan Flight Path button is pressed
         private void btnExecute_Click(object sender, EventArgs e)
         {
+            #region Sanity Check
+
             // Make sure there are tasks in queue
             if (lvQueue.Items.Count < 1)
             {
@@ -221,6 +260,29 @@ namespace IPPA
                 System.Windows.Forms.MessageBox.Show("Please load a task-difficulty map first!");
                 return;
             }
+
+            // Sanity check to make sure distribution map and task-difficulty map have same size
+            if (chkUseDiff.Checked && chkUseDist.Checked)
+            {
+                if (CurDistMap.Rows != CurDiffMap.Rows || CurDistMap.Columns != CurDiffMap.Columns)
+                {
+                    System.Windows.Forms.MessageBox.Show("Please make sure the distribution map and the " +
+                    "task-difficulty map must be the same size!");
+                    return;
+                }                    
+            }
+
+            // Use default distribution map or task-difficulty map if only one is checked
+            if (chkUseDiff.Checked && !chkUseDist.Checked)
+            {
+                CurDistMap = new RtwMatrix(CurDiffMap.Rows, CurDiffMap.Columns);
+            }
+            if (!chkUseDiff.Checked && chkUseDist.Checked)
+            {
+                CurDiffMap = new RtwMatrix(CurDistMap.Rows, CurDistMap.Columns);
+            }
+
+            #endregion
 
             // Generate path planning requests
             foreach (ListViewItem item in lvQueue.Items)
@@ -309,7 +371,17 @@ namespace IPPA
                     newRequest.BatchRun = true;
                     newRequest.RunTimes = Convert.ToInt16(ntxtRunTimes.Value);
                 }
+                // Find max task-difficulty only once
+                if (chkUseDiff.Checked)
+                {
+                    newRequest.MaxDifficulty = Convert.ToInt32(CurDiffMap.MinMaxValue()[1]);
+                }
 
+                if (!newRequest.SanityCheck())
+                {
+                    System.Windows.Forms.MessageBox.Show(newRequest.GetLog());
+                    return;
+                }
                 #endregion
 
                 // Add to server queue and pass alone the object
@@ -354,6 +426,63 @@ namespace IPPA
             SetDestPoint(false, End);
         }
 
+        // GW Iterations numerical box value is changed
+        private void ntxtGWCount_ValueChanged(object sender, EventArgs e)
+        {
+            ProjectConstants.GWCount = Convert.ToInt32(ntxtGWCount.Value);
+        }
+
+        // Conv Iterations numerical box value is changed
+        private void ntxtConvCount_ValueChanged(object sender, EventArgs e)
+        {
+            ProjectConstants.ConvCount = Convert.ToInt32(ntxtConvCount.Value);
+        }
+
+        // PF Iterations numerical box value is changed
+        private void ntxtPFCount_ValueChanged(object sender, EventArgs e)
+        {
+            ProjectConstants.PFCount = Convert.ToInt32(ntxtPFCount.Value);
+        }
+
+
+
+        // View Reachable Area button is pressed
+        private void btnView_Click(object sender, EventArgs e)
+        {
+            if (CurDistMap == null)
+            {
+                System.Windows.Forms.MessageBox.Show("Please load a distribution map first!");
+                return;
+            }
+            DrawReachableArea();
+        }
+
+        // Function to draw reachable area on map
+        private void DrawReachableArea()
+        {
+            // Redraw map to only show areas UAV can reach
+            RtwMatrix mReachableRegion = new RtwMatrix(CurDistMap.Rows, CurDistMap.Columns);
+            for (int y = 0; y < mReachableRegion.Rows; y++)
+            {
+                for (int x = 0; x < mReachableRegion.Columns; x++)
+                {
+                    int dist = MISCLib.ManhattanDistance(x, y, Start.X, Start.Y);
+                    if (dist <= trbFlightTime.Value)
+                    {
+                        // Mark 0 as impossible
+                        mReachableRegion[y, x] = 1;
+                    }
+                }
+            }
+
+            if (map != null)
+            {
+                map.resetImage();
+                map.DrawingStartEndPoints();
+                map.DrawReachableRegion(mReachableRegion);
+                map.Refresh();
+            }
+        }
 
 
         // When the test button is pressed (Count how many modes)

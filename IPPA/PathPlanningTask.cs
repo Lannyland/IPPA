@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using rtwmatrix;
+using System.Drawing;
 
 namespace IPPA
 {
@@ -21,6 +22,8 @@ namespace IPPA
         private double Efficiency_LB = 0;
         private double Efficiency = 0;
         private double RunTime = 0;
+        private List<Point> Path;
+        AlgPathPlanning curAlg;
 
         #endregion
 
@@ -44,6 +47,7 @@ namespace IPPA
             curRequest = null;
             mDistReachable = null;
             mDiffReachable = null;
+            curAlg = null;
         }
 
         #endregion
@@ -53,6 +57,7 @@ namespace IPPA
         // Performing the path planning task
         public void Run()
         {
+            // Use the right algorithm
             switch (curRequest.AlgToUse)
             {
                 case AlgType.CC:
@@ -68,16 +73,15 @@ namespace IPPA
                     // TODO handle EA_E
                     break;
                 case AlgType.LHCGWCONV:
-                    // First do Global Warming
-                    AlgGlobalWarming myGW = new AlgGlobalWarming(curRequest, ModeCount, mDistReachable, mDiffReachable, Efficiency_LB);
-                    myGW.PlanPath();
-                    myGW = null;
+                    curAlg = new AlgGlobalWarming(curRequest, ModeCount, mDistReachable, mDiffReachable, Efficiency_LB);
+                    curAlg.PlanPath();
                     break;
                 case AlgType.LHCGWCONV_E:
                     // TODO handle LHCGWCONV_E
                     break;
                 case AlgType.LHCGWPF:
-                    // TODO handle LHCGWPF
+                    curAlg = new AlgGlobalWarming(curRequest, ModeCount, mDistReachable, mDiffReachable, Efficiency_LB);
+                    curAlg.PlanPath();
                     break;
                 case AlgType.LHCGWPF_E:
                     // TODO handle LHCGWPF_E
@@ -89,8 +93,30 @@ namespace IPPA
                     // TODO handle PF_E
                     break;
             }
-        }
 
+            // Set things ready for getters
+            Efficiency = curAlg.GetEfficiency();
+            RunTime = curAlg.GetRunTime();
+            Path = curAlg.GetPath();
+            curAlg.Shout();
+
+            // Debug code, show actualy path
+            Bitmap CurBMP = new Bitmap(mDistReachable.Columns, mDistReachable.Rows);
+            ImgLib.MatrixToImage(ref mDistReachable, ref CurBMP);
+            frmMap map = new frmMap();
+            map.setImage(CurBMP);
+            map.Show();
+            map.resetImage();
+            map.DrawPath(Path);
+            map.Refresh();
+
+            // Log results
+            curRequest.SetLog("Best CDF: " + curAlg.GetCDF() + "\n");
+            curRequest.SetLog("Best Efficiency: " + curAlg.GetEfficiency() + "\n");
+
+            // Drawing real path
+            MISCLib.ShowImage(MISCLib.DrawPath(Path), "Real Path");
+        }
 
         #region Getters
         public double GetEfficiency()
@@ -100,6 +126,10 @@ namespace IPPA
         public double GetRunTime()
         {
             return RunTime;
+        }
+        public List<Point> GetPath()
+        {
+            return Path;
         }
         #endregion
 
