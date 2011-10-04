@@ -69,8 +69,10 @@ namespace IPPA
         public static int DownSampleScale = 1;
 
         // Global Warming parameters
-        public static int GWCount = 40;
-        public static int ConvCount = 10;
-        public static int PFCount = 6;
+        public static int GWCount = 40;             // How many extensive GWs to search for
+        public static int ConvCount = 10;           // How many convolution kernals to use
+        public static int PFCount = 6;              // How many PF discount functions to use
+        public static int CTFGWCoraseLevel = 4;     // How many GW to perform at each coarse-to-fine level
+        public static int CTFGWLevelCount = 3;      // How many coarse-to-fine levels to search for
     }
 }

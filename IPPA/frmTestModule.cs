@@ -366,11 +366,13 @@ namespace IPPA
                             break;
                     }
                 }
+                newRequest.DrawPath = chkShowPath.Checked;
                 if (chkBatchRun.Checked)
                 {
                     newRequest.BatchRun = true;
                     newRequest.RunTimes = Convert.ToInt16(ntxtRunTimes.Value);
                 }
+                
                 // Find max task-difficulty only once
                 if (chkUseDiff.Checked)
                 {

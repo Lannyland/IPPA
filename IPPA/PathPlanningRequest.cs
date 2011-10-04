@@ -35,6 +35,7 @@ namespace IPPA
         public bool BatchRun = false;
         public int RunTimes = 1;
         public int MaxDifficulty = 0;
+        public bool DrawPath = false;
         
         #endregion
 

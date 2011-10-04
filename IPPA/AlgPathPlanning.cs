@@ -85,45 +85,7 @@ namespace IPPA
         // Compute what amount can be taken off when visiting a node
         protected float GetPartialDetection(Point p)
         {
-            float original = 0;
-            float current = mCurDist[p.Y, p.X];
-            float amountToDeduct = 0;
-
-            // Always do fixed percent of remaining for DiffRates
-            // Based on detection type, compute differently
-            switch (curRequest.DetectionType)
-            {
-                case DType.FixAmount:
-                    // Ignore task-difficulty map
-                    amountToDeduct = (float)curRequest.DetectionRate;
-                    break;
-                case DType.FixAmountInPercentage:
-                    if (curRequest.UseTaskDifficultyMap)
-                    {
-                        original = mDist[p.Y, p.X];
-                        amountToDeduct = (float)(original * DiffRates[Convert.ToInt32(mDiff[p.Y, p.X])] * curRequest.DetectionRate);
-                    }
-                    else
-                    {
-                        amountToDeduct = (float)(current * curRequest.DetectionRate);
-                    }
-                    break;
-                case DType.FixPercentage:
-                    if (curRequest.UseTaskDifficultyMap)
-                    {
-                        amountToDeduct = (float)(current * DiffRates[Convert.ToInt32(mDiff[p.Y, p.X])] * curRequest.DetectionRate);
-                    }
-                    else
-                    {
-                        amountToDeduct = (float)(current * curRequest.DetectionRate);
-                    }
-                    break;
-            }
-            if (amountToDeduct > current)
-            {
-                amountToDeduct = current;
-            }
-            return amountToDeduct;
+            return GetPartialDetection(p, mCurDist);
         }
         protected float GetPartialDetection(Point p, RtwMatrix m)
         {
@@ -170,9 +132,7 @@ namespace IPPA
         // Compute actual detection rate based on task-difficulty map and partial detection rate
         protected float VacuumProbability(Point p)
         {
-            float current = mCurDist[p.Y, p.X];
-            float amountLeft = current - GetPartialDetection(p);
-            return amountLeft;
+            return VacuumProbability(p, mCurDist);
         }
         protected float VacuumProbability(Point p, RtwMatrix m)
         {
@@ -181,8 +141,6 @@ namespace IPPA
             return amountLeft;
         }
 
-
-        
         // Expand child according to direction
         protected Point GetDirChild(int dir, Point p)
         {

@@ -101,21 +101,24 @@ namespace IPPA
             curAlg.Shout();
 
             // Debug code, show actualy path
-            Bitmap CurBMP = new Bitmap(mDistReachable.Columns, mDistReachable.Rows);
-            ImgLib.MatrixToImage(ref mDistReachable, ref CurBMP);
-            frmMap map = new frmMap();
-            map.setImage(CurBMP);
-            map.Show();
-            map.resetImage();
-            map.DrawPath(Path);
-            map.Refresh();
+            if (curRequest.DrawPath)
+            {
+                Bitmap CurBMP = new Bitmap(mDistReachable.Columns, mDistReachable.Rows);
+                ImgLib.MatrixToImage(ref mDistReachable, ref CurBMP);
+                frmMap map = new frmMap();
+                map.setImage(CurBMP);
+                map.Show();
+                map.resetImage();
+                map.DrawPath(Path);
+                map.Refresh();
+
+                // Drawing real path
+                MISCLib.ShowImage(MISCLib.DrawPath(Path), "Real Path");
+            }
 
             // Log results
             curRequest.SetLog("Best CDF: " + curAlg.GetCDF() + "\n");
             curRequest.SetLog("Best Efficiency: " + curAlg.GetEfficiency() + "\n");
-
-            // Drawing real path
-            MISCLib.ShowImage(MISCLib.DrawPath(Path), "Real Path");
         }
 
         #region Getters
