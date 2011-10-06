@@ -66,12 +66,6 @@ namespace IPPA
                 case AlgType.CC_E:
                     // TODO handle CC_E
                     break;
-                case AlgType.EA:
-                    // TODO handle EA
-                    break;
-                case AlgType.EA_E:
-                    // TODO handle EA_E
-                    break;
                 case AlgType.LHCGWCONV:
                     curAlg = new AlgGlobalWarming(curRequest, ModeCount, mDistReachable, mDiffReachable, Efficiency_LB);
                     curAlg.PlanPath();
@@ -86,11 +80,24 @@ namespace IPPA
                 case AlgType.LHCGWPF_E:
                     // TODO handle LHCGWPF_E
                     break;
+                case AlgType.LHCRandom:
+                    curAlg = new AlgLHCRandom(curRequest, mDistReachable, mDiffReachable, Efficiency_LB);
+                    curAlg.PlanPath();
+                    break;
+                case AlgType.LHCRandom_E:
+                    // TODO handle LHCGWPF_E
+                    break;
                 case AlgType.PF:
                     // TODO handle PF
                     break;
                 case AlgType.PF_E:
                     // TODO handle PF_E
+                    break;
+                case AlgType.EA:
+                    // TODO handle EA
+                    break;
+                case AlgType.EA_E:
+                    // TODO handle EA_E
                     break;
             }
 

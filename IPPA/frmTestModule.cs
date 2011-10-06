@@ -26,7 +26,8 @@ namespace IPPA
         private RtwMatrix CurDistMap;
         private RtwMatrix CurDiffMap;
         private frmServer frmParent;
-        private frmMap map;
+        private frmMap frmDistMap;
+        private frmMap frmDiffMap;
         private Point Start = new Point(0,0);
         private Point End = new Point(0,0);
 
@@ -46,7 +47,8 @@ namespace IPPA
         {
             // Cleaning up
             CurDistMap = null;
-            map = null;
+            frmDistMap = null;
+            frmDiffMap = null;
         }
 
         #endregion
@@ -87,6 +89,7 @@ namespace IPPA
             lstAlg.Items.Add("CC");
             lstAlg.Items.Add("LHC-GW-CONV");
             lstAlg.Items.Add("LHC-GW-PF");
+            lstAlg.Items.Add("LHC-Random");
             lstAlg.Items.Add("PF");
             // lstAlg.Items.Add("EA-Dir");
             lstAlg.Items.Add("EA-Path");
@@ -149,9 +152,10 @@ namespace IPPA
             ImgLib.MatrixToImage(ref CurDistMap, ref CurBMP);
 
             // Showing map in map form
-            map = new frmMap();
-            map.setImage(CurBMP);
-            map.Show();
+            frmDistMap = new frmMap();
+            frmDistMap.Text = "Probability Distribution Map";
+            frmDistMap.setImage(CurBMP);
+            frmDistMap.Show();
         }
 
         // When the Browse button for task-difficulty map is clicked.
@@ -184,7 +188,8 @@ namespace IPPA
             ImgLib.MatrixToImage(ref TempDiffMap, ref CurBMP);
 
             // Showing map in map form
-            frmMap frmDiffMap = new frmMap();
+            frmDiffMap = new frmMap();
+            frmDistMap.Text = "Task-Difficulty Map";
             frmDiffMap.setImage(CurBMP);
             frmDiffMap.Show();
 
@@ -337,6 +342,9 @@ namespace IPPA
                         case "LHC-GW-PF":
                             newRequest.AlgToUse = AlgType.LHCGWPF_E;
                             break;
+                        case "LHC-Random":
+                            newRequest.AlgToUse = AlgType.LHCRandom_E;
+                            break;
                         case "PF":
                             newRequest.AlgToUse = AlgType.PF_E;
                             break;
@@ -357,6 +365,9 @@ namespace IPPA
                             break;
                         case "LHC-GW-PF":
                             newRequest.AlgToUse = AlgType.LHCGWPF;
+                            break;
+                        case "LHC-Random":
+                            newRequest.AlgToUse = AlgType.LHCRandom;
                             break;
                         case "PF":
                             newRequest.AlgToUse = AlgType.PF;
@@ -445,9 +456,7 @@ namespace IPPA
         {
             ProjectConstants.PFCount = Convert.ToInt32(ntxtPFCount.Value);
         }
-
-
-
+        
         // View Reachable Area button is pressed
         private void btnView_Click(object sender, EventArgs e)
         {
@@ -464,25 +473,66 @@ namespace IPPA
         {
             // Redraw map to only show areas UAV can reach
             RtwMatrix mReachableRegion = new RtwMatrix(CurDistMap.Rows, CurDistMap.Columns);
-            for (int y = 0; y < mReachableRegion.Rows; y++)
+            if (!chkUseEndPoint.Checked)
             {
-                for (int x = 0; x < mReachableRegion.Columns; x++)
+                for (int y = 0; y < mReachableRegion.Rows; y++)
                 {
-                    int dist = MISCLib.ManhattanDistance(x, y, Start.X, Start.Y);
-                    if (dist <= trbFlightTime.Value)
+                    for (int x = 0; x < mReachableRegion.Columns; x++)
                     {
-                        // Mark 0 as impossible
-                        mReachableRegion[y, x] = 1;
+                        int dist = MISCLib.ManhattanDistance(x, y, Start.X, Start.Y);
+                        if (dist <= trbFlightTime.Value)
+                        {
+                            // Mark 1 as possible
+                            mReachableRegion[y, x] = 1;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                int dist = MISCLib.ManhattanDistance(Start.X, Start.Y, End.X, End.Y);
+                if (dist > ntxtFlightTime.Value)
+                {
+                    // Impossible to get from A to B in allowed flight time
+                    System.Windows.Forms.MessageBox.Show("Impossible! Extend flight time!");
+                    return;
+                }
+
+                if (ntxtFlightTime.Value % 2 != dist % 2)
+                {
+                    // Impossible to get from A to B in the exact allowed flight time
+                    System.Windows.Forms.MessageBox.Show("Impossible to reach end point at time T! Add 1 or minus 1!");
+                    return;
+                }
+
+                for (int y = 0; y < mReachableRegion.Rows; y++)
+                {
+                    for (int x = 0; x < mReachableRegion.Columns; x++)
+                    {
+                        int dist_AC = MISCLib.ManhattanDistance(x, y, Start.X, Start.Y);
+                        int dist_BC = MISCLib.ManhattanDistance(x, y, End.X, End.Y);
+                        if ((dist_AC + dist_BC) <= ntxtFlightTime.Value)
+                        {
+                            // Mark 1 as possible
+                            mReachableRegion[y, x] = 1;
+                        }
                     }
                 }
             }
 
-            if (map != null)
+            if (frmDistMap != null)
             {
-                map.resetImage();
-                map.DrawingStartEndPoints();
-                map.DrawReachableRegion(mReachableRegion);
-                map.Refresh();
+                frmDistMap.resetImage();
+                frmDistMap.DrawingStartEndPoints();
+                frmDistMap.DrawReachableRegion(mReachableRegion);
+                frmDistMap.Refresh();
+            }
+            if (frmDiffMap != null)
+            {
+                frmDiffMap.resetImage();
+                frmDiffMap.DrawingStartEndPoints();
+                frmDiffMap.DrawReachableRegion(mReachableRegion);
+                frmDiffMap.Refresh();
             }
         }
 
@@ -509,11 +559,17 @@ namespace IPPA
         // Drawing starting point or ending point on display map
         private void SetDestPoint(bool start, Point p)
         {
-            if (map != null)
+            if (frmDistMap != null)
             {
-                map.resetImage();
-                map.setPoint(start, p);
-                map.DrawingStartEndPoints();
+                frmDistMap.resetImage();
+                frmDistMap.setPoint(start, p);
+                frmDistMap.DrawingStartEndPoints();
+            }
+            if(frmDiffMap != null)
+            {
+                frmDiffMap.resetImage();
+                frmDiffMap.setPoint(start, p);
+                frmDiffMap.DrawingStartEndPoints();
             }
         }
 

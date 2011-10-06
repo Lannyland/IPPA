@@ -122,7 +122,6 @@ namespace IPPA
                 next = ValidNeighbors[indexOfnext].Loc;
                 Path.Add(next);
                 CDF += GetPartialDetection(next);
-                // TODO handle partial detection and task-difficulty map                
                 mCurDist[next.Y, next.X] = VacuumProbability(next);
 
                 // Console.Write("moving to (" + next.X + "," + next.Y + ").\n");

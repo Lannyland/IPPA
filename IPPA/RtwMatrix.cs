@@ -17,10 +17,6 @@ namespace rtwmatrix
 
 		public RtwMatrix(int rows, int columns)
 		{
-			//
-			// TODO: Add constructor logic here
-			//
-
 			m_rows = rows;
 			m_columns = columns;
 

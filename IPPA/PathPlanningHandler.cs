@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using rtwmatrix;
+using System.Drawing;
 
 namespace IPPA
 {
@@ -51,9 +52,24 @@ namespace IPPA
             }
             
             // First do reachable area (Dist and Diff)
-            // TODO Implement method to compute reachable areas
-            RtwMatrix mDistReachable = curRequest.DistMap;
-            RtwMatrix mDiffReachable = curRequest.DiffMap;
+            RtwMatrix mDistReachable;
+            RtwMatrix mDiffReachable;
+
+            if (curRequest.T < curRequest.DistMap.Rows + curRequest.DistMap.Columns)
+            {
+                mDistReachable = curRequest.DistMap.Clone();
+                mDiffReachable = curRequest.DiffMap.Clone();
+                if (!ComputeReachableArea(mDistReachable, mDiffReachable))
+                {
+                    // Cannot plan path.
+                    return;
+                }
+            }
+            else
+            {
+                mDistReachable = curRequest.DistMap;
+                mDiffReachable = curRequest.DiffMap;
+            }
 
             // Then do mode count (If Diff is used, multiply first)
             // TODO Implenment Diff map            
@@ -62,8 +78,8 @@ namespace IPPA
             myCount = null;
 
             // Then do efficiency lower bound
-            ComputeEfficiencyLB myELB = new ComputeEfficiencyLB(curRequest);
-            double Efficiency_LB = myELB.GetEfficiency_LB();
+            ComputeEfficiencyUB myELB = new ComputeEfficiencyUB(curRequest);
+            double Efficiency_LB = myELB.GetEfficiency_UB();
             myELB = null;
 
             // Do the batch run of Path Planning
@@ -93,6 +109,79 @@ namespace IPPA
             curRequest.SetLog("Standard deviation: " + StdEfficiency.ToString() + "\n");
             curRequest.SetLog("----------------------------------------------");
             curRequest.SetLog("----------------------------------------------\n");
+        }
+
+        // Compute the reachable area and might as well compute distance to closest non-zero node
+        private bool ComputeReachableArea(RtwMatrix mDistReachable, RtwMatrix mDiffReachable)
+        {
+            // Code is cleaner to just deal two cases seperately.
+            if (!curRequest.UseEndPoint)
+            {
+                Point Start = new Point(curRequest.pStart.column, curRequest.pStart.row);
+                int d = curRequest.T;
+                for (int y = 0; y < mDistReachable.Rows; y++)
+                {
+                    for (int x = 0; x < mDistReachable.Columns; x++)
+                    {
+                        int dist = MISCLib.ManhattanDistance(x, y, Start.X, Start.Y);
+                        if (dist >= curRequest.T)
+                        {
+                            // Wipe cell in both maps clean
+                            mDistReachable[y, x] = 0;
+                            mDiffReachable[y, x] = 0;
+                        }
+                        if (dist < d && mDistReachable[y, x] != 0)
+                        {
+                            d = dist;
+                        }
+                    }
+                }
+                curRequest.d = d;
+            }
+            else
+            {
+                Point Start = new Point(curRequest.pStart.column, curRequest.pStart.row);
+                Point End = new Point(curRequest.pEnd.column, curRequest.pEnd.row);
+                int d = curRequest.T;
+                int dist = MISCLib.ManhattanDistance(Start.X, Start.Y, End.X, End.Y);
+
+                if (dist > curRequest.T)
+                {
+                    // Impossible to get from A to B in allowed flight time
+                    System.Windows.Forms.MessageBox.Show("Impossible! Extend flight time!");
+                    return false;
+                }
+
+                if (curRequest.T % 2 != dist % 2)
+                {
+                    // Impossible to get from A to B in the exact allowed flight time
+                    System.Windows.Forms.MessageBox.Show("Impossible to reach end point at time T! Add 1 or minus 1!");
+                    return false;
+                }
+
+                for (int y = 0; y < mDistReachable.Rows; y++)
+                {
+                    for (int x = 0; x < mDistReachable.Columns; x++)
+                    {
+                        int dist_AC = MISCLib.ManhattanDistance(x, y, Start.X, Start.Y);
+                        int dist_BC = MISCLib.ManhattanDistance(x, y, End.X, End.Y);
+                        if ((dist_AC + dist_BC) > curRequest.T)
+                        {
+                            // Wipe cell in both maps clean
+                            mDistReachable[y, x] = 0;
+                            mDiffReachable[y, x] = 0;
+                        }
+                        dist = MISCLib.ManhattanDistance(x, y, Start.X, Start.Y);
+                        if (dist < d && mDistReachable[y, x] != 0)
+                        {
+                            d = dist;
+                        }
+                    }
+                }
+                curRequest.d = d;
+
+            }            
+            return true;
         }
 
         // Compute standard deviation given a list and average

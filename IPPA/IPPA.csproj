@@ -51,7 +51,8 @@
     <Compile Include="AlgLHCGWCONV.cs" />
     <Compile Include="AlgLHCGWPF.cs" />
     <Compile Include="AlgPathPlanning.cs" />
-    <Compile Include="ComputeEfficiencyLB.cs" />
+    <Compile Include="ComputeEfficiencyUB.cs" />
+    <Compile Include="AlgLHCRandom.cs" />
     <Compile Include="CountDistModes.cs" />
     <Compile Include="frmMap.cs">
       <SubType>Form</SubType>

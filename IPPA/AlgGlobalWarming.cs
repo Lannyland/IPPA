@@ -15,7 +15,6 @@ namespace IPPA
 
         // Private variables
         private int ModeCount = 0;
-        private float curCDF = 0;
         private List<float> arrlCurCDFs = new List<float>();
         
         #endregion

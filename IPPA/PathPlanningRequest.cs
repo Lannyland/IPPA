@@ -8,7 +8,7 @@ namespace IPPA
 {
     public enum UAVType { FixWing, Copter };
     public enum DType { FixAmount, FixAmountInPercentage, FixPercentage };
-    public enum AlgType { CC, CC_E, LHCGWCONV, LHCGWCONV_E, LHCGWPF, LHCGWPF_E, PF, PF_E, EA, EA_E };
+    public enum AlgType { CC, CC_E, LHCGWCONV, LHCGWCONV_E, LHCGWPF, LHCGWPF_E, LHCRandom, LHCRandom_E, PF, PF_E, EA, EA_E };
 
     public class PathPlanningRequest
     {
@@ -36,6 +36,7 @@ namespace IPPA
         public int RunTimes = 1;
         public int MaxDifficulty = 0;
         public bool DrawPath = false;
+        public int d = 0;                                       // Distance from Start point to the nearest non-zero node
         
         #endregion
 
@@ -55,7 +56,7 @@ namespace IPPA
         }
 
         #endregion
-
+                
         #region functions
 
         public bool SanityCheck()

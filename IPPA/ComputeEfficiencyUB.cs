@@ -5,24 +5,24 @@ using System.Text;
 
 namespace IPPA
 {
-    class ComputeEfficiencyLB
+    class ComputeEfficiencyUB
     {
         #region Members
         PathPlanningRequest curRequest;
-        double Efficiency_LB = 0;
+        double Efficiency_UB = 0;
         #endregion
 
         #region Constructor, Destructor
 
         // Constructor
-        public ComputeEfficiencyLB(PathPlanningRequest _curRequest)
+        public ComputeEfficiencyUB(PathPlanningRequest _curRequest)
         {
             curRequest = _curRequest;
             Compute();
         }
 
         // Destructor
-        ~ComputeEfficiencyLB()
+        ~ComputeEfficiencyUB()
         {
             // Cleaning up
             curRequest = null;
@@ -35,14 +35,14 @@ namespace IPPA
         // Compute the Efficiency Lower Bound based on PathPlanningRequest scenario
         private void Compute()
         {
-            // TODO actually compute the Efficiency_LB
-            Efficiency_LB = 100000;
+            // TODO actually compute the Efficiency_UB
+            Efficiency_UB = 100000;
         }
 
         #region Getters
-        public double GetEfficiency_LB()
+        public double GetEfficiency_UB()
         {
-            return Efficiency_LB;
+            return Efficiency_UB;
         }
         #endregion
 
