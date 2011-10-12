@@ -47,7 +47,7 @@ namespace IPPA
             {
                 GWExtensiveSearch();
             }
-            
+
             // If yes Coarse-to-fine and no parallel
             if (curRequest.UseCoarseToFineSearch && !curRequest.UseParallelProcessing)
             {
@@ -64,24 +64,6 @@ namespace IPPA
             if (curRequest.UseCoarseToFineSearch && curRequest.UseParallelProcessing)
             {
                 // GWCoarseToFineAndParallelSearch();
-            }
-
-            // Debug code, show map remain (especially for partial detection)
-            // Re-enact the flight with real distmap
-            if (curRequest.DrawPath)
-            {
-                RtwMatrix DistMapRemain = mDist.Clone();
-                foreach (Point p in Path)
-                {
-                    DistMapRemain[p.Y, p.X] = VacuumProbability(p, DistMapRemain);
-                }
-                Bitmap CurBMP = new Bitmap(DistMapRemain.Columns, DistMapRemain.Rows);
-                ImgLib.MatrixToImage(ref DistMapRemain, ref CurBMP);
-                frmMap map = new frmMap();
-                map.setImage(CurBMP);
-                map.Show();
-                map.resetImage();
-                map.Refresh();
             }
         }
 

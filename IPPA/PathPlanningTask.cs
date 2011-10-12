@@ -61,7 +61,8 @@ namespace IPPA
             switch (curRequest.AlgToUse)
             {
                 case AlgType.CC:
-                    // TODO handle CC
+                    curAlg = new AlgCC(curRequest, mDistReachable, mDiffReachable, Efficiency_LB);
+                    curAlg.PlanPath();
                     break;
                 case AlgType.CC_E:
                     // TODO handle CC_E
@@ -107,17 +108,28 @@ namespace IPPA
             Path = curAlg.GetPath();
             curAlg.Shout();
 
-            // Debug code, show actualy path
+            // Debug code, show actual path
             if (curRequest.DrawPath)
             {
+                // Draw coverage
                 Bitmap CurBMP = new Bitmap(mDistReachable.Columns, mDistReachable.Rows);
                 ImgLib.MatrixToImage(ref mDistReachable, ref CurBMP);
                 frmMap map = new frmMap();
                 map.setImage(CurBMP);
                 map.Show();
                 map.resetImage();
-                map.DrawPath(Path);
+                map.DrawCoverage(Path);
                 map.Refresh();
+
+                // Draw path
+                Bitmap CurBMP2 = new Bitmap(mDistReachable.Columns, mDistReachable.Rows);
+                ImgLib.MatrixToImage(ref mDistReachable, ref CurBMP2);
+                frmMap map2 = new frmMap();
+                map2.setImage(CurBMP2);
+                map2.Show();
+                map2.resetImage();
+                map2.DrawPath(Path);
+                map2.Refresh();
 
                 // Drawing real path
                 MISCLib.ShowImage(MISCLib.DrawPath(Path), "Real Path");

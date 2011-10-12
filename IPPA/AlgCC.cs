@@ -23,12 +23,14 @@ namespace IPPA
         {
             bool blnClean = false;                              // Is there still probability left?
             int CurT = 0;                                       // Time used for current run (lawnmowing pattern)
+            int RealT = 0;                                      // How much time left after current run
+            int PatternStepCount = 0;                           // Used to remember last flight pattern inside box
             Point CurStart = new Point(curRequest.pStart.column, curRequest.pStart.row); // Start point in each run
             List<Point> CurPathSegment = new List<Point>();     // Path planned for current run
-            int RealT = 0;                                      // How much time left after current run
             CurPathSegment.Add(CurStart);                       // Only do this once. Don't add Start again in future runs.
 
             // Plan to do complete coverage multiple times if partial detection is used
+            // Before distribution map is wiped clean
             while (!blnClean && RealT < curRequest.T)
             {
                 // First find bounding box that contains all the non-zero probability nodes
@@ -41,10 +43,18 @@ namespace IPPA
 
                 RtwMatrix boundingbox = GetBox(ref EvenColumns, ref Top, ref Bottom, ref Left, ref Right);
 
-                // If nothing left on map, then try to continue the previous pattern
+                // If nothing left on map, exit while loop
+                if (Top == -1 && Bottom == -1 && Left == -1 && Right == -1)
+                {
+                    blnClean = true;
+                    break;
+                }
 
                 #region Move inside the box if not in
-                CurT = 0;
+                
+                // Reset pattern step count
+                PatternStepCount = 0;
+                // Move inside
                 Point Start = CurStart;
                 Point CurPoint = new Point(Start.X, Start.Y);
                 if (boundingbox[Start.Y, Start.X] == 0)
@@ -53,7 +63,7 @@ namespace IPPA
                     if (Start.X < Left)
                     {
                         // Move right horizentally
-                        while (CurPoint.X <= Left)
+                        while (CurPoint.X < Left)
                         {
                             CurPoint.X++;
                             AddNodeToPath(CurPathSegment, ref CurT, ref RealT, ref CurPoint);
@@ -62,7 +72,7 @@ namespace IPPA
                     else if (Start.X > Right)
                     {
                         // Move left horizentally
-                        while (CurPoint.X >= Left)
+                        while (CurPoint.X > Right)
                         {
                             CurPoint.X--;
                             AddNodeToPath(CurPathSegment, ref CurT, ref RealT, ref CurPoint);
@@ -75,7 +85,7 @@ namespace IPPA
                     if (CurPoint.Y < Top)
                     {
                         // Move down vertically
-                        while (CurPoint.Y <= Top)
+                        while (CurPoint.Y < Top)
                         {
                             CurPoint.Y++;
                             AddNodeToPath(CurPathSegment, ref CurT, ref RealT, ref CurPoint);
@@ -84,7 +94,7 @@ namespace IPPA
                     else if (CurPoint.Y > Bottom)
                     {
                         // Move up vertically
-                        while (CurPoint.Y >= Bottom)
+                        while (CurPoint.Y > Bottom)
                         {
                             CurPoint.Y--;
                             AddNodeToPath(CurPathSegment, ref CurT, ref RealT, ref CurPoint);
@@ -106,19 +116,30 @@ namespace IPPA
 
                 // Remember starting position inside bounding box
                 Point boxstart = new Point(CurPoint.X, CurPoint.Y);
-                int tempt = CurT;
+                // boxstart node counts as part of the pattern, increase counter
+                PatternStepCount++;
+                // tempt is current timestep, used to identify first step in while loop
+                bool AtBoxStart = true;
 
+                // Debug:
+                if (CurPoint.X == 0 && CurPoint.Y == 18)
+                {
+                    Console.WriteLine("bla!");
+                }
                 // Once inside bounding box fly the pattern until mxn-1 steps (complete coverage)
                 if (EvenColumns)
                 {
                     // Depending on the current position, decide which direction to go
                     // Do the following as long as there's still time or if I return back to boxstart
-                    while (((CurPoint.X != boxstart.X || CurPoint.Y != boxstart.Y) && RealT <= curRequest.T) || CurT <= tempt)
+                    while (((CurPoint.X != boxstart.X || CurPoint.Y != boxstart.Y) && RealT <= curRequest.T) || AtBoxStart)
                     {
                         // Don't add boxstart, but add future nodes
-                        if (CurT > tempt)
+                        if (!AtBoxStart)
                         {
+                            // Add node to path
                             AddNodeToPath(CurPathSegment, ref CurT, ref RealT, ref CurPoint);
+                            // Increase time counter
+                            PatternStepCount++;
                         }
 
                         // Move intelligently
@@ -158,20 +179,21 @@ namespace IPPA
                             CurPoint.Y--;
                         }
 
-                        // Increase time counter
-                        CurT++;
-                        RealT++;
+                        AtBoxStart = false;
                     }
                 }
                 else
                 {
                     // Turn the pattern 90 degrees clockwise
-                    while (((CurPoint.X != boxstart.X || CurPoint.Y != boxstart.Y) && RealT <= curRequest.T) || CurT <= tempt)
+                    while (((CurPoint.X != boxstart.X || CurPoint.Y != boxstart.Y) && RealT <= curRequest.T) || AtBoxStart)
                     {
                         // Don't add boxstart, but add future nodes
-                        if (CurT > tempt)
+                        if (!AtBoxStart)
                         {
+                            // Add node to path
                             AddNodeToPath(CurPathSegment, ref CurT, ref RealT, ref CurPoint);
+                            // Increase pattern step counter
+                            PatternStepCount++;
                         }
 
                         if (CurPoint.X == Right && CurPoint.Y >= Top && CurPoint.Y < Bottom)
@@ -210,15 +232,39 @@ namespace IPPA
                             CurPoint.X++;
                         }
 
-                        // Increase time counter
-                        CurT++;
-                        RealT++;
+                        AtBoxStart = false;
                     }
                 }
 
                 #endregion
 
+                // Add current segment of path to total path
+                Path.AddRange(CurPathSegment);
 
+                // Clear current segment of path
+                CurPathSegment.Clear();
+
+                // Reset timer for current run
+                CurT = 0;
+
+                // Remember new start point
+                CurStart = new Point(CurPoint.X, CurPoint.Y);
+            }
+
+            // If all time used, we are done.
+            if (RealT == curRequest.T)
+            {
+                return;
+            }
+            
+            // After distribution map is wiped clean and still time left
+            int FixedPatternStartAt = Path.Count - PatternStepCount;
+            while (RealT < curRequest.T)
+            {
+                Point p = new Point(Path[FixedPatternStartAt].X, Path[FixedPatternStartAt].Y);
+                Path.Add(p);
+                RealT++;
+                FixedPatternStartAt++;
             }
         }
 
@@ -247,8 +293,8 @@ namespace IPPA
                     if (mCurDist[i, j] > 0)
                     {
                         Top = i;
-                        j = DIM;
-                        i = DIM;
+                        j = mCurDist.Columns;
+                        i = mCurDist.Rows;
                     }
 
                 }
@@ -295,6 +341,12 @@ namespace IPPA
             }
             #endregion
 
+            // If distribution map is wiped clean, there's nothing to do here.
+            if (Top == -1 || Bottom == -1 || Left == -1 || Right == -1)
+            {
+                return mbox;
+            }
+
             // Create binary mask matrix
             for (int i = Top; i < Bottom + 1; i++)
             {
@@ -305,6 +357,7 @@ namespace IPPA
             }
 
             #region Handle odd columns or odd rows
+
             if (Right - Left == mCurDist.Columns && Bottom - Top == mCurDist.Rows)
             {
                 if (mCurDist.Columns % 2 != 0 && mCurDist.Rows % 2 != 0)
@@ -395,7 +448,7 @@ namespace IPPA
         #region Constructor, Destructor
 
         public AlgCC(PathPlanningRequest _curRequest, RtwMatrix _mDistReachable,
-            RtwMatrix _mDiffReachable, double _Efficiency_LB, int _Sigma)
+            RtwMatrix _mDiffReachable, double _Efficiency_LB)
             : base(_curRequest, _mDistReachable, _mDiffReachable, _Efficiency_LB)
         {
         }

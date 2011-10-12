@@ -92,7 +92,7 @@ namespace IPPA
             pbMap.Image = DisplayMap;
         }
 
-        public void DrawPath(List<Point> Path)
+        public void DrawCoverage(List<Point> Path)
         {
             if (Path.Count < 2)
             {
@@ -121,6 +121,48 @@ namespace IPPA
                 DisplayMap.SetPixel(p.X, p.Y, c);
                 pbMap.Image = DisplayMap;
                 this.Refresh();
+            }
+            pbMap.Image = DisplayMap;
+        }
+
+        public void DrawPath(List<Point> Path)
+        {
+            if (Path.Count < 2)
+            {
+                return;
+            }
+
+            for (int i = 0; i < Path.Count; i++)
+            {
+                Point p = Path[i];
+                Color c = new Color();
+                Color cOriginal = new Color();
+                cOriginal = DisplayMap.GetPixel(p.X, p.Y);
+
+                if (i == 0)
+                {
+                    // Yellow for staring point
+                    c = Color.FromArgb(255, 255, 0);
+                }
+                else if (i != Path.Count - 1)
+                {
+                    // Red for path
+                    c = Color.FromArgb(255, 0, 0);
+                }
+                else
+                {
+                    // Blue for ending point 
+                    c = Color.FromArgb(0, 0, 255);
+                }
+                DisplayMap.SetPixel(p.X, p.Y, c);
+                pbMap.Image = DisplayMap;
+                this.Refresh();
+
+                // Now change pixel back to original color
+                if (i != 0 && i != Path.Count - 1)
+                {
+                    DisplayMap.SetPixel(p.X, p.Y, cOriginal);
+                }
             }
             pbMap.Image = DisplayMap;
         }
