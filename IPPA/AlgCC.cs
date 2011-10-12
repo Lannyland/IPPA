@@ -23,11 +23,13 @@ namespace IPPA
         {
             bool blnClean = false;                              // Is there still probability left?
             int CurT = 0;                                       // Time used for current run (lawnmowing pattern)
+            Point CurStart = new Point(curRequest.pStart.column, curRequest.pStart.row); // Start point in each run
             List<Point> CurPathSegment = new List<Point>();     // Path planned for current run
-            int TLeft = 0;                                      // How much time left after current run
-            
+            int RealT = 0;                                      // How much time left after current run
+            CurPathSegment.Add(CurStart);                       // Only do this once. Don't add Start again in future runs.
+
             // Plan to do complete coverage multiple times if partial detection is used
-            while (!blnClean && TLeft>0)
+            while (!blnClean && RealT < curRequest.T)
             {
                 // First find bounding box that contains all the non-zero probability nodes
                 bool EvenColumns = false;
@@ -39,83 +41,54 @@ namespace IPPA
 
                 RtwMatrix boundingbox = GetBox(ref EvenColumns, ref Top, ref Bottom, ref Left, ref Right);
 
-            }
+                // If nothing left on map, then try to continue the previous pattern
 
-
-
-        }
-            
-                /*
-
-                // Next check if the starting node is inside or outside of the box.
-                int t = -1;
-                Point Cur_Point = new Point(Start.X, Start.Y);
+                #region Move inside the box if not in
+                CurT = 0;
+                Point Start = CurStart;
+                Point CurPoint = new Point(Start.X, Start.Y);
                 if (boundingbox[Start.Y, Start.X] == 0)
                 {
                     // Outside of the box, so plan shortest path to bounding box
                     if (Start.X < Left)
                     {
                         // Move right horizentally
-                        while (Cur_Point.X <= Left)
+                        while (CurPoint.X <= Left)
                         {
-                            Point p = new Point(Cur_Point.X, Cur_Point.Y);
-                            BestPoints.Add(p);
-                            t++; 
-                            NodesExpanded++;
-                            BestCDF += mMap[Cur_Point.Y, Cur_Point.X];
-                            mMap[Cur_Point.Y, Cur_Point.X] = 0;
-                            Cur_Point.X++;
+                            CurPoint.X++;
+                            AddNodeToPath(CurPathSegment, ref CurT, ref RealT, ref CurPoint);
                         }
-                        Cur_Point.X--;
                     }
                     else if (Start.X > Right)
                     {
                         // Move left horizentally
-                        while (Cur_Point.X >= Left)
+                        while (CurPoint.X >= Left)
                         {
-                            Point p = new Point(Cur_Point.X, Cur_Point.Y);
-                            BestPoints.Add(p);
-                            t++; 
-                            NodesExpanded++;
-                            BestCDF += mMap[Cur_Point.Y, Cur_Point.X];
-                            mMap[Cur_Point.Y, Cur_Point.X] = 0;
-                            Cur_Point.X--;
+                            CurPoint.X--;
+                            AddNodeToPath(CurPathSegment, ref CurT, ref RealT, ref CurPoint);
                         }
-                        Cur_Point.X++;
                     }
                     else
                     {
                         // No need to move horizentally
                     }
-                    if (Cur_Point.Y < Top)
-                    { 
+                    if (CurPoint.Y < Top)
+                    {
                         // Move down vertically
-                        while (Cur_Point.Y <= Top)
+                        while (CurPoint.Y <= Top)
                         {
-                            Point p = new Point(Cur_Point.X, Cur_Point.Y);
-                            BestPoints.Add(p);
-                            t++; 
-                            NodesExpanded++;
-                            BestCDF += mMap[Cur_Point.Y, Cur_Point.X];
-                            mMap[Cur_Point.Y, Cur_Point.X] = 0;
-                            Cur_Point.Y++;
+                            CurPoint.Y++;
+                            AddNodeToPath(CurPathSegment, ref CurT, ref RealT, ref CurPoint);
                         }
-                        Cur_Point.Y--;
                     }
-                    else if (Cur_Point.Y > Bottom)
+                    else if (CurPoint.Y > Bottom)
                     {
                         // Move up vertically
-                        while (Cur_Point.Y >= Bottom)
+                        while (CurPoint.Y >= Bottom)
                         {
-                            Point p = new Point(Cur_Point.X, Cur_Point.Y);
-                            BestPoints.Add(p);
-                            t++; 
-                            NodesExpanded++;
-                            BestCDF += mMap[Cur_Point.Y, Cur_Point.X];
-                            mMap[Cur_Point.Y, Cur_Point.X] = 0;
-                            Cur_Point.Y--;
+                            CurPoint.Y--;
+                            AddNodeToPath(CurPathSegment, ref CurT, ref RealT, ref CurPoint);
                         }
-                        Cur_Point.Y++;
                     }
                     else
                     {
@@ -125,184 +98,168 @@ namespace IPPA
                 else
                 {
                     // Inside the box. Let's add Current Node first
-                    Point p = new Point(Cur_Point.X, Cur_Point.Y);
-                    BestPoints.Add(p);
-                    NodesExpanded++;
-                    BestCDF += mMap[Cur_Point.Y, Cur_Point.X];
-                    mMap[Cur_Point.Y, Cur_Point.X] = 0;
-                    t++;
+                    // Point already in path segment
                 }
+                #endregion
+
+                #region Complete Coverage
 
                 // Remember starting position inside bounding box
-                Point boxstart = new Point(Cur_Point.X, Cur_Point.Y);
-                int tempt = t;
+                Point boxstart = new Point(CurPoint.X, CurPoint.Y);
+                int tempt = CurT;
 
                 // Once inside bounding box fly the pattern until mxn-1 steps (complete coverage)
                 if (EvenColumns)
                 {
                     // Depending on the current position, decide which direction to go
-                    while (((Cur_Point.X != boxstart.X || Cur_Point.Y != boxstart.Y) && t <= T) || t <= tempt)
+                    // Do the following as long as there's still time or if I return back to boxstart
+                    while (((CurPoint.X != boxstart.X || CurPoint.Y != boxstart.Y) && RealT <= curRequest.T) || CurT <= tempt)
                     {
-                        if (t > tempt)
+                        // Don't add boxstart, but add future nodes
+                        if (CurT > tempt)
                         {
-                            Point p = new Point(Cur_Point.X, Cur_Point.Y);
-                            BestPoints.Add(p);
-                            NodesExpanded++;
-                            BestCDF += mMap[Cur_Point.Y, Cur_Point.X];
-                            mMap[Cur_Point.Y, Cur_Point.X] = 0;
+                            AddNodeToPath(CurPathSegment, ref CurT, ref RealT, ref CurPoint);
                         }
-                        t++;
 
-                        if (Cur_Point.X >= Left && Cur_Point.X < Right && Cur_Point.Y == Top)
+                        // Move intelligently
+                        if (CurPoint.X >= Left && CurPoint.X < Right && CurPoint.Y == Top)
                         {
                             // Top left corner. Go right
-                            Cur_Point.X++;
+                            CurPoint.X++;
                         }
-                        else if (Cur_Point.X == Right && Cur_Point.Y >= Top && Cur_Point.Y < Bottom)
+                        else if (CurPoint.X == Right && CurPoint.Y >= Top && CurPoint.Y < Bottom)
                         {
                             // Top right corner. Go down
-                            Cur_Point.Y++;
+                            CurPoint.Y++;
                         }
-                        else if (Cur_Point.Y == Bottom && (Cur_Point.X - Left) % 2 == 1)
+                        else if (CurPoint.Y == Bottom && (CurPoint.X - Left) % 2 == 1)
                         {
                             // Bottom right corners. Go left
-                            Cur_Point.X--;
+                            CurPoint.X--;
                         }
-                        else if (Cur_Point.Y <= Bottom && Cur_Point.Y > Top + 1 && (Cur_Point.X - Left) % 2 == 0)
+                        else if (CurPoint.Y <= Bottom && CurPoint.Y > Top + 1 && (CurPoint.X - Left) % 2 == 0)
                         {
                             // Bottom left corners. Go up
-                            Cur_Point.Y--;
+                            CurPoint.Y--;
                         }
-                        else if (Cur_Point.Y == Top + 1 && Cur_Point.X > Left && (Cur_Point.X - Left) % 2 == 0)
+                        else if (CurPoint.Y == Top + 1 && CurPoint.X > Left && (CurPoint.X - Left) % 2 == 0)
                         {
                             // Second row right corners. Go left
-                            Cur_Point.X--;
+                            CurPoint.X--;
                         }
-                        else if (Cur_Point.Y >= Top + 1 && Cur_Point.Y < Bottom && (Cur_Point.X - Left) % 2 == 1)
+                        else if (CurPoint.Y >= Top + 1 && CurPoint.Y < Bottom && (CurPoint.X - Left) % 2 == 1)
                         {
                             // Second row left corners. Go down
-                            Cur_Point.Y++;
+                            CurPoint.Y++;
                         }
-                        else if (Cur_Point.X == Left && Cur_Point.Y == Top + 1)
+                        else if (CurPoint.X == Left && CurPoint.Y == Top + 1)
                         {
                             // Point left of top right corner. Go Right
-                            Cur_Point.Y--;
+                            CurPoint.Y--;
                         }
+
+                        // Increase time counter
+                        CurT++;
+                        RealT++;
                     }
                 }
                 else
                 {
                     // Turn the pattern 90 degrees clockwise
-                    while (((Cur_Point.X != boxstart.X || Cur_Point.Y != boxstart.Y) && t <= T) || t <= tempt)
+                    while (((CurPoint.X != boxstart.X || CurPoint.Y != boxstart.Y) && RealT <= curRequest.T) || CurT <= tempt)
                     {
-                        if (t > tempt)
+                        // Don't add boxstart, but add future nodes
+                        if (CurT > tempt)
                         {
-                            Point p = new Point(Cur_Point.X, Cur_Point.Y);
-                            BestPoints.Add(p);
-                            NodesExpanded++;
-                            BestCDF += mMap[Cur_Point.Y, Cur_Point.X];
-                            mMap[Cur_Point.Y, Cur_Point.X] = 0;
+                            AddNodeToPath(CurPathSegment, ref CurT, ref RealT, ref CurPoint);
                         }
-                        t++;
 
-                        if (Cur_Point.X == Right && Cur_Point.Y >= Top && Cur_Point.Y < Bottom)
+                        if (CurPoint.X == Right && CurPoint.Y >= Top && CurPoint.Y < Bottom)
                         {
                             // Top right corner. Go down
-                            Cur_Point.Y++;
+                            CurPoint.Y++;
                         }
-                        else if (Cur_Point.X <= Right && Cur_Point.X > Left && Cur_Point.Y == Bottom)
+                        else if (CurPoint.X <= Right && CurPoint.X > Left && CurPoint.Y == Bottom)
                         {
                             // Bottom right corner. Go left
-                            Cur_Point.X--;
+                            CurPoint.X--;
                         }
-                        else if (Cur_Point.X == Left && (Cur_Point.Y - Top) % 2 == 1)
+                        else if (CurPoint.X == Left && (CurPoint.Y - Top) % 2 == 1)
                         {
                             // Left bottom corners. Go up
-                            Cur_Point.Y--;
+                            CurPoint.Y--;
                         }
-                        else if (Cur_Point.X >= Left && Cur_Point.X < Right - 1 && (Cur_Point.Y - Top) % 2 == 0)
+                        else if (CurPoint.X >= Left && CurPoint.X < Right - 1 && (CurPoint.Y - Top) % 2 == 0)
                         {
                             // Left top corners. Go right
-                            Cur_Point.X++;
+                            CurPoint.X++;
                         }
-                        else if (Cur_Point.X == Right - 1 && Cur_Point.Y > Top && (Cur_Point.Y - Top) % 2 == 0)
+                        else if (CurPoint.X == Right - 1 && CurPoint.Y > Top && (CurPoint.Y - Top) % 2 == 0)
                         {
                             // Second column from right bottom corners. Go up
-                            Cur_Point.Y--;
+                            CurPoint.Y--;
                         }
-                        else if (Cur_Point.X <= Right - 1 && Cur_Point.X > Left && (Cur_Point.Y - Top) % 2 == 1)
+                        else if (CurPoint.X <= Right - 1 && CurPoint.X > Left && (CurPoint.Y - Top) % 2 == 1)
                         {
                             // Second column from right top corners. Go left
-                            Cur_Point.X--;
+                            CurPoint.X--;
                         }
-                        else if (Cur_Point.X == Right - 1 && Cur_Point.Y == Top)
+                        else if (CurPoint.X == Right - 1 && CurPoint.Y == Top)
                         {
                             // Point left of top right corner. Go Right
-                            Cur_Point.X++;
+                            CurPoint.X++;
                         }
+
+                        // Increase time counter
+                        CurT++;
+                        RealT++;
                     }
                 }
 
-                // Once everything is covered, let's just fly North, East, South, West until all timesteps are used ups
-                // First add the anchor node in path the second time
-                if (t < T)
-                {
-                    BestPoints.Add(boxstart);
-                }
-                NodesExpanded++;
-                // No need to t++
-                // Now let's just fly straight lines going north first
-                int LastDir = 0;
-                while (t <= T)
-                {
-                    // Loop through all four directions (N, E, S, W)
-                    for (int i = LastDir; i < LastDir+4; i++)
-                    {
-                        // Expand children
-                        Point child = MISCLib.get_delta(i%4, Cur_Point);
-                        NodesExpanded++;
+                #endregion
 
-                        // Check if it's valid children (no repeat first)
-                        if (MISCLib.ValidMove(Cur_Point, Cur_Point, child, mReachableRegion, true, mReachableRegion))
-                        {
-                            BestPoints.Add(child);
-                            Cur_Point.X = child.X;
-                            Cur_Point.Y = child.Y;
-                            LastDir = i%4;
-                            break;
-                        }
-                    }
-                    t++;
-                }
 
             }
-    }
+        }
 
-                */
+        // Method to add node to path and partially detect
+        private void AddNodeToPath(List<Point> CurPathSegment, ref int CurT, ref int RealT, ref Point CurPoint)
+        {
+            Point p = new Point(CurPoint.X, CurPoint.Y);
+            CurPathSegment.Add(p);
+            CurT++;
+            RealT++;
+            CDF += GetPartialDetection(CurPoint);
+            mCurDist[CurPoint.Y, CurPoint.X] = VacuumProbability(CurPoint);
+        }
 
-        // Function to identify a m x n box bounding non-zero nodes where m is even
+        // Function to identify a mxn box bounding non-zero nodes where m is even
         RtwMatrix GetBox(ref bool EvenColumns, ref int Top, ref int Bottom, ref int Left, ref int Right)
         {
-            RtwMatrix mbox = new RtwMatrix(mDist.Rows, mDist.Columns);
+            RtwMatrix mbox = new RtwMatrix(mCurDist.Rows, mCurDist.Columns);
+
+            #region Find four sides
             // First pass find top
-            for (int i = 0; i < mDist.Rows; i++)
+            for (int i = 0; i < mCurDist.Rows; i++)
             {
-                for (int j = 0; j < mDist.Columns; j++)
+                for (int j = 0; j < mCurDist.Columns; j++)
                 {
-                    if (mDist[i, j] > 0)
+                    if (mCurDist[i, j] > 0)
                     {
                         Top = i;
-                        j = mDist.Columns;
-                        i = mDist.Rows;
+                        j = DIM;
+                        i = DIM;
                     }
+
                 }
             }
+
             // Second pass find bottom
-            for (int i = mDist.Rows - 1; i > -1; i--)
+            for (int i = mCurDist.Rows - 1; i > -1; i--)
             {
-                for (int j = mDist.Columns - 1; j > -1; j--)
+                for (int j = mCurDist.Columns - 1; j > -1; j--)
                 {
-                    if (mDist[i, j] > 0)
+                    if (mCurDist[i, j] > 0)
                     {
                         Bottom = i;
                         j = -1;
@@ -311,24 +268,24 @@ namespace IPPA
                 }
             }
             // Third pass find left
-            for (int i = 0; i < mDist.Columns; i++)
+            for (int i = 0; i < mCurDist.Columns; i++)
             {
-                for (int j = 0; j < mDist.Rows; j++)
+                for (int j = 0; j < mCurDist.Rows; j++)
                 {
-                    if (mDist[j, i] > 0)
+                    if (mCurDist[j, i] > 0)
                     {
                         Left = i;
-                        j = mDist.Rows;
-                        i = mDist.Columns;
+                        j = mCurDist.Rows;
+                        i = mCurDist.Columns;
                     }
                 }
             }
             // Fourth pass find right
-            for (int i = mDist.Columns - 1; i > -1; i--)
+            for (int i = mCurDist.Columns - 1; i > -1; i--)
             {
-                for (int j = mDist.Rows - 1; j > -1; j--)
+                for (int j = mCurDist.Rows - 1; j > -1; j--)
                 {
-                    if (mDist[j, i] > 0)
+                    if (mCurDist[j, i] > 0)
                     {
                         Right = i;
                         j = -1;
@@ -336,6 +293,7 @@ namespace IPPA
                     }
                 }
             }
+            #endregion
 
             // Create binary mask matrix
             for (int i = Top; i < Bottom + 1; i++)
@@ -346,70 +304,91 @@ namespace IPPA
                 }
             }
 
-            // Next check if it is a m x n box where m is even
-            if ((Right + 1 - Left) % 2 == 0)
+            #region Handle odd columns or odd rows
+            if (Right - Left == mCurDist.Columns && Bottom - Top == mCurDist.Rows)
             {
-                // Even number of columns
-                EvenColumns = true;
-            }
-            else if ((Bottom + 1 - Top) % 2 == 0)
-            {
-                // Odd number of columns but even number or rows
-                EvenColumns = false;
-            }
-            else
-            {
-                // Odd numbber of columns and odd number of rows
-                // Need to patch this
-                // Let's first try find the shorter line of nodes to add
-                if (Right + 1 - Left > Bottom + 1 - Top)
+                if (mCurDist.Columns % 2 != 0 && mCurDist.Rows % 2 != 0)
                 {
-                    // Row is longer, column is shorter. We should add column
-                    // Since DIM is even, we can always add a column
-                    if (Left != 0)
+                    // Because of dynamic size of distribution map, deal with full map oddxodd right here
+                    // Let's first try find the shorter line of nodes to subtract
+                    if (Right + 1 - Left > Bottom + 1 - Top)
                     {
-                        Left--;
+                        // Row is longer, column is shorter. We should subtract column
+                        Left++;
                         for (int i = Top; i < Bottom + 1; i++)
                         {
                             mbox[i, Left] = 1;
                         }
+                        EvenColumns = true;
                     }
-                    else
-                    {
-                        Right++;
-                        for (int i = Top; i < Bottom + 1; i++)
-                        {
-                            mbox[i, Right] = 1;
-                        }
-                    }
+
+                }
+            }
+            else
+            {
+                // Next check if it is a m x n box where m is even
+                if ((Right + 1 - Left) % 2 == 0)
+                {
+                    // Even number of columns
                     EvenColumns = true;
+                }
+                else if ((Bottom + 1 - Top) % 2 == 0)
+                {
+                    // Odd number of columns but even number or rows
+                    EvenColumns = false;
                 }
                 else
                 {
-                    // Add a row instead
-                    if (Top != 0)
+                    // Odd numbber of columns and odd number of rows (not full map)
+                    // Let's first try find the shorter line of nodes to add
+                    if (Right + 1 - Left > Bottom + 1 - Top)
                     {
-                        Top--;
-                        for (int i = Left; i < Right + 1; i++)
+                        // Row is longer, column is shorter. We should add column
+                        if (Left != 0)
                         {
-                            mbox[Top, i] = 1;
+                            Left--;
+                            for (int i = Top; i < Bottom + 1; i++)
+                            {
+                                mbox[i, Left] = 1;
+                            }
                         }
+                        else
+                        {
+                            Right++;
+                            for (int i = Top; i < Bottom + 1; i++)
+                            {
+                                mbox[i, Right] = 1;
+                            }
+                        }
+                        EvenColumns = true;
                     }
                     else
                     {
-                        Bottom++;
-                        for (int i = Left; i < Right + 1; i++)
+                        // Add a row instead
+                        if (Top != 0)
                         {
-                            mbox[Bottom, i] = 1;
+                            Top--;
+                            for (int i = Left; i < Right + 1; i++)
+                            {
+                                mbox[Top, i] = 1;
+                            }
                         }
+                        else
+                        {
+                            Bottom++;
+                            for (int i = Left; i < Right + 1; i++)
+                            {
+                                mbox[Bottom, i] = 1;
+                            }
+                        }
+                        EvenColumns = false;
                     }
-                    EvenColumns = false;
                 }
             }
+            #endregion
 
             return mbox;
         }
-
 
         #endregion
         
