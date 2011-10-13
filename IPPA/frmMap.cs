@@ -11,17 +11,42 @@ namespace IPPA
 {
     public partial class frmMap : Form
     {
+        #region Members
+
         private Bitmap Map;
         private Bitmap DisplayMap;
         private Point Start = new Point();
         private Point End = new Point();
         private MyPictureBox pbMap = new MyPictureBox();
 
+        #endregion
+
+        #region Constructor, Destructor
+
         public frmMap()
         {
             InitializeComponent();
         }
-        
+
+        #endregion
+
+        #region Message Handlers
+
+        private void frmMap_Load(object sender, EventArgs e)
+        {
+            Size PBSize = new Size();
+            PBSize.Height = 800;
+            PBSize.Width = 800;
+            pbMap.Size = PBSize;
+            pbMap.Location = new Point(2, 16);
+            pbMap.SizeMode = PictureBoxSizeMode.StretchImage;
+            this.Controls.Add(pbMap);
+        }
+
+        #endregion
+
+        #region Other Functions
+
         // Function for image to be set from outside the form
         public void setImage(Bitmap BMP)
         {
@@ -167,18 +192,22 @@ namespace IPPA
             pbMap.Image = DisplayMap;
         }
 
-        private void frmMap_Load(object sender, EventArgs e)
+        public void setPointColor(Point p, float f)
         {
-            Size PBSize = new Size();
-            PBSize.Height = 800;
-            PBSize.Width = 800;
-            pbMap.Size = PBSize;
-            pbMap.Location = new Point(2,16);
-            pbMap.SizeMode = PictureBoxSizeMode.StretchImage;
-            this.Controls.Add(pbMap);
+            Color c = new Color();
+            int i = Convert.ToInt32(f);
+            c = Color.FromArgb(i, i, i);
+            DisplayMap.SetPixel(p.X, p.Y, c);
+        }
+
+        public void setPointColor(Point p, Color c)
+        {
+            DisplayMap.SetPixel(p.X, p.Y, c);
         }
 
         // When I have time, add in the sprite visual effect and allow
         // setting and dragging sprites to show starting pint and ending point
+
+        #endregion
     }
 }

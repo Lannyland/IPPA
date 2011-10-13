@@ -16,6 +16,21 @@ namespace IPPA
         // Public variables
         
         #endregion
+
+        #region Constructor, Destructor
+
+        public AlgCC(PathPlanningRequest _curRequest, RtwMatrix _mDistReachable,
+            RtwMatrix _mDiffReachable, double _Efficiency_LB)
+            : base(_curRequest, _mDistReachable, _mDiffReachable, _Efficiency_LB)
+        {
+        }
+
+        // Destructor
+        ~AlgCC()
+        {
+        }
+
+        #endregion
         
         #region Functions
 
@@ -51,7 +66,7 @@ namespace IPPA
                 }
 
                 #region Move inside the box if not in
-                
+                                               
                 // Reset pattern step count
                 PatternStepCount = 0;
                 // Move inside
@@ -60,8 +75,41 @@ namespace IPPA
                 if (boundingbox[Start.Y, Start.X] == 0)
                 {
                     // Outside of the box, so plan shortest path to bounding box
+                    Point Parent;
+                    if (Path.Count == 0)
+                    {
+                        Parent = Start;
+                    }
+                    else if (Path.Count == 1)
+                    {
+                        Parent = Path[Path.Count - 1];
+                    }
+                    else
+                    {
+                        Parent = Path[Path.Count - 2];
+                    }
                     if (Start.X < Left)
                     {
+                        // Should go right
+                        // Make sure it's a valid flight pattern for given UAV
+                        Point Child = new Point(CurPoint.X + 1, CurPoint.Y);
+                        if(!ValidMove(Parent, CurPoint, Child))
+                        {
+                            if (CurPoint.Y < Top || CurPoint.Y == 0)
+                            {
+                                CurPoint.Y++;
+                            }
+                            else if (CurPoint.Y > Bottom || CurPoint.Y == mDist.Rows - 1)
+                            {
+                                CurPoint.Y--;
+                            }
+                            else
+                            {
+                                // Just go down (choices are up or down)
+                                CurPoint.Y++;
+                            }
+                            AddNodeToPath(CurPathSegment, ref CurT, ref RealT, ref CurPoint);
+                        }
                         // Move right horizentally
                         while (CurPoint.X < Left)
                         {
@@ -71,6 +119,26 @@ namespace IPPA
                     }
                     else if (Start.X > Right)
                     {
+                        // Should go left
+                        // Make sure it's a valid flight pattern for given UAV
+                        Point Child = new Point(CurPoint.X - 1, CurPoint.Y);
+                        if (!ValidMove(Parent, CurPoint, Child))
+                        {
+                            if (CurPoint.Y < Top || CurPoint.Y == 0)
+                            {
+                                CurPoint.Y++;
+                            }
+                            else if (CurPoint.Y > Bottom || CurPoint.Y == mDist.Rows - 1)
+                            {
+                                CurPoint.Y--;
+                            }
+                            else
+                            {
+                                // Just go down (choices are up or down)
+                                CurPoint.Y++;
+                            }
+                            AddNodeToPath(CurPathSegment, ref CurT, ref RealT, ref CurPoint);
+                        }
                         // Move left horizentally
                         while (CurPoint.X > Right)
                         {
@@ -84,6 +152,26 @@ namespace IPPA
                     }
                     if (CurPoint.Y < Top)
                     {
+                        // Should go down
+                        // Make sure it's a valid flight pattern for given UAV
+                        Point Child = new Point(CurPoint.X, CurPoint.Y + 1);
+                        if (!ValidMove(Parent, CurPoint, Child))
+                        {
+                            if (CurPoint.X < Left || CurPoint.X == 0)
+                            {
+                                CurPoint.X++;
+                            }
+                            else if (CurPoint.X > Right || CurPoint.X == mDist.Columns - 1)
+                            {
+                                CurPoint.X--;
+                            }
+                            else
+                            {
+                                // Just go right (choices are left or right)
+                                CurPoint.X++;
+                            }
+                            AddNodeToPath(CurPathSegment, ref CurT, ref RealT, ref CurPoint);
+                        }
                         // Move down vertically
                         while (CurPoint.Y < Top)
                         {
@@ -93,6 +181,26 @@ namespace IPPA
                     }
                     else if (CurPoint.Y > Bottom)
                     {
+                        // Should go up
+                        // Make sure it's a valid flight pattern for given UAV
+                        Point Child = new Point(CurPoint.X, CurPoint.Y - 1);
+                        if (!ValidMove(Parent, CurPoint, Child))
+                        {
+                            if (CurPoint.X < Left || CurPoint.X == 0)
+                            {
+                                CurPoint.X++;
+                            }
+                            else if (CurPoint.X > Right || CurPoint.X == mDist.Columns - 1)
+                            {
+                                CurPoint.X--;
+                            }
+                            else
+                            {
+                                // Just go right (choices are left or right)
+                                CurPoint.X++;
+                            }
+                            AddNodeToPath(CurPathSegment, ref CurT, ref RealT, ref CurPoint);
+                        }                        
                         // Move up vertically
                         while (CurPoint.Y > Bottom)
                         {
@@ -121,11 +229,6 @@ namespace IPPA
                 // tempt is current timestep, used to identify first step in while loop
                 bool AtBoxStart = true;
 
-                // Debug:
-                if (CurPoint.X == 0 && CurPoint.Y == 18)
-                {
-                    Console.WriteLine("bla!");
-                }
                 // Once inside bounding box fly the pattern until mxn-1 steps (complete coverage)
                 if (EvenColumns)
                 {
@@ -185,7 +288,7 @@ namespace IPPA
                 else
                 {
                     // Turn the pattern 90 degrees clockwise
-                    while (((CurPoint.X != boxstart.X || CurPoint.Y != boxstart.Y) && RealT <= curRequest.T) || AtBoxStart)
+                    while (((CurPoint.X != boxstart.X || CurPoint.Y != boxstart.Y) && RealT < curRequest.T) || AtBoxStart)
                     {
                         // Don't add boxstart, but add future nodes
                         if (!AtBoxStart)
@@ -248,7 +351,7 @@ namespace IPPA
                 CurT = 0;
 
                 // Remember new start point
-                CurStart = new Point(CurPoint.X, CurPoint.Y);
+                CurStart = new Point(Path[Path.Count-1].X, Path[Path.Count-1].Y);
             }
 
             // If all time used, we are done.
@@ -443,21 +546,6 @@ namespace IPPA
             return mbox;
         }
 
-        #endregion
-        
-        #region Constructor, Destructor
-
-        public AlgCC(PathPlanningRequest _curRequest, RtwMatrix _mDistReachable,
-            RtwMatrix _mDiffReachable, double _Efficiency_LB)
-            : base(_curRequest, _mDistReachable, _mDiffReachable, _Efficiency_LB)
-        {
-        }
-        
-        // Destructor
-        ~AlgCC()
-        {
-        }
-        
         #endregion
     }
 }

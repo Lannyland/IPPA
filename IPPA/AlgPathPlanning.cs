@@ -78,24 +78,24 @@ namespace IPPA
             // Compute Efficiency
             Efficiency = CDF / Efficiency_LB;
 
-            // Debug code, show map remain (especially for partial detection)
-            // Re-enact the flight with real distmap
-            if (curRequest.DrawPath)
-            {
-                RtwMatrix DistMapRemain = mDist.Clone();
-                foreach (Point p in Path)
-                {
-                    DistMapRemain[p.Y, p.X] = VacuumProbability(p, DistMapRemain);
-                }
-                Bitmap CurBMP = new Bitmap(DistMapRemain.Columns, DistMapRemain.Rows);
-                ImgLib.MatrixToImage(ref DistMapRemain, ref CurBMP);
-                frmMap map = new frmMap();
-                map.setImage(CurBMP);
-                map.Show();
-                map.resetImage();
-                map.Refresh();
-            }
-
+            //// Debug code, show map remain (especially for partial detection)
+            //// Re-enact the flight with real distmap
+            //if (curRequest.DrawPath)
+            //{
+            //    RtwMatrix DistMapRemain = mDist.Clone();
+            //    foreach (Point p in Path)
+            //    {
+            //        DistMapRemain[p.Y, p.X] = VacuumProbability(p, DistMapRemain);
+            //    }
+            //    Bitmap CurBMP = new Bitmap(DistMapRemain.Columns, DistMapRemain.Rows);
+            //    ImgLib.MatrixToImage(ref DistMapRemain, ref CurBMP);
+            //    frmMap map = new frmMap();
+            //    map.Text = "Remaining distribution after UAV search";
+            //    map.setImage(CurBMP);
+            //    map.Show();
+            //    map.resetImage();
+            //    map.Refresh();
+            //}
         }
 
         // Individual implementation of path planning based on algorithm choosen
@@ -148,6 +148,7 @@ namespace IPPA
             }
             return amountToDeduct;
         }
+        
         // Compute actual detection rate based on task-difficulty map and partial detection rate
         protected float VacuumProbability(Point p)
         {
@@ -212,6 +213,20 @@ namespace IPPA
             }
 
             return true;
+        }
+
+        // Showing UAV trajectory and coverage (including partial detection)
+        public List<float> ShowCoverage()
+        {
+            List<float> remains = new List<float>();
+            RtwMatrix mCoverage = mDist.Clone();
+            foreach (Point p in Path)
+            {
+                float remain = VacuumProbability(p, mCoverage);
+                mCoverage[p.Y, p.X] = remain;
+                remains.Add(remain);
+            }
+            return remains;
         }
 
         // Debugging shouts

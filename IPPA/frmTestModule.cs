@@ -189,7 +189,7 @@ namespace IPPA
 
             // Showing map in map form
             frmDiffMap = new frmMap();
-            frmDistMap.Text = "Task-Difficulty Map";
+            frmDiffMap.Text = "Task-Difficulty Map";
             frmDiffMap.setImage(CurBMP);
             frmDiffMap.Show();
 

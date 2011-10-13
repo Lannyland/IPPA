@@ -111,25 +111,46 @@ namespace IPPA
             // Debug code, show actual path
             if (curRequest.DrawPath)
             {
-                // Draw coverage
-                Bitmap CurBMP = new Bitmap(mDistReachable.Columns, mDistReachable.Rows);
-                ImgLib.MatrixToImage(ref mDistReachable, ref CurBMP);
-                frmMap map = new frmMap();
-                map.setImage(CurBMP);
-                map.Show();
-                map.resetImage();
-                map.DrawCoverage(Path);
-                map.Refresh();
+                //// Draw coverage
+                //Bitmap CurBMP = new Bitmap(mDistReachable.Columns, mDistReachable.Rows);
+                //ImgLib.MatrixToImage(ref mDistReachable, ref CurBMP);
+                //frmMap map = new frmMap();
+                //map.Text = "Actual UAV path";
+                //map.setImage(CurBMP);
+                //map.Show();
+                //map.resetImage();
+                //map.DrawCoverage(Path);
+                //map.Refresh();
 
-                // Draw path
-                Bitmap CurBMP2 = new Bitmap(mDistReachable.Columns, mDistReachable.Rows);
-                ImgLib.MatrixToImage(ref mDistReachable, ref CurBMP2);
+                //// Draw path
+                //Bitmap CurBMP2 = new Bitmap(mDistReachable.Columns, mDistReachable.Rows);
+                //ImgLib.MatrixToImage(ref mDistReachable, ref CurBMP2);
+                //frmMap map2 = new frmMap();
+                //map2.Text = "UAV trajectory simulation";
+                //map2.setImage(CurBMP2);
+                //map2.Show();
+                //map2.resetImage();
+                //map2.DrawPath(Path);
+                //map2.Refresh();
+
+                // Draw path with map remains
+                Bitmap CurBMP3 = new Bitmap(mDistReachable.Columns, mDistReachable.Rows);
+                ImgLib.MatrixToImage(ref mDistReachable, ref CurBMP3);
                 frmMap map2 = new frmMap();
-                map2.setImage(CurBMP2);
+                map2.Text = "UAV trajectory and coverage";
+                map2.setImage(CurBMP3);
                 map2.Show();
                 map2.resetImage();
-                map2.DrawPath(Path);
-                map2.Refresh();
+                List<float> remains = curAlg.ShowCoverage();
+                Color c = Color.FromArgb(255, 0, 0);
+                for (int i=0; i<Path.Count; i++)
+                {
+                    Point p = Path[i];
+                    map2.setPointColor(p, c);
+                    map2.Refresh();
+                    map2.setPointColor(p, remains[i]);
+                    map2.Refresh();
+                }                
 
                 // Drawing real path
                 MISCLib.ShowImage(MISCLib.DrawPath(Path), "Real Path");
