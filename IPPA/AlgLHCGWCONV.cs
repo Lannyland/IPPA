@@ -85,8 +85,7 @@ namespace IPPA
         {
             Console.WriteLine("I am AlgLHCGWCONV!");
         }
-
-
+        
         #endregion
 
     }

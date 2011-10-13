@@ -7,25 +7,6 @@ namespace IPPA
     class ProjectConstants
     {
         /*
-        // General parameters
-        public static int DIM = 60;
-        public static int FT = 1800;
-        //public static string LabDir = @"P:\Classes\CS678\Project";
-        //public static string LabDir = @"C:\Lanny\CS678";
-        public static string LabDir = @"C:\Lanny\AAAI Paper";
-
-        // GW parameters
-        public static int GWCount = 40;
-        public static int ConvCount = 10;
-        public static int PFCount = 6;
-
-        // PF parameters
-        public static int PFLoop = 12;
-
-        // A* parameters
-        public static int DFS_Level = 7;
-        public static TimeSpan Duration = new TimeSpan(0, 30, 0);
-
         // EA parameters
         public static int EA_Population = 100;
         public static float EA_ReplacementRate = 0.3f;
@@ -36,14 +17,6 @@ namespace IPPA
         public static int EA_Minimum_Run = 500;
         public static int EA_Maximum_Run = 1000;
         public static int EA_Epsilon_Run = 200;
-
-        // GW_E parameters
-        public static int GWCount_E = 40;
-        public static int ConvCount_E = 10;
-        public static int PFCount_E = 6;
-
-        // PF_E parameters
-        public static int PFLoop_E = 12;
 
         // EA_E parameters
         public static int EA_E_Population = 100;
@@ -60,7 +33,7 @@ namespace IPPA
 
         // General parameters
         public static int DefaultDimension = 60;
-        public static int MaxFlightTime = 1800;
+        public static int MaxFlightTime = 3600;
         public static string MapsDir = @"C:\Lanny\MAMI\IPPA\Maps";
         public static string DefaultDistMap = @"C:\Lanny\MAMI\IPPA\Maps\DistMaps\Simple_BimodalFar.csv";
         public static string DefaultDiffMap = @"C:\Lanny\MAMI\IPPA\Maps\DiffMaps\Diff_Simple_BimodalFar1.csv";
@@ -74,5 +47,9 @@ namespace IPPA
         public static int PFCount = 6;              // How many PF discount functions to use
         public static int CTFGWCoraseLevel = 4;     // How many GW to perform at each coarse-to-fine level
         public static int CTFGWLevelCount = 3;      // How many coarse-to-fine levels to search for
+
+        // PF parameters
+        public static int PFLoop = 1;              // How many time we should run PF with different sigmas
+        public static int PFStep = 1;               // How much to increase sigma in each step
     }
 }

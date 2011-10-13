@@ -51,7 +51,7 @@ namespace IPPA
         }
 
         // Return the potential field forces in four directions
-        private float[] CalculateForces(Point cur_node, int cur_T)
+        protected float[] CalculateForces(Point cur_node, int cur_T)
         {
             // Variables to store forces in different directions
             float[] forces = new float[4] { 0, 0, 0, 0 };
@@ -143,8 +143,7 @@ namespace IPPA
         {
             Console.WriteLine("I am AlgLHCGWCONV!");
         }
-
-
+        
         #endregion
 
     }

@@ -75,7 +75,6 @@ namespace IPPA
                 // Find parent
                 if (Path.Count < 2)
                 {
-                    // It only has starting point
                     parent = Start;
                     me = Start;
                 }
@@ -85,16 +84,8 @@ namespace IPPA
                     me = Path[Path.Count - 1];
                 }
 
-                // Console.Write("Now at (" + me.X +"," + me.Y + ") ");
-
                 // Find all valid neighbors from current node
                 List<LHCNode> ValidNeighbors = GetNeighbors(parent, me);
-
-                // Console.Write(ValidNeighbors.Count + " valid neighbors ");
-                // foreach (LHCNode lhc in ValidNeighbors)
-                // {
-                    // Console.Write("(" + lhc.Loc.X + "," + lhc.Loc.Y + ")" + "p=" + lhc.p + " ");
-                // }
 
                 // Decide which way to go.
                 Point next;
@@ -102,20 +93,7 @@ namespace IPPA
 
                 if (ValidNeighbors.Count > 1)
                 {
-                    // More than one valid neighbors
-                    ValidNeighbors.Sort();
-                    ValidNeighbors.Reverse();
-                    int identicalCount = GetTopIdenticalCount(ref ValidNeighbors);
-                    if (identicalCount > 1)
-                    {
-                        //Console.Write("T=" + i + " count=" + ValidNeighbors.Count + " ");
-                        //foreach (LHCNode lhc in ValidNeighbors)
-                        //{
-                        //    Console.Write(lhc.p + " ");
-                        //}
-                        indexOfnext = PickChildNode(me, ValidNeighbors, identicalCount, i+1);
-                        //sameCount++;
-                    }
+                    FindNodeToGoTo(i, ref me, ref ValidNeighbors, ref indexOfnext);
                 }
 
                 // Add node to path and then collect probability (zero it out)
@@ -123,10 +101,20 @@ namespace IPPA
                 Path.Add(next);
                 CDF += GetPartialDetection(next);
                 mCurDist[next.Y, next.X] = VacuumProbability(next);
-
-                // Console.Write("moving to (" + next.X + "," + next.Y + ").\n");
             }
-            //Console.Write("Had to make conv choice " + sameCount + " times.\n");
+        }
+
+        // Algorithm specific way of finding where to go next
+        protected virtual void FindNodeToGoTo(int i, ref Point me, ref List<LHCNode> ValidNeighbors, ref int indexOfnext)
+        {
+            // More than one valid neighbors
+            ValidNeighbors.Sort();
+            ValidNeighbors.Reverse();
+            int identicalCount = GetTopIdenticalCount(ref ValidNeighbors);
+            if (identicalCount > 1)
+            {
+                indexOfnext = PickChildNode(me, ValidNeighbors, identicalCount, i + 1);
+            }
         }
 
         // Expand neighboring nodes
@@ -246,14 +234,12 @@ namespace IPPA
         // Abstract method different implementation by algorithm
         abstract protected float TieBreaker(Point me, Point neighbor, int cur_T, float[] forces);
         
-
         // Debugging shouts
         public override void Shout()
         {
             Console.WriteLine("I am AlgLHC!");
         }
-
-
+        
         #endregion
     }
 }

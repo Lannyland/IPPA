@@ -114,7 +114,7 @@ namespace IPPA
             int i = lstQueue.SelectedIndex;
             if (i > -1)
             {
-                rtxtRequestDetails.AppendText(GetRequestDetail(i));
+                rtxtRequestDetails.Text=GetRequestDetail(i);
             }
         }
 

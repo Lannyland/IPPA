@@ -57,6 +57,7 @@
     <Compile Include="AlgPF.cs" />
     <Compile Include="ComputeEfficiencyUB.cs" />
     <Compile Include="AlgLHCRandom.cs" />
+    <Compile Include="AlgPFLooper.cs" />
     <Compile Include="CountDistModes.cs" />
     <Compile Include="frmMap.cs">
       <SubType>Form</SubType>

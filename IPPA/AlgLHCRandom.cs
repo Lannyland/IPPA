@@ -54,8 +54,7 @@ namespace IPPA
         {
             Console.WriteLine("I am AlgLHCRandom!");
         }
-
-
+        
         #endregion
 
     }

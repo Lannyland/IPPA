@@ -46,7 +46,7 @@
             // 
             // btnServerSwitch
             // 
-            this.btnServerSwitch.Location = new System.Drawing.Point(414, 24);
+            this.btnServerSwitch.Location = new System.Drawing.Point(596, 24);
             this.btnServerSwitch.Name = "btnServerSwitch";
             this.btnServerSwitch.Size = new System.Drawing.Size(134, 38);
             this.btnServerSwitch.TabIndex = 0;
@@ -60,7 +60,7 @@
             this.groupBox1.Controls.Add(this.btnServerSwitch);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(554, 122);
+            this.groupBox1.Size = new System.Drawing.Size(736, 122);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Server Description";
@@ -79,7 +79,7 @@
             // 
             this.rtxtLog.Location = new System.Drawing.Point(6, 19);
             this.rtxtLog.Name = "rtxtLog";
-            this.rtxtLog.Size = new System.Drawing.Size(402, 255);
+            this.rtxtLog.Size = new System.Drawing.Size(584, 339);
             this.rtxtLog.TabIndex = 4;
             this.rtxtLog.TabStop = false;
             this.rtxtLog.Text = "";
@@ -89,16 +89,16 @@
             this.groupBox2.Controls.Add(this.btnLoadTestModule);
             this.groupBox2.Controls.Add(this.btnClear);
             this.groupBox2.Controls.Add(this.rtxtLog);
-            this.groupBox2.Location = new System.Drawing.Point(12, 282);
+            this.groupBox2.Location = new System.Drawing.Point(12, 401);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(554, 280);
+            this.groupBox2.Size = new System.Drawing.Size(736, 364);
             this.groupBox2.TabIndex = 2;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Activity Log";
             // 
             // btnLoadTestModule
             // 
-            this.btnLoadTestModule.Location = new System.Drawing.Point(414, 236);
+            this.btnLoadTestModule.Location = new System.Drawing.Point(596, 320);
             this.btnLoadTestModule.Name = "btnLoadTestModule";
             this.btnLoadTestModule.Size = new System.Drawing.Size(134, 38);
             this.btnLoadTestModule.TabIndex = 6;
@@ -108,7 +108,7 @@
             // 
             // btnClear
             // 
-            this.btnClear.Location = new System.Drawing.Point(414, 19);
+            this.btnClear.Location = new System.Drawing.Point(596, 19);
             this.btnClear.Name = "btnClear";
             this.btnClear.Size = new System.Drawing.Size(134, 38);
             this.btnClear.TabIndex = 5;
@@ -123,7 +123,7 @@
             this.groupBox3.Controls.Add(this.lstQueue);
             this.groupBox3.Location = new System.Drawing.Point(12, 140);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(554, 136);
+            this.groupBox3.Size = new System.Drawing.Size(736, 255);
             this.groupBox3.TabIndex = 1;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Path Planning Request Queues";
@@ -133,14 +133,14 @@
             this.rtxtRequestDetails.Location = new System.Drawing.Point(214, 19);
             this.rtxtRequestDetails.Name = "rtxtRequestDetails";
             this.rtxtRequestDetails.ReadOnly = true;
-            this.rtxtRequestDetails.Size = new System.Drawing.Size(194, 108);
+            this.rtxtRequestDetails.Size = new System.Drawing.Size(376, 225);
             this.rtxtRequestDetails.TabIndex = 2;
             this.rtxtRequestDetails.TabStop = false;
             this.rtxtRequestDetails.Text = "";
             // 
             // btnDelete
             // 
-            this.btnDelete.Location = new System.Drawing.Point(414, 19);
+            this.btnDelete.Location = new System.Drawing.Point(596, 19);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(134, 38);
             this.btnDelete.TabIndex = 3;
@@ -153,7 +153,7 @@
             this.lstQueue.FormattingEnabled = true;
             this.lstQueue.Location = new System.Drawing.Point(6, 19);
             this.lstQueue.Name = "lstQueue";
-            this.lstQueue.Size = new System.Drawing.Size(201, 108);
+            this.lstQueue.Size = new System.Drawing.Size(201, 225);
             this.lstQueue.TabIndex = 1;
             this.lstQueue.Click += new System.EventHandler(this.lstQueue_Click);
             // 
@@ -161,7 +161,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(580, 573);
+            this.ClientSize = new System.Drawing.Size(760, 777);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);

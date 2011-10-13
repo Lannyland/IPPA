@@ -89,7 +89,8 @@ namespace IPPA
                     // TODO handle LHCGWPF_E
                     break;
                 case AlgType.PF:
-                    // TODO handle PF
+                    curAlg = new AlgPFLooper(curRequest, mDistReachable, mDiffReachable, Efficiency_UB);
+                    curAlg.PlanPath();
                     break;
                 case AlgType.PF_E:
                     // TODO handle PF_E
@@ -158,6 +159,7 @@ namespace IPPA
             }
 
             // Log results
+            curRequest.SetLog("Run time: " + curAlg.GetRunTime() + "\n");
             curRequest.SetLog("Best CDF: " + curAlg.GetCDF() + "\n");
             curRequest.SetLog("Best Efficiency: " + curAlg.GetEfficiency() + "\n");
         }

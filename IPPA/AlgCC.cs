@@ -546,6 +546,12 @@ namespace IPPA
             return mbox;
         }
 
+        // Debugging shouts
+        public override void Shout()
+        {
+            Console.WriteLine("I am AlgCC!");
+        }
+
         #endregion
     }
 }
