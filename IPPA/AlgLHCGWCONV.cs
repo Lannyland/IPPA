@@ -20,8 +20,8 @@ namespace IPPA
 
         // Constructor
         public AlgLHCGWCONV(PathPlanningRequest _curRequest, RtwMatrix _mDistReachable, 
-            RtwMatrix _mDiffReachable, double _Efficiency_LB, int _KernalSize) 
-            : base (_curRequest, _mDistReachable, _mDiffReachable, _Efficiency_LB)
+            RtwMatrix _mDiffReachable, double _Efficiency_UB, int _KernalSize) 
+            : base (_curRequest, _mDistReachable, _mDiffReachable, _Efficiency_UB)
         {
             KernalSize = _KernalSize;
         }

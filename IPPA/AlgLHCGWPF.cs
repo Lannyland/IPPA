@@ -20,8 +20,8 @@ namespace IPPA
 
         // Constructor
         public AlgLHCGWPF(PathPlanningRequest _curRequest, RtwMatrix _mDistReachable, 
-            RtwMatrix _mDiffReachable, double _Efficiency_LB, int _Sigma) 
-            : base (_curRequest, _mDistReachable, _mDiffReachable, _Efficiency_LB)
+            RtwMatrix _mDiffReachable, double _Efficiency_UB, int _Sigma) 
+            : base (_curRequest, _mDistReachable, _mDiffReachable, _Efficiency_UB)
         {
             Sigma = _Sigma;
         }

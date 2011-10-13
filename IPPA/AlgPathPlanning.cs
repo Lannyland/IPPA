@@ -17,7 +17,7 @@ namespace IPPA
         protected RtwMatrix mDist;
         protected RtwMatrix mDiff;
         protected RtwMatrix mCurDist;
-        protected double Efficiency_LB = 0;
+        protected double Efficiency_UB = 0;
         protected double CDF;
         protected double RunTime = 0;
         protected double Efficiency = 0;
@@ -30,14 +30,14 @@ namespace IPPA
 
         // Constructor
         public AlgPathPlanning(PathPlanningRequest _curRequest,
-            RtwMatrix _mDist, RtwMatrix _mDiff, double _Efficiency_LB)
+            RtwMatrix _mDist, RtwMatrix _mDiff, double _Efficiency_UB)
         {
             curRequest = _curRequest;
             mDist = _mDist;
             mDiff = _mDiff;
             // Clone distribution map so we can modify it
             mCurDist = mDist.Clone();
-            Efficiency_LB = _Efficiency_LB;
+            Efficiency_UB = _Efficiency_UB;
             // Set task-difficulty rates
             DiffRates = new double[curRequest.MaxDifficulty + 1];
             double rate = 1.0 / (curRequest.MaxDifficulty + 1);
@@ -76,7 +76,7 @@ namespace IPPA
             RunTime = duration.TotalSeconds;
 
             // Compute Efficiency
-            Efficiency = CDF / Efficiency_LB;
+            Efficiency = CDF / Efficiency_UB;
 
             //// Debug code, show map remain (especially for partial detection)
             //// Re-enact the flight with real distmap

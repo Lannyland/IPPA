@@ -79,7 +79,7 @@ namespace IPPA
 
             // Then do efficiency lower bound
             ComputeEfficiencyUB myELB = new ComputeEfficiencyUB(curRequest);
-            double Efficiency_LB = myELB.GetEfficiency_UB();
+            double Efficiency_UB = myELB.GetEfficiency_UB();
             myELB = null;
 
             // Do the batch run of Path Planning
@@ -88,7 +88,7 @@ namespace IPPA
             for (int i = 0; i < BatchCount; i++)
             {
                 // Run them sequencially and don't use multiple threads.
-                PathPlanningTask curTask = new PathPlanningTask(curRequest, ModeCount, mDistReachable, mDiffReachable, Efficiency_LB);
+                PathPlanningTask curTask = new PathPlanningTask(curRequest, ModeCount, mDistReachable, mDiffReachable, Efficiency_UB);
                 curTask.Run();
                 AllRunTimes.Add(curTask.GetRunTime());
                 AvgRunTime += curTask.GetRunTime();

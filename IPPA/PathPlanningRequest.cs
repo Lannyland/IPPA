@@ -20,6 +20,7 @@ namespace IPPA
         // Public variables
         public bool UseDistributionMap = true;
         public bool UseTaskDifficultyMap = false;
+        public bool UseHiararchy = false;
         public bool UseCoarseToFineSearch = false;
         public bool UseParallelProcessing = false;
         public UAVType VehicleType = UAVType.FixWing;

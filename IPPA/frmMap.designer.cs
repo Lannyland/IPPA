@@ -47,6 +47,7 @@ namespace IPPA
             this.AutoSize = true;
             this.ClientSize = new System.Drawing.Size(794, 773);
             this.Controls.Add(this.lblInstruction);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.Name = "frmMap";
             this.Text = "frmMap";
             this.Load += new System.EventHandler(this.frmMap_Load);

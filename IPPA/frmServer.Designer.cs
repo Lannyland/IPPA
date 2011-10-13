@@ -165,6 +165,7 @@
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.Name = "frmServer";
             this.Text = "IPPA Control Panel";
             this.Load += new System.EventHandler(this.frmServer_Load);

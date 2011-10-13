@@ -43,8 +43,8 @@ namespace IPPA
 
         // Constructor
         public AlgLHC(PathPlanningRequest _curRequest, RtwMatrix _mDistReachable, 
-            RtwMatrix _mDiffReachable, double _Efficiency_LB) 
-            : base (_curRequest, _mDistReachable, _mDiffReachable, _Efficiency_LB)
+            RtwMatrix _mDiffReachable, double _Efficiency_UB) 
+            : base (_curRequest, _mDistReachable, _mDiffReachable, _Efficiency_UB)
         {
         }
 

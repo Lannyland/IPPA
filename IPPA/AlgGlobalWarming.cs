@@ -23,8 +23,8 @@ namespace IPPA
 
         // Constructor
         public AlgGlobalWarming(PathPlanningRequest _curRequest, int _ModeCount, 
-            RtwMatrix _mDistReachable, RtwMatrix _mDiffReachable, double _Efficiency_LB)
-            : base (_curRequest, _mDistReachable, _mDiffReachable, _Efficiency_LB)
+            RtwMatrix _mDistReachable, RtwMatrix _mDiffReachable, double _Efficiency_UB)
+            : base (_curRequest, _mDistReachable, _mDiffReachable, _Efficiency_UB)
         {
             ModeCount = _ModeCount;
         }
@@ -42,29 +42,55 @@ namespace IPPA
         // Algorithm specific implementation of the path planning
         protected override void DoPathPlanning()
         {
+            // If using hiararchical search
+            if (curRequest.UseHiararchy)
+            {
+                if (ModeCount <= 1)
+                {
+                    // Uniform distribution or unimodal distribution or path distribution (possibly with splits)
+                    NoGWSearch();
+                    return;
+                }
+            }
+
             // If no Coarse-to-fine and no parallel
             if (!curRequest.UseCoarseToFineSearch && !curRequest.UseParallelProcessing)
             {
                 GWExtensiveSearch();
+                return;
             }
 
             // If yes Coarse-to-fine and no parallel
             if (curRequest.UseCoarseToFineSearch && !curRequest.UseParallelProcessing)
             {
                 GWCoarseToFineSearch();
+                return;
             }
 
             // If no Coarse-to-fine and yes parallel
             if (!curRequest.UseCoarseToFineSearch && curRequest.UseParallelProcessing)
             {
-                // GWParallelSearch();
+                GWParallelSearch();
+                return;
             }
 
             // If yes Coarse-to-fine and yes parallel
             if (curRequest.UseCoarseToFineSearch && curRequest.UseParallelProcessing)
             {
-                // GWCoarseToFineAndParallelSearch();
+                GWCoarseToFineAndParallelSearch();
+                return;
             }
+        }
+
+        // Search without Global Warning
+        private void NoGWSearch()
+        {
+            // Make copy of map
+            RtwMatrix mGW = mDist.Clone();
+            // Search once
+            PlanPathAtCurrentGW(mGW);
+            // Cleaning up                        
+            mGW = null;
         }
 
         // Search every GW
@@ -237,7 +263,7 @@ namespace IPPA
                 for (int j = 3; j < dim; j += (int)(dim / ProjectConstants.ConvCount))
                 {
                     //Console.Write("j=" + j + "\n");
-                    AlgLHCGWCONV myAlg = new AlgLHCGWCONV(curRequest, mGW, mDiff, Efficiency_LB, j);
+                    AlgLHCGWCONV myAlg = new AlgLHCGWCONV(curRequest, mGW, mDiff, Efficiency_UB, j);
                     myAlg.PlanPath();
 
                     // Remember if true CDF is better
@@ -247,7 +273,7 @@ namespace IPPA
                     myAlg = null;
 
                     // If we already have the best path, then no need to continue
-                    if (Math.Abs(Efficiency_LB - CDF) < 0.001)
+                    if (Math.Abs(Efficiency_UB - CDF) < 0.001)
                     {
                         return true;
                     }
@@ -264,7 +290,7 @@ namespace IPPA
                 {
                     //Console.Write("j=" + j + "\n");
                     Sigma += Convert.ToInt16(dim / 3);
-                    AlgLHCGWCONV myAlg = new AlgLHCGWCONV(curRequest, mGW, mDiff, Efficiency_LB, Sigma);
+                    AlgLHCGWCONV myAlg = new AlgLHCGWCONV(curRequest, mGW, mDiff, Efficiency_UB, Sigma);
                     myAlg.PlanPath();
 
                     // Remember if true CDF is better
@@ -274,7 +300,7 @@ namespace IPPA
                     myAlg = null;
 
                     // If we already have the best path, then no need to continue
-                    if (Math.Abs(Efficiency_LB - CDF) < 0.001)
+                    if (Math.Abs(Efficiency_UB - CDF) < 0.001)
                     {
                         return true;
                     }

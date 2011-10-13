@@ -19,7 +19,7 @@ namespace IPPA
         private int ModeCount = 0;
         private RtwMatrix mDistReachable;
         private RtwMatrix mDiffReachable;
-        private double Efficiency_LB = 0;
+        private double Efficiency_UB = 0;
         private double Efficiency = 0;
         private double RunTime = 0;
         private List<Point> Path;
@@ -31,13 +31,13 @@ namespace IPPA
 
         // Constructor
         public PathPlanningTask(PathPlanningRequest _curRequest, int _ModeCount,
-            RtwMatrix _mDistReachable, RtwMatrix _mDiffReachable, double _Efficiency_LB)
+            RtwMatrix _mDistReachable, RtwMatrix _mDiffReachable, double _Efficiency_UB)
         {
             curRequest = _curRequest;
             ModeCount = _ModeCount;
             mDistReachable = _mDistReachable;
             mDiffReachable = _mDiffReachable;
-            Efficiency_LB = _Efficiency_LB;
+            Efficiency_UB = _Efficiency_UB;
         }
 
         // Destructor
@@ -61,28 +61,28 @@ namespace IPPA
             switch (curRequest.AlgToUse)
             {
                 case AlgType.CC:
-                    curAlg = new AlgCC(curRequest, mDistReachable, mDiffReachable, Efficiency_LB);
+                    curAlg = new AlgCC(curRequest, mDistReachable, mDiffReachable, Efficiency_UB);
                     curAlg.PlanPath();
                     break;
                 case AlgType.CC_E:
                     // TODO handle CC_E
                     break;
                 case AlgType.LHCGWCONV:
-                    curAlg = new AlgGlobalWarming(curRequest, ModeCount, mDistReachable, mDiffReachable, Efficiency_LB);
+                    curAlg = new AlgGlobalWarming(curRequest, ModeCount, mDistReachable, mDiffReachable, Efficiency_UB);
                     curAlg.PlanPath();
                     break;
                 case AlgType.LHCGWCONV_E:
                     // TODO handle LHCGWCONV_E
                     break;
                 case AlgType.LHCGWPF:
-                    curAlg = new AlgGlobalWarming(curRequest, ModeCount, mDistReachable, mDiffReachable, Efficiency_LB);
+                    curAlg = new AlgGlobalWarming(curRequest, ModeCount, mDistReachable, mDiffReachable, Efficiency_UB);
                     curAlg.PlanPath();
                     break;
                 case AlgType.LHCGWPF_E:
                     // TODO handle LHCGWPF_E
                     break;
                 case AlgType.LHCRandom:
-                    curAlg = new AlgLHCRandom(curRequest, mDistReachable, mDiffReachable, Efficiency_LB);
+                    curAlg = new AlgLHCRandom(curRequest, mDistReachable, mDiffReachable, Efficiency_UB);
                     curAlg.PlanPath();
                     break;
                 case AlgType.LHCRandom_E:
@@ -96,6 +96,7 @@ namespace IPPA
                     break;
                 case AlgType.EA:
                     // TODO handle EA
+                    // TODO handle hiararchical search inside EA
                     break;
                 case AlgType.EA_E:
                     // TODO handle EA_E
