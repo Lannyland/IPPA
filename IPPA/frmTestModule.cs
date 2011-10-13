@@ -152,7 +152,7 @@ namespace IPPA
             ImgLib.MatrixToImage(ref CurDistMap, ref CurBMP);
 
             // Showing map in map form
-            frmDistMap = new frmMap();
+            frmDistMap = new frmMap(this);
             frmDistMap.Text = "Probability Distribution Map";
             frmDistMap.setImage(CurBMP);
             frmDistMap.Show();
@@ -571,6 +571,15 @@ namespace IPPA
                 frmDiffMap.setPoint(start, p);
                 frmDiffMap.DrawingStartEndPoints();
             }
+        }
+
+        // Set starting point ending point coordinates
+        public void SetStartEndPoints(Point Start, Point End)
+        {
+            ntxtSX.Value = Start.X;
+            ntxtSY.Value = Start.Y;
+            ntxtEX.Value = End.X;
+            ntxtEY.Value = End.Y;
         }
 
         // Code to display logs in log rich text box (refresh and scroll to bottom)

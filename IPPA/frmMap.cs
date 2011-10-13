@@ -18,6 +18,8 @@ namespace IPPA
         private Point Start = new Point();
         private Point End = new Point();
         private MyPictureBox pbMap = new MyPictureBox();
+        private frmTestModule TM;
+        private bool blnCanClickSet = false;
 
         #endregion
 
@@ -28,10 +30,18 @@ namespace IPPA
             InitializeComponent();
         }
 
+        public frmMap(frmTestModule _TM)
+        {
+            InitializeComponent();
+            TM = _TM;
+            blnCanClickSet = true;
+        }
+
         #endregion
 
         #region Message Handlers
 
+        // Load things when form loads
         private void frmMap_Load(object sender, EventArgs e)
         {
             Size PBSize = new Size();
@@ -41,6 +51,40 @@ namespace IPPA
             pbMap.Location = new Point(2, 16);
             pbMap.SizeMode = PictureBoxSizeMode.StretchImage;
             this.Controls.Add(pbMap);
+            pbMap.Click += new EventHandler(this.pbMap_Click);
+            pbMap.MouseDown += new MouseEventHandler(this.pbMap_MouseDown);
+        }
+
+        // Allow user to set start end points by clicking
+        private void pbMap_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (blnCanClickSet)
+            {
+                Color c = new Color();
+                if (e.Button == System.Windows.Forms.MouseButtons.Left)
+                {
+                    // Left click for starting point in Yellow
+                    c = Color.FromArgb(255, 255, 0);
+                    Start.X = Convert.ToInt32(Math.Round((decimal)e.X / pbMap.Width * DisplayMap.Width - 0.5m));
+                    Start.Y = Convert.ToInt32(Math.Round((decimal)e.Y / pbMap.Height * DisplayMap.Height - 0.5m));                    
+                }
+                else if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                {
+                    // Right click for starting point in Blue
+                    c = Color.FromArgb(0, 0, 255);
+                    End.X = Convert.ToInt32(Math.Round((decimal)e.X / pbMap.Width * DisplayMap.Width - 0.5m));
+                    End.Y = Convert.ToInt32(Math.Round((decimal)e.Y / pbMap.Height * DisplayMap.Height - 0.5m));
+                }
+                // Drawing the points
+                DrawingStartEndPoints();
+                // Set numbers on TestModule form
+                TM.SetStartEndPoints(Start, End);
+            }
+        }
+
+        private void pbMap_Click(object sender, EventArgs e)        
+        {
+            
         }
 
         #endregion
@@ -81,6 +125,7 @@ namespace IPPA
 
         public void DrawingStartEndPoints()
         {
+            resetImage();
             Color c = new Color();
             
             // Yellow for starting point
