@@ -9,8 +9,6 @@ namespace IPPA
 {
     class AlgPFLooper : AlgPathPlanning
     {
-        // TODO Implement AlgPF
-
         #region Members
 
         // Private variables

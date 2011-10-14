@@ -385,10 +385,18 @@ namespace IPPA
                     newRequest.RunTimes = Convert.ToInt16(ntxtRunTimes.Value);
                 }
                 
-                // Find max task-difficulty only once
+                // Find max task-difficulty and compute diff rates only once
                 if (chkUseDiff.Checked)
                 {
                     newRequest.MaxDifficulty = Convert.ToInt32(CurDiffMap.MinMaxValue()[1]);
+                    // Set task-difficulty rates
+                    double[] DiffRates = new double[newRequest.MaxDifficulty + 1];
+                    double rate = 1.0 / (newRequest.MaxDifficulty + 1);
+                    for (int i = 0; i < newRequest.MaxDifficulty + 1; i++)
+                    {
+                        DiffRates[i] = 1 - i * rate;
+                    }
+                    newRequest.DiffRates = DiffRates;
                 }
 
                 if (!newRequest.SanityCheck())
@@ -542,7 +550,7 @@ namespace IPPA
         private void btnTest_Click(object sender, EventArgs e)
         {
             DateTime startTime = DateTime.Now;
-            CountDistModes myCount = new CountDistModes(ref CurDistMap);
+            CountDistModes myCount = new CountDistModes(CurDistMap);
             Log(myCount.GetCount().ToString()+"\n");
             DateTime stopTime = DateTime.Now;
             TimeSpan duration = stopTime - startTime;

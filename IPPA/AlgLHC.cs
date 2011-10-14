@@ -118,7 +118,7 @@ namespace IPPA
         }
 
         // Expand neighboring nodes
-        protected List<LHCNode> GetNeighbors(Point parent, Point me)
+        protected virtual List<LHCNode> GetNeighbors(Point parent, Point me)
         {
             List<LHCNode> Neighbors = new List<LHCNode>();
 

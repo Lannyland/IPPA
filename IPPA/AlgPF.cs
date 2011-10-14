@@ -9,8 +9,6 @@ namespace IPPA
 {
     class AlgPF : AlgLHCGWPF
     {
-        // TODO Implement AlgPF
-
         #region Members
 
         // Private variables
@@ -48,6 +46,32 @@ namespace IPPA
             indexOfnext = PickChildNode(me, ValidNeighbors, ValidNeighbors.Count, i + 1);
         }
 
+        // Expand neighboring nodes
+        protected override List<LHCNode> GetNeighbors(Point parent, Point me)
+        {
+            List<LHCNode> Neighbors = new List<LHCNode>();
+
+            // We don't want the UAV to hover in PF because it will get stuck there
+            // So don't add self if UAV can hover
+
+            // Loop through all four directions (N, E, S, W)
+            for (int j = 0; j < 4; j++)
+            {
+                // Expand child
+                Point child = GetDirChild(j, me);
+
+                // Check if it's valid
+                if (ValidMove(parent, me, child))
+                {
+                    LHCNode n = new LHCNode();
+                    n.Loc = child;
+                    n.p = GetPartialDetection(child);
+                    Neighbors.Add(n);
+                }
+            }
+            return Neighbors;
+        }
+        
         // Debugging shouts
         public override void Shout()
         {

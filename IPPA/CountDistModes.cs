@@ -54,7 +54,7 @@ namespace IPPA
         #region Constructor, Destructor
 
         // Constructor
-        public CountDistModes(ref RtwMatrix reachableregion)
+        public CountDistModes(RtwMatrix reachableregion)
         {
             mReachableRegion = reachableregion;
             lstCurPath = new List<DistPoint>();

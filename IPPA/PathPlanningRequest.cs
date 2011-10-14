@@ -36,6 +36,7 @@ namespace IPPA
         public bool BatchRun = false;
         public int RunTimes = 1;
         public int MaxDifficulty = 0;
+        public double[] DiffRates;
         public bool DrawPath = false;
         public int d = 0;                                       // Distance from Start point to the nearest non-zero node
         

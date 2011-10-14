@@ -71,11 +71,20 @@ namespace IPPA
                 mDiffReachable = curRequest.DiffMap;
             }
 
-            // Then do mode count (If Diff is used, multiply first)
-            // TODO Implenment Diff map            
-            CountDistModes myCount = new CountDistModes(ref mDistReachable);
+            // Then do mode count (If Diff map is used, multiply first)
+            RtwMatrix mRealModes = new RtwMatrix(mDistReachable.Rows, mDistReachable.Columns);
+            for (int i = 0; i < mRealModes.Rows; i++)
+            {
+                for (int j = 0; j < mRealModes.Columns; j++)
+                {
+                    mRealModes[i, j] = mDistReachable[i, j] * 
+                        (float)curRequest.DiffRates[Convert.ToInt32(mDiffReachable[i, j])];
+                }
+            }
+            CountDistModes myCount = new CountDistModes(mRealModes);
             int ModeCount = myCount.GetCount();
             myCount = null;
+            Console.WriteLine("ModeCount = " + ModeCount);
 
             // Then do efficiency lower bound
             ComputeEfficiencyUB myELB = new ComputeEfficiencyUB(curRequest);

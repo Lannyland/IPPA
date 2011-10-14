@@ -49,7 +49,7 @@ namespace IPPA
         public static int CTFGWLevelCount = 3;      // How many coarse-to-fine levels to search for
 
         // PF parameters
-        public static int PFLoop = 1;              // How many time we should run PF with different sigmas
-        public static int PFStep = 1;               // How much to increase sigma in each step
+        public static int PFLoop = 12;              // How many time we should run PF with different sigmas
+        public static int PFStep = 6;               // How much to increase sigma in each step
     }
 }

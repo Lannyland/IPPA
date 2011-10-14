@@ -22,8 +22,7 @@ namespace IPPA
         protected double RunTime = 0;
         protected double Efficiency = 0;
         protected List<Point> Path = new List<Point>();
-        protected double[] DiffRates;
-        
+       
         #endregion
 
         #region Constructor, Destructor
@@ -38,13 +37,6 @@ namespace IPPA
             // Clone distribution map so we can modify it
             mCurDist = mDist.Clone();
             Efficiency_UB = _Efficiency_UB;
-            // Set task-difficulty rates
-            DiffRates = new double[curRequest.MaxDifficulty + 1];
-            double rate = 1.0 / (curRequest.MaxDifficulty + 1);
-            for (int i = 0; i < curRequest.MaxDifficulty + 1; i++)
-            {
-                DiffRates[i] = 1 - i * rate;
-            }
         }
 
         // Destructor
@@ -124,7 +116,7 @@ namespace IPPA
                     if (curRequest.UseTaskDifficultyMap)
                     {
                         original = mDist[p.Y, p.X];
-                        amountToDeduct = (float)(original * DiffRates[Convert.ToInt32(mDiff[p.Y, p.X])] * curRequest.DetectionRate);
+                        amountToDeduct = (float)(original * curRequest.DiffRates[Convert.ToInt32(mDiff[p.Y, p.X])] * curRequest.DetectionRate);
                     }
                     else
                     {
@@ -134,7 +126,7 @@ namespace IPPA
                 case DType.FixPercentage:
                     if (curRequest.UseTaskDifficultyMap)
                     {
-                        amountToDeduct = (float)(current * DiffRates[Convert.ToInt32(mDiff[p.Y, p.X])] * curRequest.DetectionRate);
+                        amountToDeduct = (float)(current * curRequest.DiffRates[Convert.ToInt32(mDiff[p.Y, p.X])] * curRequest.DetectionRate);
                     }
                     else
                     {

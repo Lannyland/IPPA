@@ -68,7 +68,7 @@ namespace IPPA
                         // Identify where is the pixel compared to current node
                         List<int> directions = GetDirection(cur_node, new Point(j, i));
                         float Gamma = (float)(Math.Exp(-1 * d * d / (2 * Sigma * Sigma)));
-                        float force = GetPartialDetection(new Point(j,i)) * Gamma;
+                        float force = GetPartialDetection(new Point(j, i)) * Gamma;
                         
                         // Accumulate attractive forces
                         foreach (int dir in directions)
@@ -83,6 +83,10 @@ namespace IPPA
                     }
                 }
             }
+            
+            //// Debug: print out forces
+            //curRequest.SetLog(forces[0] + ", " + forces[1] + ", " + forces[2] + ", " + forces[3] + "\n");
+            
             return forces;
         }
 
