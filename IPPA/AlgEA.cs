@@ -43,7 +43,7 @@ namespace IPPA
         // Algorithm specific implementation of the path planning
         protected override void DoPathPlanning()
         {
-            // If using hiararchical search
+/*            // If using hiararchical search
             if (curRequest.UseHiararchy)
             {
                 AlgPathPlanning curAlg;
@@ -237,7 +237,7 @@ namespace IPPA
             Improvement.Clear();
             Improvement = null;
 
-
+            */
         }
 
         // Debugging shouts

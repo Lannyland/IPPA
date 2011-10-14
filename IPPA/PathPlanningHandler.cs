@@ -72,16 +72,26 @@ namespace IPPA
             }
 
             // Then do mode count (If Diff map is used, multiply first)
-            RtwMatrix mRealModes = new RtwMatrix(mDistReachable.Rows, mDistReachable.Columns);
-            for (int i = 0; i < mRealModes.Rows; i++)
+            CountDistModes myCount;
+            if (curRequest.UseTaskDifficultyMap)
             {
-                for (int j = 0; j < mRealModes.Columns; j++)
+
+                RtwMatrix mRealModes = new RtwMatrix(mDistReachable.Rows, mDistReachable.Columns);
+                for (int i = 0; i < mRealModes.Rows; i++)
                 {
-                    mRealModes[i, j] = mDistReachable[i, j] * 
-                        (float)curRequest.DiffRates[Convert.ToInt32(mDiffReachable[i, j])];
+                    for (int j = 0; j < mRealModes.Columns; j++)
+                    {
+                        mRealModes[i, j] = mDistReachable[i, j] *
+                            (float)curRequest.DiffRates[Convert.ToInt32(mDiffReachable[i, j])];
+                    }
                 }
+                myCount = new CountDistModes(mRealModes);
             }
-            CountDistModes myCount = new CountDistModes(mRealModes);
+            else
+            {
+                myCount = new CountDistModes(mDistReachable);
+            }
+            
             int ModeCount = myCount.GetCount();
             myCount = null;
             Console.WriteLine("ModeCount = " + ModeCount);
