@@ -256,7 +256,7 @@ namespace IPPA
         private bool PlanPathAtCurrentGW(RtwMatrix mGW)
         {
             // Console.WriteLine("Doing PlanPathAtCurrentGW once!");
-            if (curRequest.AlgToUse == AlgType.LHCGWCONV)
+            if (curRequest.AlgToUse == AlgType.LHCGWCONV || curRequest.AlgToUse == AlgType.LHCGWCONV_E)
             {
                 // If LHCGWCONV, search multiple convolution kernal sizes
                 int dim = Math.Max(mDist.Rows, mDist.Columns);
@@ -281,7 +281,7 @@ namespace IPPA
                 //// Print one GW per line (3 conv each line)
                 //curRequest.SetLog("\n");
             }
-            if (curRequest.AlgToUse == AlgType.LHCGWPF)
+            if (curRequest.AlgToUse == AlgType.LHCGWPF || curRequest.AlgToUse == AlgType.LHCGWPF_E)
             {
                 // If LHCGWPF, search three convolution kernal sizes
                 int dim = Math.Max(mDist.Rows, mDist.Columns);

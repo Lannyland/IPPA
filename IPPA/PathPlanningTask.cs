@@ -65,42 +65,48 @@ namespace IPPA
                     curAlg.PlanPath();
                     break;
                 case AlgType.CC_E:
-                    // TODO handle CC_E
+                    curAlg = new AlgSearchReverse(curRequest, ModeCount, mDistReachable, mDiffReachable, Efficiency_UB);
+                    curAlg.PlanPath();
                     break;
                 case AlgType.LHCGWCONV:
                     curAlg = new AlgGlobalWarming(curRequest, ModeCount, mDistReachable, mDiffReachable, Efficiency_UB);
                     curAlg.PlanPath();
                     break;
                 case AlgType.LHCGWCONV_E:
-                    // TODO handle LHCGWCONV_E
+                    curAlg = new AlgSearchReverse(curRequest, ModeCount, mDistReachable, mDiffReachable, Efficiency_UB);
+                    curAlg.PlanPath();
                     break;
                 case AlgType.LHCGWPF:
                     curAlg = new AlgGlobalWarming(curRequest, ModeCount, mDistReachable, mDiffReachable, Efficiency_UB);
                     curAlg.PlanPath();
                     break;
                 case AlgType.LHCGWPF_E:
-                    // TODO handle LHCGWPF_E
+                    curAlg = new AlgSearchReverse(curRequest, ModeCount, mDistReachable, mDiffReachable, Efficiency_UB);
+                    curAlg.PlanPath();
                     break;
                 case AlgType.LHCRandom:
                     curAlg = new AlgLHCRandom(curRequest, mDistReachable, mDiffReachable, Efficiency_UB);
                     curAlg.PlanPath();
                     break;
                 case AlgType.LHCRandom_E:
-                    // TODO handle LHCGWPF_E
+                    curAlg = new AlgSearchReverse(curRequest, ModeCount, mDistReachable, mDiffReachable, Efficiency_UB);
+                    curAlg.PlanPath();
                     break;
                 case AlgType.PF:
                     curAlg = new AlgPFLooper(curRequest, mDistReachable, mDiffReachable, Efficiency_UB);
                     curAlg.PlanPath();
                     break;
                 case AlgType.PF_E:
-                    // TODO handle PF_E
+                    curAlg = new AlgSearchReverse(curRequest, ModeCount, mDistReachable, mDiffReachable, Efficiency_UB);
+                    curAlg.PlanPath();
                     break;
                 case AlgType.EA:
-                    // TODO handle EA
-                    // TODO handle hiararchical search inside EA
+                    curAlg = new AlgEA(curRequest, ModeCount, mDistReachable, mDiffReachable, Efficiency_UB);
+                    curAlg.PlanPath();
                     break;
                 case AlgType.EA_E:
-                    // TODO handle EA_E
+                    curAlg = new AlgSearchReverse(curRequest, ModeCount, mDistReachable, mDiffReachable, Efficiency_UB);
+                    curAlg.PlanPath();
                     break;
             }
 
@@ -138,20 +144,20 @@ namespace IPPA
                 // Draw path with map remains
                 Bitmap CurBMP3 = new Bitmap(mDistReachable.Columns, mDistReachable.Rows);
                 ImgLib.MatrixToImage(ref mDistReachable, ref CurBMP3);
-                frmMap map2 = new frmMap();
-                map2.Text = "UAV trajectory and coverage";
-                map2.setImage(CurBMP3);
-                map2.Show();
-                map2.resetImage();
+                frmMap map3 = new frmMap();
+                map3.Text = "UAV trajectory and coverage";
+                map3.setImage(CurBMP3);
+                map3.Show();
+                map3.resetImage();
                 List<float> remains = curAlg.ShowCoverage();
                 Color c = Color.FromArgb(255, 0, 0);
                 for (int i=0; i<Path.Count; i++)
                 {
                     Point p = Path[i];
-                    map2.setPointColor(p, c);
-                    map2.Refresh();
-                    map2.setPointColor(p, remains[i]);
-                    map2.Refresh();
+                    map3.setPointColor(p, c);
+                    map3.Refresh();
+                    map3.setPointColor(p, remains[i]);
+                    map3.Refresh();
                 }                
 
                 // Drawing real path

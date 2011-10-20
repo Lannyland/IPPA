@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using rtwmatrix;
+using System.Drawing;
 
 namespace IPPA
 {
@@ -61,6 +62,7 @@ namespace IPPA
                 
         #region functions
 
+        // Perform sanity check
         public bool SanityCheck()
         {
             bool AllVerified = true;
@@ -102,8 +104,34 @@ namespace IPPA
                 Log += "Please make sure you have specified a valid starting point and end point.\n";
                 AllVerified = false;
             }
+            // Make sure we can reach end point in specified flight time
+            if (UseEndPoint)
+            {
+                int dist = MISCLib.ManhattanDistance(pStart.column, pStart.row, pEnd.column, pEnd.row);
+                if (dist > T)
+                {
+                    // Impossible to get from A to B in allowed flight time
+                    Log += "Impossible! Extend flight time!\n";
+                    AllVerified = false;
+                }
+                if (VehicleType != UAVType.Copter && T % 2 != dist % 2)
+                {
+                    // Impossible to get from A to B in the exact allowed flight time
+                    Log += "Impossible to reach end point at time T! Add 1 or minus 1!\n";
+                    AllVerified = false;
+                }
+            }
 
             return AllVerified;
+        }
+
+        // Clone self with shallow copy except pStart and pEnd.
+        public PathPlanningRequest Clone()
+        {
+            PathPlanningRequest clonedRequest = MemberwiseClone() as PathPlanningRequest;
+            clonedRequest.pStart = new DistPoint(pStart.row, pStart.column);
+            clonedRequest.pEnd = new DistPoint(pEnd.row, pEnd.column);
+            return clonedRequest;
         }
 
         // Get Log

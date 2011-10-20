@@ -155,6 +155,14 @@ namespace IPPA
             frmDistMap = new frmMap(this);
             frmDistMap.Text = "Probability Distribution Map";
             frmDistMap.setImage(CurBMP);
+            // Also show start end points
+            Start.X = Convert.ToInt32(ntxtSX.Value);
+            Start.Y = Convert.ToInt32(ntxtSY.Value);
+            SetDestPoint(true, Start);
+            End.X = Convert.ToInt32(ntxtEX.Value);
+            End.Y = Convert.ToInt32(ntxtEY.Value);
+            SetDestPoint(false, End);
+            frmDistMap.DrawingStartEndPoints();
             frmDistMap.Show();
         }
 
@@ -188,9 +196,17 @@ namespace IPPA
             ImgLib.MatrixToImage(ref TempDiffMap, ref CurBMP);
 
             // Showing map in map form
-            frmDiffMap = new frmMap();
+            frmDiffMap = new frmMap(this);
             frmDiffMap.Text = "Task-Difficulty Map";
             frmDiffMap.setImage(CurBMP);
+            // Also show start end points
+            Start.X = Convert.ToInt32(ntxtSX.Value);
+            Start.Y = Convert.ToInt32(ntxtSY.Value);
+            SetDestPoint(true, Start);
+            End.X = Convert.ToInt32(ntxtEX.Value);
+            End.Y = Convert.ToInt32(ntxtEY.Value);
+            SetDestPoint(false, End);
+            frmDiffMap.DrawingStartEndPoints();
             frmDiffMap.Show();
 
         }
@@ -507,7 +523,7 @@ namespace IPPA
                     return;
                 }
 
-                if (ntxtFlightTime.Value % 2 != dist % 2)
+                if (!rbtnCopter.Checked && ntxtFlightTime.Value % 2 != dist % 2)
                 {
                     // Impossible to get from A to B in the exact allowed flight time
                     System.Windows.Forms.MessageBox.Show("Impossible to reach end point at time T! Add 1 or minus 1!");

@@ -207,6 +207,75 @@ namespace IPPA
             return true;
         }
 
+        // Path planning request specific constrains (with ending piont)
+        protected bool ValidMove(Point Parent, Point Me, Point Child, Point End, int T_Left)
+        {
+            // Regular constraints
+            if (!ValidMove(Parent, Me, Child))
+            {
+                return false;
+            }
+
+            // Make sure there are enough steps left to reach End point
+            int dist = MISCLib.ManhattanDistance(Child.X, Child.Y, End.X, End.Y);
+            // T_Left is how many time steps left from Me, not from Child
+            if (dist > T_Left - 1)
+            {
+                // System.Windows.Forms.MessageBox.Show("Won't make end point!");
+                return false;
+            }
+
+            // For fix-wing, make sure the third from last step does not reach end (force flying backward)
+            if (curRequest.VehicleType == UAVType.FixWing && dist == 0 && T_Left == 3)
+            {
+                return false;
+            }
+
+            // Make sure the direction selected won't force flying backward
+            if (curRequest.VehicleType != UAVType.Copter)
+            {
+                int distM = MISCLib.ManhattanDistance(Me.X, Me.Y, End.X, End.Y);
+                if (distM == T_Left - 2)
+                {
+                    if (End.X == Child.X || End.Y == Child.Y)
+                    {
+                        if (GetDirection(End, Me) != GetDirection(Child, Me))
+                        {
+                            if (GetDirection(End, Me) % 2 == GetDirection(Child, Me) % 2)
+                            {
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        // Return the direction of the current node from previous node in path
+        private static int GetDirection(Point cur_node, Point previous)
+        {
+            // 4 directions. 0 for north and 3 for west
+            if (cur_node.Y > previous.Y)
+            {
+                return 2; // South
+            }
+            if (cur_node.Y < previous.Y)
+            {
+                return 0; // North
+            }
+            if (cur_node.X > previous.X)
+            {
+                return 1; // East
+            }
+            if (cur_node.X < previous.X)
+            {
+                return 3; // West
+            }
+            return -1; // In case cur_node is previous node
+        }
+
         // Showing UAV trajectory and coverage (including partial detection)
         public List<float> ShowCoverage()
         {

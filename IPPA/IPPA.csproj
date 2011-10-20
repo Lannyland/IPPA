@@ -49,12 +49,14 @@
     <Compile Include="AlgCC.cs" />
     <Compile Include="AlgCC_E.cs" />
     <Compile Include="AlgEA.cs" />
+    <Compile Include="AlgEA_E.cs" />
     <Compile Include="AlgGlobalWarming.cs" />
     <Compile Include="AlgLHC.cs" />
     <Compile Include="AlgLHCGWCONV.cs" />
     <Compile Include="AlgLHCGWPF.cs" />
     <Compile Include="AlgPathPlanning.cs" />
     <Compile Include="AlgPF.cs" />
+    <Compile Include="AlgSearchReverse.cs" />
     <Compile Include="ComputeEfficiencyUB.cs" />
     <Compile Include="AlgLHCRandom.cs" />
     <Compile Include="AlgPFLooper.cs" />

@@ -2,18 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Drawing;
 using rtwmatrix;
 
 namespace IPPA
 {
-    class AlgCC_E : AlgPathPlanning
+    class AlgEA_E : AlgPathPlanning
     {
-        // TODO Implement AlgCC_E
-
         #region Members
 
         // Private variables
+        private int ModeCount = 0;
 
         // Public variables
 
@@ -22,14 +20,15 @@ namespace IPPA
         #region Constructor, Destructor
 
         // Constructor
-        public AlgCC_E(PathPlanningRequest _curRequest, 
+        public AlgEA_E(PathPlanningRequest _curRequest, int _ModeCount, 
             RtwMatrix _mDistReachable, RtwMatrix _mDiffReachable, double _Efficiency_UB)
             : base (_curRequest, _mDistReachable, _mDiffReachable, _Efficiency_UB)
         {
+            ModeCount = _ModeCount;
         }
 
         // Destructor
-        ~AlgCC_E()
+        ~AlgEA_E()
         {
             // Cleaning up
         }
@@ -41,14 +40,6 @@ namespace IPPA
         // Algorithm specific implementation of the path planning
         protected override void DoPathPlanning()
         {
-            // TODO AlgCC_E path planning
-            throw new NotImplementedException();
-        }
-
-        // Debugging shouts
-        public override void Shout()
-        {
-            Console.WriteLine("I am AlgCC_E!");
         }
 
         #endregion

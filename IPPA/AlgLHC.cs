@@ -85,7 +85,15 @@ namespace IPPA
                 }
 
                 // Find all valid neighbors from current node
-                List<LHCNode> ValidNeighbors = GetNeighbors(parent, me);
+                List<LHCNode> ValidNeighbors;
+                if (curRequest.UseEndPoint)
+                {
+                    ValidNeighbors = GetNeighbors(parent, me, new Point(curRequest.pEnd.column, curRequest.pEnd.row), curRequest.T-i);
+                }
+                else
+                {
+                    ValidNeighbors = GetNeighbors(parent, me);
+                }
 
                 // Decide which way to go.
                 Point next;
@@ -125,10 +133,14 @@ namespace IPPA
             // Add self if UAV can hover
             if (curRequest.VehicleType == UAVType.Copter)
             {
-                LHCNode n = new LHCNode();
-                n.Loc = me;
-                n.p = GetPartialDetection(me);
-                Neighbors.Add(n);
+                // Check if it's valid
+                if (ValidMove(parent, me, me))
+                {
+                    LHCNode n = new LHCNode();
+                    n.Loc = me;
+                    n.p = GetPartialDetection(me);
+                    Neighbors.Add(n);
+                }
             }
 
             // Loop through all four directions (N, E, S, W)
@@ -149,6 +161,42 @@ namespace IPPA
             return Neighbors;
         }
 
+        // Expand neighboring nodes (with end point)
+        protected virtual List<LHCNode> GetNeighbors(Point parent, Point me, Point end, int T_Left)
+        {
+            List<LHCNode> Neighbors = new List<LHCNode>();
+
+            // Add self if UAV can hover
+            if (curRequest.VehicleType == UAVType.Copter)
+            {
+                // Check if it's valid
+                if (ValidMove(parent, me, me, end, T_Left))
+                {
+                    LHCNode n = new LHCNode();
+                    n.Loc = me;
+                    n.p = GetPartialDetection(me);
+                    Neighbors.Add(n);
+                }
+            }
+
+            // Loop through all four directions (N, E, S, W)
+            for (int j = 0; j < 4; j++)
+            {
+                // Expand child
+                Point child = GetDirChild(j, me);
+
+                // Check if it's valid
+                if (ValidMove(parent, me, child, end, T_Left))
+                {
+                    LHCNode n = new LHCNode();
+                    n.Loc = child;
+                    n.p = GetPartialDetection(child);
+                    Neighbors.Add(n);
+                }
+            }
+            return Neighbors;
+        }
+        
         // Function to return the count of identical items at the top (also set oldindex)
         protected int GetTopIdenticalCount(ref List<LHCNode> myList)
         {
