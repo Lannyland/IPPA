@@ -76,10 +76,10 @@ namespace IPPA
             ntxtSX.Maximum = ProjectConstants.DefaultDimension - 1;
             ntxtSY.Minimum = 0;
             ntxtSY.Maximum = ProjectConstants.DefaultDimension - 1;
-            trbFlightTime.Minimum = 0;
+            trbFlightTime.Minimum = ProjectConstants.MinFlightTime;
             trbFlightTime.Maximum = ProjectConstants.MaxFlightTime;
             trbFlightTime.Value = ProjectConstants.MaxFlightTime;
-            ntxtFlightTime.Minimum = 0;
+            ntxtFlightTime.Minimum = ProjectConstants.MinFlightTime;
             ntxtFlightTime.Maximum = ProjectConstants.MaxFlightTime;
             ntxtFlightTime.Value = 150;
             ntxtGWCount.Value = ProjectConstants.GWCount;
@@ -90,19 +90,9 @@ namespace IPPA
             lstAlg.Items.Add("LHC-GW-CONV");
             lstAlg.Items.Add("LHC-GW-PF");
             lstAlg.Items.Add("LHC-Random");
+            lstAlg.Items.Add("Random");
             lstAlg.Items.Add("PF");
-            // lstAlg.Items.Add("EA-Dir");
             lstAlg.Items.Add("EA-Path");
-            //// Group of algorithms for set destination
-            //lstAlg.Items.Add("CC_E");
-            //lstAlg.Items.Add("CC_E Reversed");
-            //lstAlg.Items.Add("LHCGWConv_E");
-            //lstAlg.Items.Add("LHCGWConv_E Reversed");
-            //lstAlg.Items.Add("LHCGWPF_E");
-            //lstAlg.Items.Add("LHCGWPF_E Reversed");
-            //lstAlg.Items.Add("PF_E");
-            //lstAlg.Items.Add("PF_E Reversed");
-            //lstAlg.Items.Add("EA_E");
 
             lvQueue.Clear();
             lvQueue.View = View.Details;
@@ -362,6 +352,9 @@ namespace IPPA
                         case "LHC-Random":
                             newRequest.AlgToUse = AlgType.LHCRandom_E;
                             break;
+                        case "Random":
+                            newRequest.AlgToUse = AlgType.Random_E;
+                            break;
                         case "PF":
                             newRequest.AlgToUse = AlgType.PF_E;
                             break;
@@ -385,6 +378,9 @@ namespace IPPA
                             break;
                         case "LHC-Random":
                             newRequest.AlgToUse = AlgType.LHCRandom;
+                            break;
+                        case "Random":
+                            newRequest.AlgToUse = AlgType.Random;
                             break;
                         case "PF":
                             newRequest.AlgToUse = AlgType.PF;

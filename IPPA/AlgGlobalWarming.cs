@@ -327,24 +327,6 @@ namespace IPPA
             }
         }
 
-        // Function to calculate true cummulative probability using original map
-        private float GetTrueCDF(List<Point> curPath)
-        {
-            float curCDF = 0;
-
-            RtwMatrix mCDF = mDist.Clone();
-            for (int i = 0; i < curRequest.T + 1; i++)
-            {
-                curCDF += GetPartialDetection(curPath[i], mCDF);
-                mCDF[curPath[i].Y, curPath[i].X] = VacuumProbability(curPath[i], mCDF);
-            }
-
-            // Cleaning up
-            mCDF = null;
-
-            return curCDF;
-        }
-
         // Debugging shouts
         public override void Shout()
         {

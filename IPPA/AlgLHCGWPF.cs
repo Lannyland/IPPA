@@ -91,7 +91,7 @@ namespace IPPA
         }
 
         // Return the direction of the end node
-        private List<int> GetDirection(Point start, Point end)
+        private new List<int> GetDirection(Point start, Point end)
         {
             // 8 directions. 0 for north and 7 for norstwest
             List<int> neighbors = new List<int>();

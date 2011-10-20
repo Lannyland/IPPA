@@ -51,45 +51,40 @@ namespace IPPA
             {
                 case AlgType.CC_E:
                     curAlg = new AlgCC_E(curRequest, mDist, mDiff, Efficiency_UB);
-                    curAlg.PlanPath();
                     curAlgReversed = new AlgCC_E(curRequestReversed, mDist, mDiff, Efficiency_UB);
-                    curAlgReversed.PlanPath();
                     break;
                 case AlgType.LHCGWCONV_E:
                     curAlg = new AlgGlobalWarming(curRequest, ModeCount, mDist, mDiff, Efficiency_UB);
-                    curAlg.PlanPath();
                     curAlgReversed = new AlgGlobalWarming(curRequestReversed, ModeCount, mDist, mDiff, Efficiency_UB);
-                    curAlgReversed.PlanPath();
                     break;
                 case AlgType.LHCGWPF_E:
                     curAlg = new AlgGlobalWarming(curRequest, ModeCount, mDist, mDiff, Efficiency_UB);
-                    curAlg.PlanPath();
                     curAlgReversed = new AlgGlobalWarming(curRequestReversed, ModeCount, mDist, mDiff, Efficiency_UB);
-                    curAlgReversed.PlanPath();
                     break;
                 case AlgType.LHCRandom_E:
                     curAlg = new AlgLHCRandom(curRequest, mDist, mDiff, Efficiency_UB);
-                    curAlg.PlanPath();
                     curAlgReversed = new AlgLHCRandom(curRequestReversed, mDist, mDiff, Efficiency_UB);
-                    curAlgReversed.PlanPath();
+                    break;
+                case AlgType.Random_E:
+                    curAlg = new AlgRandom(curRequest, mDist, mDiff, Efficiency_UB);
+                    curAlgReversed = new AlgRandom(curRequestReversed, mDist, mDiff, Efficiency_UB);
                     break;
                 case AlgType.PF_E:
                     curAlg = new AlgPFLooper(curRequest, mDist, mDiff, Efficiency_UB);
-                    curAlg.PlanPath();
                     curAlgReversed = new AlgPFLooper(curRequestReversed, mDist, mDiff, Efficiency_UB);
-                    curAlgReversed.PlanPath();
                     break;
                 case AlgType.EA_E:
                     curAlg = new AlgEA_E(curRequest, ModeCount, mDist, mDiff, Efficiency_UB);
-                    curAlg.PlanPath();
                     curAlgReversed = new AlgEA_E(curRequestReversed, ModeCount, mDist, mDiff, Efficiency_UB);
-                    curAlgReversed.PlanPath();
                     break;
                 default:
                     curAlg = null;
                     curAlgReversed = null;
                     break;
             }
+
+            curAlg.PlanPath();
+            curAlgReversed.PlanPath();
 
             if (curAlg.GetCDF() >= curAlgReversed.GetCDF())
             {

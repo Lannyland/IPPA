@@ -18,9 +18,9 @@ namespace IPPA
         #region Constructor, Destructor
 
         // Constructor
-        public AlgLHCRandom(PathPlanningRequest _curRequest, RtwMatrix _mDistReachable, 
-            RtwMatrix _mDiffReachable, double _Efficiency_UB) 
-            : base (_curRequest, _mDistReachable, _mDiffReachable, _Efficiency_UB)
+        public AlgLHCRandom(PathPlanningRequest _curRequest, RtwMatrix _mDistReachable,
+            RtwMatrix _mDiffReachable, double _Efficiency_UB)
+            : base(_curRequest, _mDistReachable, _mDiffReachable, _Efficiency_UB)
         {
         }
 

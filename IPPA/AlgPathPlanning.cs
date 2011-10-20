@@ -254,7 +254,7 @@ namespace IPPA
         }
 
         // Return the direction of the current node from previous node in path
-        private static int GetDirection(Point cur_node, Point previous)
+        protected int GetDirection(Point cur_node, Point previous)
         {
             // 4 directions. 0 for north and 3 for west
             if (cur_node.Y > previous.Y)
@@ -274,6 +274,24 @@ namespace IPPA
                 return 3; // West
             }
             return -1; // In case cur_node is previous node
+        }
+
+        // Function to calculate true cummulative probability using original map
+        protected float GetTrueCDF(List<Point> curPath)
+        {
+            float curCDF = 0;
+
+            RtwMatrix mCDF = mDist.Clone();
+            for (int i = 0; i < curRequest.T + 1; i++)
+            {
+                curCDF += GetPartialDetection(curPath[i], mCDF);
+                mCDF[curPath[i].Y, curPath[i].X] = VacuumProbability(curPath[i], mCDF);
+            }
+
+            // Cleaning up
+            mCDF = null;
+
+            return curCDF;
         }
 
         // Showing UAV trajectory and coverage (including partial detection)

@@ -92,6 +92,14 @@ namespace IPPA
                     curAlg = new AlgSearchReverse(curRequest, ModeCount, mDistReachable, mDiffReachable, Efficiency_UB);
                     curAlg.PlanPath();
                     break;
+                case AlgType.Random:
+                    curAlg = new AlgRandom(curRequest, mDistReachable, mDiffReachable, Efficiency_UB);
+                    curAlg.PlanPath();
+                    break;
+                case AlgType.Random_E:
+                    curAlg = new AlgSearchReverse(curRequest, ModeCount, mDistReachable, mDiffReachable, Efficiency_UB);
+                    curAlg.PlanPath();
+                    break;
                 case AlgType.PF:
                     curAlg = new AlgPFLooper(curRequest, mDistReachable, mDiffReachable, Efficiency_UB);
                     curAlg.PlanPath();
