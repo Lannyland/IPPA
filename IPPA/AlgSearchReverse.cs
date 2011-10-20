@@ -91,7 +91,7 @@ namespace IPPA
                     break;
             }
 
-            if (curAlg.GetCDF() > curAlgReversed.GetCDF())
+            if (curAlg.GetCDF() >= curAlgReversed.GetCDF())
             {
                 CDF = curAlg.GetCDF();
                 Path = curAlg.GetPath();
@@ -100,6 +100,7 @@ namespace IPPA
             {
                 CDF = curAlgReversed.GetCDF();
                 Path = curAlgReversed.GetPath();
+                Path.Reverse();
             }
         }
 

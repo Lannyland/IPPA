@@ -36,6 +36,7 @@ namespace IPPA
         private Random r = new Random((int)DateTime.Now.Ticks);
 
         // Public variables
+        public Point BeforeStart = new Point(-1, -1);
 
         #endregion
 
@@ -75,7 +76,14 @@ namespace IPPA
                 // Find parent
                 if (Path.Count < 2)
                 {
-                    parent = Start;
+                    if (BeforeStart.X == -1 && BeforeStart.Y == -1)
+                    {
+                        parent = Start;
+                    }
+                    else
+                    {
+                        parent = BeforeStart;
+                    }
                     me = Start;
                 }
                 else

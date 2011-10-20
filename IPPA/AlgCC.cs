@@ -12,7 +12,8 @@ namespace IPPA
         #region Members
         
         // Private variables
-        
+        protected double lastCDF;
+
         // Public variables
         
         #endregion
@@ -372,18 +373,19 @@ namespace IPPA
         }
 
         // Method to add node to path and partially detect
-        private void AddNodeToPath(List<Point> CurPathSegment, ref int CurT, ref int RealT, ref Point CurPoint)
+        protected void AddNodeToPath(List<Point> CurPathSegment, ref int CurT, ref int RealT, ref Point CurPoint)
         {
             Point p = new Point(CurPoint.X, CurPoint.Y);
             CurPathSegment.Add(p);
             CurT++;
             RealT++;
-            CDF += GetPartialDetection(CurPoint);
+            lastCDF = GetPartialDetection(CurPoint);
+            CDF += lastCDF;
             mCurDist[CurPoint.Y, CurPoint.X] = VacuumProbability(CurPoint);
         }
 
         // Function to identify a mxn box bounding non-zero nodes where m is even
-        RtwMatrix GetBox(ref bool EvenColumns, ref int Top, ref int Bottom, ref int Left, ref int Right)
+        protected RtwMatrix GetBox(ref bool EvenColumns, ref int Top, ref int Bottom, ref int Left, ref int Right)
         {
             RtwMatrix mbox = new RtwMatrix(mCurDist.Rows, mCurDist.Columns);
 

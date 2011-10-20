@@ -7,17 +7,6 @@ namespace IPPA
     class ProjectConstants
     {
         /*
-        // EA parameters
-        public static int EA_Population = 100;
-        public static float EA_ReplacementRate = 0.3f;
-        public static int EA_SelectionType = 1;
-        public static float EA_MutationRate = 0.50f;
-        public static int EA_BestToKeep = 3;
-        public static int EA_Crossover_MidSize = 5;
-        public static int EA_Minimum_Run = 500;
-        public static int EA_Maximum_Run = 1000;
-        public static int EA_Epsilon_Run = 200;
-
         // EA_E parameters
         public static int EA_E_Population = 100;
         public static float EA_E_ReplacementRate = 0.3f;
@@ -51,5 +40,19 @@ namespace IPPA
         // PF parameters
         public static int PFLoop = 12;              // How many time we should run PF with different sigmas
         public static int PFStep = 6;               // How much to increase sigma in each step
+
+        // EA parameters
+        public static int EA_Population = 100;
+        public static float EA_ReplacementRate = 0.3f;
+        public static int EA_SelectionType = 1;
+        public static float EA_MutationRate = 0.50f;
+        public static int EA_BestToKeep = 3;
+        public static int EA_Crossover_MidSize = 5;
+        public static int EA_Minimum_Run = 500;
+        public static int EA_Maximum_Run = 1000;
+        public static int EA_Epsilon_Run = 200;
+        public static int Count_CC = 1;
+        public static int 
+
     }
 }
