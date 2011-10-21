@@ -91,6 +91,7 @@ namespace IPPA
             lstAlg.Items.Add("LHC-GW-PF");
             lstAlg.Items.Add("LHC-Random");
             lstAlg.Items.Add("Random");
+            lstAlg.Items.Add("CONV");
             lstAlg.Items.Add("PF");
             lstAlg.Items.Add("EA-Path");
 
@@ -355,6 +356,9 @@ namespace IPPA
                         case "Random":
                             newRequest.AlgToUse = AlgType.Random_E;
                             break;
+                        case "CONV":
+                            newRequest.AlgToUse = AlgType.CONV_E;
+                            break;
                         case "PF":
                             newRequest.AlgToUse = AlgType.PF_E;
                             break;
@@ -381,6 +385,9 @@ namespace IPPA
                             break;
                         case "Random":
                             newRequest.AlgToUse = AlgType.Random;
+                            break;
+                        case "CONV":
+                            newRequest.AlgToUse = AlgType.CONV;
                             break;
                         case "PF":
                             newRequest.AlgToUse = AlgType.PF;

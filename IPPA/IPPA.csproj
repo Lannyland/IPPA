@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="AlgCC.cs" />
     <Compile Include="AlgCC_E.cs" />
+    <Compile Include="AlgCONV.cs" />
     <Compile Include="AlgEA.cs" />
     <Compile Include="AlgEA_E.cs" />
     <Compile Include="AlgGlobalWarming.cs" />

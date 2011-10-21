@@ -100,6 +100,14 @@ namespace IPPA
                     curAlg = new AlgSearchReverse(curRequest, ModeCount, mDistReachable, mDiffReachable, Efficiency_UB);
                     curAlg.PlanPath();
                     break;
+                case AlgType.CONV:
+                    curAlg = new AlgGlobalWarming(curRequest, ModeCount, mDistReachable, mDiffReachable, Efficiency_UB);
+                    curAlg.PlanPath();
+                    break;
+                case AlgType.CONV_E:
+                    curAlg = new AlgSearchReverse(curRequest, ModeCount, mDistReachable, mDiffReachable, Efficiency_UB);
+                    curAlg.PlanPath();
+                    break;
                 case AlgType.PF:
                     curAlg = new AlgPFLooper(curRequest, mDistReachable, mDiffReachable, Efficiency_UB);
                     curAlg.PlanPath();

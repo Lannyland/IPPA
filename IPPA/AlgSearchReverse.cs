@@ -69,6 +69,10 @@ namespace IPPA
                     curAlg = new AlgRandom(curRequest, mDist, mDiff, Efficiency_UB);
                     curAlgReversed = new AlgRandom(curRequestReversed, mDist, mDiff, Efficiency_UB);
                     break;
+                case AlgType.CONV_E:
+                    curAlg = new AlgGlobalWarming(curRequest, ModeCount, mDist, mDiff, Efficiency_UB);
+                    curAlgReversed = new AlgGlobalWarming(curRequestReversed, ModeCount, mDist, mDiff, Efficiency_UB);
+                    break;
                 case AlgType.PF_E:
                     curAlg = new AlgPFLooper(curRequest, mDist, mDiff, Efficiency_UB);
                     curAlgReversed = new AlgPFLooper(curRequestReversed, mDist, mDiff, Efficiency_UB);

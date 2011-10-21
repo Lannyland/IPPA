@@ -308,6 +308,31 @@ namespace IPPA
                 // Print one GW per line (3 conv each line)
                 //curRequest.SetLog("\n");
             }
+            if (curRequest.AlgToUse == AlgType.CONV || curRequest.AlgToUse == AlgType.CONV_E)
+            {
+                // If CONV, search multiple convolution kernal sizes
+                int dim = Math.Max(mDist.Rows, mDist.Columns);
+                for (int j = 3; j < dim; j += (int)(dim / ProjectConstants.ConvCount))
+                {
+                    //Console.Write("j=" + j + "\n");
+                    AlgCONV myAlg = new AlgCONV(curRequest, mGW, mDiff, Efficiency_UB, j);
+                    myAlg.PlanPath();
+
+                    // Remember if true CDF is better
+                    RememberBestPath(myAlg);
+
+                    // Cleaning up                        
+                    myAlg = null;
+
+                    // If we already have the best path, then no need to continue
+                    if (Math.Abs(Efficiency_UB - CDF) < 0.001)
+                    {
+                        return true;
+                    }
+                }
+                //// Print one GW per line (3 conv each line)
+                //curRequest.SetLog("\n");
+            }
             return false;
         }
 

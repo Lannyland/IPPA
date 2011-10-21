@@ -29,10 +29,10 @@ namespace IPPA
         public static int PFStep = 6;               // How much to increase sigma in each step
 
         // EA parameters
-        public static int Count_CC = 1;
-        public static int Count_LHCGWCONV = 3;
+        public static int Count_CC = 5;
+        public static int Count_LHCGWCONV = 4;
         public static int Count_LHCGWPF = 1;
-        public static int Count_LHCRandom = 3;
+        public static int Count_LHCRandom = 10;
 
         public static int EA_Population = 100;
         public static float EA_ReplacementRate = 0.3f;
@@ -40,7 +40,7 @@ namespace IPPA
         public static int EA_BestToKeep = 3;
         public static int EA_Crossover_MidSize = 5;
         public static int EA_Minimum_Run = 500;
-        public static int EA_Maximum_Run = 1000;
+        public static int EA_Maximum_Run = 3000;
         public static int EA_Epsilon_Run = 200;
 
         // EA_E parameters

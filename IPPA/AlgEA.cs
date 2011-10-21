@@ -71,17 +71,17 @@ namespace IPPA
 
             // Generate initial population
             CurGeneration = CreatePopulation();
-            // Debug
-            CheckGeneration(CurGeneration);
             // Sort based on CDF. Best at the end.
             CurGeneration.Sort();
+            // Debug
+            CheckPathValidity(CurGeneration, "After CreatePopulation()");
 
             // Remaining population size (e.g. 100-3=97)
             PRemain = ProjectConstants.EA_Population - ProjectConstants.EA_BestToKeep;
 
             // What's the best we have so far?
             CDF = CurGeneration[CurGeneration.Count - 1].CDF;
-            Path.Clear();
+            Path = new List<Point>();
             Path.AddRange(CurGeneration[CurGeneration.Count - 1].Path);
 
             // Prepare lists to store improvements
@@ -107,15 +107,18 @@ namespace IPPA
                 // (First three in new generation are the best three from last generation)
                 NewGeneration = CurGeneration.GetRange(PRemain, ProjectConstants.EA_BestToKeep);
                 // Debug
-                CheckGeneration(NewGeneration);
+                CheckPathValidity(NewGeneration, "After Newgeneration keep best");
+
 
                 // 1. Select based on replace rate
                 SelectPopulation();
                 // Debug
-                CheckGeneration(NewGeneration);
+                CheckPathValidity(NewGeneration, "After SelectPopulation()");
 
                 // 2. Crossover based on crossover rate
                 Crossover();
+                // Debug
+                CheckPathValidity(NewGeneration, "After Crossover()");
 
                 // 3. Add best to keep to end of list and don't mutate those
                 for (int i = 0; i < ProjectConstants.EA_BestToKeep; i++)
@@ -126,24 +129,34 @@ namespace IPPA
                     eap.Path.AddRange(NewGeneration[i].Path);
                     NewGeneration.Add(eap);
                 }
+                // Debug
+                CheckPathValidity(NewGeneration, "After add best 3 to end");
 
                 // 4. Mutate based on mutate rate
                 Mutate();
+                // Debug
+                CheckPathValidity(NewGeneration, "After Mutate()");
 
                 // 5. Evaluate
                 EvaluateFitness();
                 NewGeneration.Sort();
+                // Debug
+                CheckPathValidity(NewGeneration, "After EvaluateFitness()");
 
                 // 6. Update                    
                 CurGeneration.Clear();
                 CurGeneration.AddRange(NewGeneration.GetRange(NewGeneration.Count - ProjectConstants.EA_Population, ProjectConstants.EA_Population));
+                // Debug
+                CheckPathValidity(CurGeneration, "After generating new CurGeneration");
 
                 // 7. Remember best and record improvement
                 RememberCDF.Add(CurGeneration[ProjectConstants.EA_Population - 1].CDF);
                 Improvement.Add(CurGeneration[ProjectConstants.EA_Population - 1].CDF - CDF);
                 CDF = CurGeneration[ProjectConstants.EA_Population - 1].CDF;
-                Path.Clear();
+                Path = new List<Point>();
                 Path.AddRange(CurGeneration[ProjectConstants.EA_Population - 1].Path);
+                // Debug
+                CheckPathValidity(NewGeneration, "After remember best and record improvement");
 
                 if (Improvement.Count < ProjectConstants.EA_Minimum_Run)
                 {
@@ -158,13 +171,15 @@ namespace IPPA
                     }
                     epsilon = epsilon / ProjectConstants.EA_Epsilon_Run;
                 }
+                // Debug
+                CheckPathValidity(NewGeneration, "After computing epsilon");
 
                 // 7. Increase counter
                 count++;
             }
 
             // Evolution completed...
-            Path.Clear();
+            Path = new List<Point>();
             Path.AddRange(CurGeneration[CurGeneration.Count - 1].Path);
 
             // Report how many iterations
@@ -231,20 +246,6 @@ namespace IPPA
             }
 
             return false;
-        }
-
-        // Debug code to make sure all eaps have path
-        private void CheckGeneration(List<EAPath> EAPList)
-        {
-            Console.WriteLine("List has " + EAPList.Count() + " paths.");
-            foreach (EAPath eap in EAPList)
-            {
-                if (eap.Path.Count == 0)
-                {
-                    System.Windows.Forms.MessageBox.Show("Bummer!");
-                    return;
-                }
-            }
         }
 
         // Function to create initial population of paths
@@ -482,17 +483,17 @@ namespace IPPA
                 Son = new EAPath();
                 Daughter = new EAPath();
                 SinglePointCrossover(split_1_F, split_1_M, Father, Mother, Son, Daughter);
-                bool SonLonger = TruncateLongerPath(Son, Daughter, ref ShorterPath, ref LongerPath);
+                bool blnSonLonger = TruncateLongerPath(Son, Daughter, ref ShorterPath, ref LongerPath);
                 EAPath NewLongerPath = LongerPath;
 
                 // Make sure there's no flying backward for non-copter
                 if (curRequest.VehicleType != UAVType.Copter)
                 {
                     // Only worry about LongerPath
-                    if (!SonLonger)
+                    if (!blnSonLonger)
                     {
                         split_1_F = split_1_M;
-                        Daughter = Son;
+                        Son = Daughter;
                     }
                     bool blnGoodCrossover = GoodCrossover(split_1_F, split_1_F, 0, 0, Son, Son, false);
                     if (!blnGoodCrossover)
@@ -586,12 +587,6 @@ namespace IPPA
                 split_1_M = Mother.IndexOf(first);
             } while (split_1_M == -1 && LoopCount < 10);
 
-            // Debug
-            if (Father.Count() == 0 || Mother.Count() == 0)
-            {
-                Console.WriteLine("Something went wrong!");
-            }
-
             // Did we find a good mother?
             if (split_1_M == -1)
             {
@@ -623,7 +618,7 @@ namespace IPPA
         private void SinglePointCrossover(int split_1_F, int split_1_M, List<Point> Father, List<Point> Mother, EAPath Son, EAPath Daughter)
         {
             Son.Path.AddRange(Father.GetRange(0, split_1_F));
-            Son.Path.AddRange(Mother.GetRange(split_1_M, curRequest.T + 1 - split_1_M));
+            Son.Path.AddRange(Mother.GetRange(split_1_M, Mother.Count() - split_1_M));
             Daughter.Path.AddRange(Mother.GetRange(0, split_1_M));
             Daughter.Path.AddRange(Father.GetRange(split_1_F, Father.Count() - split_1_F));
         }
@@ -633,10 +628,10 @@ namespace IPPA
         {
             Son.Path.AddRange(Father.GetRange(0, split_1_F));
             Son.Path.AddRange(Mother.GetRange(split_1_M, split_2_M - split_1_M));
-            Son.Path.AddRange(Father.GetRange(split_2_F, curRequest.T + 1 - split_2_F));
+            Son.Path.AddRange(Father.GetRange(split_2_F, Father.Count() - split_2_F));
             Daughter.Path.AddRange(Mother.GetRange(0, split_1_M));
             Daughter.Path.AddRange(Father.GetRange(split_1_F, split_2_F - split_1_F));
-            Daughter.Path.AddRange(Mother.GetRange(split_2_M, curRequest.T + 1 - split_2_M));
+            Daughter.Path.AddRange(Mother.GetRange(split_2_M, Mother.Count() - split_2_M));
         }
 
         // Check if crossover points are good
@@ -683,7 +678,7 @@ namespace IPPA
         // Check if the crossover is valid for non-copter (no flying backwards)
         private bool ValidCrossover(int split_point, EAPath Son, int i)
         {
-            if (split_point != -1)
+            if (split_point != -1 && Son.Path.Count - 1 > split_point && split_point > 1)
             {
                 if (!ValidMove(Son.Path[split_point - i], Son.Path[split_point - i + 1], Son.Path[split_point - i + 2]))
                 {
@@ -954,6 +949,50 @@ namespace IPPA
             Console.WriteLine("I am AlgEA!");
         }
 
+        // Debug code to make sure all eaps have path
+        private void CheckGeneration(List<EAPath> EAPList)
+        {
+            Console.WriteLine("List has " + EAPList.Count() + " paths.");
+            foreach (EAPath eap in EAPList)
+            {
+                if (eap.Path.Count == 0)
+                {
+                    System.Windows.Forms.MessageBox.Show("Bummer!");
+                    return;
+                }
+            }
+        }
+
+        // Debug code to make sure path length is always T+1;
+        private void CheckPathLength()
+        {
+            foreach (EAPath e in CurGeneration)
+            {
+                if (e.Path.Count() != curRequest.T + 1)
+                {
+                    System.Windows.Forms.MessageBox.Show("Bummer!");
+                    return;
+                }
+            }
+            foreach (EAPath e in NewGeneration)
+            {
+                if (e.Path.Count() != curRequest.T + 1)
+                {
+                    System.Windows.Forms.MessageBox.Show("Bummer!");
+                    return;
+                }
+            }
+        }
+
+        // Debug code to do sanity check on path
+        private void CheckPathValidity(List<EAPath> EAPList, string s)
+        {
+            foreach (EAPath eap in EAPList)
+            {
+                PathSanityCheck(eap.Path);
+            }
+        }
+        
         #endregion
     }
 }

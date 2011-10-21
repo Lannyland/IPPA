@@ -70,24 +70,55 @@ namespace IPPA
             // Compute Efficiency
             Efficiency = CDF / Efficiency_UB;
 
-            //// Debug code, show map remain (especially for partial detection)
-            //// Re-enact the flight with real distmap
+            #region Debug
+            //// Debug code, show actual path
             //if (curRequest.DrawPath)
             //{
-            //    RtwMatrix DistMapRemain = mDist.Clone();
-            //    foreach (Point p in Path)
-            //    {
-            //        DistMapRemain[p.Y, p.X] = VacuumProbability(p, DistMapRemain);
-            //    }
-            //    Bitmap CurBMP = new Bitmap(DistMapRemain.Columns, DistMapRemain.Rows);
-            //    ImgLib.MatrixToImage(ref DistMapRemain, ref CurBMP);
-            //    frmMap map = new frmMap();
-            //    map.Text = "Remaining distribution after UAV search";
-            //    map.setImage(CurBMP);
-            //    map.Show();
-            //    map.resetImage();
-            //    map.Refresh();
+                //// Draw coverage
+                //Bitmap CurBMP = new Bitmap(mDistReachable.Columns, mDistReachable.Rows);
+                //ImgLib.MatrixToImage(ref mDistReachable, ref CurBMP);
+                //frmMap map = new frmMap();
+                //map.Text = "Actual UAV path";
+                //map.setImage(CurBMP);
+                //map.Show();
+                //map.resetImage();
+                //map.DrawCoverage(Path);
+                //map.Refresh();
+
+                //// Draw path
+                //Bitmap CurBMP2 = new Bitmap(mDistReachable.Columns, mDistReachable.Rows);
+                //ImgLib.MatrixToImage(ref mDistReachable, ref CurBMP2);
+                //frmMap map2 = new frmMap();
+                //map2.Text = "UAV trajectory simulation";
+                //map2.setImage(CurBMP2);
+                //map2.Show();
+                //map2.resetImage();
+                //map2.DrawPath(Path);
+                //map2.Refresh();
+
+                //// Draw path with map remains
+                //Bitmap CurBMP3 = new Bitmap(mDist.Columns, mDist.Rows);
+                //ImgLib.MatrixToImage(ref mDist, ref CurBMP3);
+                //frmMap map3 = new frmMap();
+                //map3.Text = "UAV trajectory and coverage";
+                //map3.setImage(CurBMP3);
+                //map3.Show();
+                //map3.resetImage();
+                //List<float> remains = ShowCoverage();
+                //Color c = Color.FromArgb(255, 0, 0);
+                //for (int i = 0; i < Path.Count; i++)
+                //{
+                //    Point p = Path[i];
+                //    map3.setPointColor(p, c);
+                //    map3.Refresh();
+                //    map3.setPointColor(p, remains[i]);
+                //    map3.Refresh();
+                //}
             //}
+            
+            PathSanityCheck(Path);
+            
+            #endregion
         }
 
         // Individual implementation of path planning based on algorithm choosen
@@ -312,6 +343,23 @@ namespace IPPA
         public virtual void Shout()
         {
             Console.WriteLine("I am AlgPathPlanning!");
+        }
+
+        // Debugging check
+        protected void PathSanityCheck(List<Point> curPath)
+        {
+            // Debug code: Sanity check to make sure no flying backwards
+            if (curRequest.VehicleType != UAVType.Copter)
+            {
+                for (int i = 1; i < curPath.Count() - 1; i++)
+                {
+                    if (!ValidMove(curPath[i - 1], curPath[i], curPath[i + 1]))
+                    {
+                        System.Windows.Forms.MessageBox.Show("Bummer!");
+                        return;
+                    }
+                }
+            }
         }
 
         #region Getters
