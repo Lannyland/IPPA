@@ -45,7 +45,7 @@ namespace IPPA
         // Function to find node with higher convolution value as tie-breaker
         protected override float TieBreaker(Point me, Point neighbor, int cur_T, float[] forces)
         {
-            List<int> directions = GetDirection(me, neighbor);
+            List<int> directions = GetEndDirection(me, neighbor);
             float cur_force = forces[directions[0]];
             return cur_force;
         }
@@ -66,7 +66,7 @@ namespace IPPA
                     if (d > 0 && d < (curRequest.T - cur_T))
                     {
                         // Identify where is the pixel compared to current node
-                        List<int> directions = GetDirection(cur_node, new Point(j, i));
+                        List<int> directions = GetEndDirection(cur_node, new Point(j, i));
                         float Gamma = (float)(Math.Exp(-1 * d * d / (2 * Sigma * Sigma)));
                         float force = GetPartialDetection(new Point(j, i)) * Gamma;
                         
@@ -91,7 +91,7 @@ namespace IPPA
         }
 
         // Return the direction of the end node
-        private new List<int> GetDirection(Point start, Point end)
+        private List<int> GetEndDirection(Point start, Point end)
         {
             // 8 directions. 0 for north and 7 for norstwest
             List<int> neighbors = new List<int>();

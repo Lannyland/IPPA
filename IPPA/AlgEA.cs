@@ -33,8 +33,8 @@ namespace IPPA
         private int ModeCount = 0;
         private List<EAPath> CurGeneration = new List<EAPath>();
         private List<EAPath> NewGeneration = new List<EAPath>();
-        int PRemain;
-        private double[] Fitness;
+        int PRemain = 0;
+        private double[] ProbabilityCDF = new double[ProjectConstants.EA_Population];
         Random r = new Random((int)DateTime.Now.Ticks); 
 
         // Public variables
@@ -64,78 +64,34 @@ namespace IPPA
         // Algorithm specific implementation of the path planning
         protected override void DoPathPlanning()
         {
-            #region Hiararchical Search
-
-            // If using hiararchical search
-            if (curRequest.UseHiararchy)
+            if (HiararchicalSearch())
             {
-                AlgPathPlanning curAlg = null;
-
-                if (ModeCount == 0)
-                {
-                    // If uniform distribution, just do Complete Coverage
-                    curAlg = new AlgCC(curRequest, mDist, mDiff, Efficiency_UB);
-                    curAlg.PlanPath();
-                }
-                else if (!curRequest.UseTaskDifficultyMap               // No task difficulty map
-                        && curRequest.DetectionRate == 1                // Detection rate is 1
-                        && curRequest.T >= mDist.Rows*mDist.Columns)    // Time enough to cover entire map
-                {
-                    // If there's plenty of time, then just do Complete Coverage
-                    curAlg = new AlgCC(curRequest, mDist, mDiff, Efficiency_UB);
-                    curAlg.PlanPath();
-                }
-                else if (curRequest.UseTaskDifficultyMap                            // Use task difficulty map
-                        && curRequest.DetectionType == DType.FixAmountInPercentage  // A fixed percentage of original
-                        && curRequest.DetectionRate == 1                            // Detection rate is 1
-                        && curRequest.T >= mDist.Rows*mDist.Columns
-                        /curRequest.DiffRates[curRequest.MaxDifficulty-1])          // Time enough to cover entire map multiple times to wipe it clean
-                {
-                    // If there's plenty of time, then just do Complete Coverage
-                    curAlg = new AlgCC(curRequest, mDist, mDiff, Efficiency_UB);
-                    curAlg.PlanPath();
-                }
-                // If 1 mode
-                if (ModeCount == 1)
-                {
-                    // Unimodal distribution or path distribution (possibly with splits)
-                    // return;
-                }
-
-                // If lots of modes, consider using PF as seed
-                if (ModeCount > 4)
-                {
-                    // return;
-                }
-
-                if (curAlg != null)
-                {
-                    CDF = curAlg.GetCDF();
-                    Path = curAlg.GetPath();
-                    return;
-                }
+                return;
             }
 
-            #endregion 
-
+            // Generate initial population
             CurGeneration = CreatePopulation();
+            // Debug
             CheckGeneration(CurGeneration);
+            // Sort based on CDF. Best at the end.
             CurGeneration.Sort();
 
             // Remaining population size (e.g. 100-3=97)
             PRemain = ProjectConstants.EA_Population - ProjectConstants.EA_BestToKeep;
 
-            // What do we have so far?
+            // What's the best we have so far?
             CDF = CurGeneration[CurGeneration.Count - 1].CDF;
             Path.Clear();
             Path.AddRange(CurGeneration[CurGeneration.Count - 1].Path);
 
-            // Iterate until converge or until certain number of iterations
-            int count = 1;
+            // Prepare lists to store improvements
             List<double> Improvement = new List<double>();
             Improvement.Add(0);
             List<double> RememberCDF = new List<double>();
             RememberCDF.Add(CurGeneration[CurGeneration.Count - 1].CDF);
+
+            // Iterate until converge or until certain number of iterations
+            int count = 1;
             double epsilon = 1;
             while (epsilon > 0 && count < ProjectConstants.EA_Maximum_Run)
             {
@@ -147,15 +103,16 @@ namespace IPPA
 
                 // Create a new generation
 
-                // Add the best three to mid generation 
+                // 0. Keep the best three to mid generation 
                 // (First three in new generation are the best three from last generation)
                 NewGeneration = CurGeneration.GetRange(PRemain, ProjectConstants.EA_BestToKeep);
-
-                // Array to store fitness proportion
-                Fitness = new double[ProjectConstants.EA_Population];
+                // Debug
+                CheckGeneration(NewGeneration);
 
                 // 1. Select based on replace rate
                 SelectPopulation();
+                // Debug
+                CheckGeneration(NewGeneration);
 
                 // 2. Crossover based on crossover rate
                 Crossover();
@@ -226,9 +183,60 @@ namespace IPPA
             Improvement = null;
         }
 
+        // Perform Hiarachical Search and be done if possible
+        private bool HiararchicalSearch()
+        {
+            // If using hiararchical search
+            if (curRequest.UseHiararchy)
+            {
+                AlgPathPlanning curAlg = null;
+
+                if (ModeCount == 0)
+                {
+                    // If uniform distribution, just do Complete Coverage
+                    curAlg = new AlgCC(curRequest, mDist, mDiff, Efficiency_UB);
+                    curAlg.PlanPath();
+                }
+                else if (!curRequest.UseTaskDifficultyMap               // No task difficulty map
+                        && curRequest.DetectionRate == 1                // Detection rate is 1
+                        && curRequest.T >= mDist.Rows * mDist.Columns)    // Time enough to cover entire map
+                {
+                    // If there's plenty of time, then just do Complete Coverage
+                    curAlg = new AlgCC(curRequest, mDist, mDiff, Efficiency_UB);
+                    curAlg.PlanPath();
+                }
+                else if (curRequest.UseTaskDifficultyMap                            // Use task difficulty map
+                        && curRequest.DetectionType == DType.FixAmountInPercentage  // A fixed percentage of original
+                        && curRequest.DetectionRate == 1                            // Detection rate is 1
+                        && curRequest.T >= mDist.Rows * mDist.Columns
+                        / curRequest.DiffRates[curRequest.MaxDifficulty - 1])          // Time enough to cover entire map multiple times to wipe it clean
+                {
+                    // If there's plenty of time, then just do Complete Coverage
+                    curAlg = new AlgCC(curRequest, mDist, mDiff, Efficiency_UB);
+                    curAlg.PlanPath();
+                }
+                // If 1 mode
+                if (ModeCount == 1)
+                {
+                    // Unimodal distribution or path distribution (possibly with splits)
+                    // return;
+                }
+
+                if (curAlg != null)
+                {
+                    CDF = curAlg.GetCDF();
+                    Path = curAlg.GetPath();
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         // Debug code to make sure all eaps have path
         private void CheckGeneration(List<EAPath> EAPList)
         {
+            Console.WriteLine("List has " + EAPList.Count() + " paths.");
             foreach (EAPath eap in EAPList)
             {
                 if (eap.Path.Count == 0)
@@ -324,37 +332,28 @@ namespace IPPA
         // Select Population based on replacement rate
         private void SelectPopulation()
         {
-            double[] Pr = new double[ProjectConstants.EA_Population];
-            double SumFitness = 0;
+            // First build the probability table
+            BuildProbabilityCDF();
 
-            // Always use proportional select
-            for (int i = 0; i < ProjectConstants.EA_Population; i++)
-            {
-                SumFitness += CurGeneration[i].CDF;
-            }
-            for (int i = 0; i < ProjectConstants.EA_Population; i++)
-            {
-                Pr[i] = CurGeneration[i].CDF / SumFitness;
-            }
-            Fitness[0] = Pr[0];
-            for (int i = 1; i < ProjectConstants.EA_Population; i++)
-            {
-                Fitness[i] = Fitness[i - 1] + Pr[i];
-            }
-            Fitness[ProjectConstants.EA_Population - 1] = 1;
-            
-            // Select based on replacement rate
+            // Then proportionally select paths (based on replacement rate)
+            SelectPaths();
+        }
+
+        // Actually select paths
+        private void SelectPaths()
+        {
+            // Select based on replacement rate (97-.3*100)=67
             for (int j = 0; j < (PRemain - Convert.ToInt16(ProjectConstants.EA_ReplacementRate * ProjectConstants.EA_Population)); j++)
             {
                 // Pick random number (0,1) (Three digit precision)
                 double dblRand = (double)r.Next(0, 1000) / 1000;
                 int index = 0;
-                if (dblRand >= Fitness[0])
+                if (dblRand > ProbabilityCDF[0])
                 {
                     for (int i = 1; i < PRemain; i++)
                     {
 
-                        if (dblRand > Fitness[i - 1] && dblRand < Fitness[i])
+                        if (dblRand > ProbabilityCDF[i - 1] && dblRand <= ProbabilityCDF[i])
                         {
                             index = i;
                             break;
@@ -374,431 +373,344 @@ namespace IPPA
             }
         }
 
+        // Build the probability table for Proportional Select
+        private void BuildProbabilityCDF()
+        {
+            double[] Pr = new double[ProjectConstants.EA_Population];
+            double SumFitness = 0;
+
+            // Always use proportional select
+            for (int i = 0; i < ProjectConstants.EA_Population; i++)
+            {
+                SumFitness += CurGeneration[i].CDF;
+            }
+            for (int i = 0; i < ProjectConstants.EA_Population; i++)
+            {
+                Pr[i] = CurGeneration[i].CDF / SumFitness;
+            }
+            ProbabilityCDF[0] = Pr[0];
+            for (int i = 1; i < ProjectConstants.EA_Population; i++)
+            {
+                ProbabilityCDF[i] = ProbabilityCDF[i - 1] + Pr[i];
+            }
+            ProbabilityCDF[ProjectConstants.EA_Population - 1] = 1;
+        }
+
         // Crossover based on replacement rate
         private void Crossover()
         {
-            // Generate remaining quota of the population by crossover
+            // Generate remaining quota of the population by crossover (Divide by 2 because I am generating 2 children each time)
             for (int k = 0; k < Convert.ToInt16(ProjectConstants.EA_ReplacementRate * ProjectConstants.EA_Population / 2); k++)
             {
-                #region 1. Probabilistically find father and mother
-                // Pick random number (0,1)
-                double dblRand1 = (double)r.Next(0, 1000) / 1000;
-                double dblRand2 = (double)r.Next(0, 1000) / 1000;
-                int index1 = 0;
-                int index2 = 0;
-
-                if (dblRand1 <= Fitness[0])
-                {
-                    index1 = 0;
-                }
-                else
-                {
-                    for (int i = 1; i < ProjectConstants.EA_Population; i++)
-                    {
-                        if (dblRand1 > Fitness[i - 1] && dblRand1 <= Fitness[i])
-                        {
-                            index1 = i;
-                            break;
-                        }
-                    }
-                }
-                // Make sure I am not using the same one to crossover
-                bool blnSame = true;
-                int loop_count = 0;
-                while (blnSame)
-                {
-                    loop_count++;
-                    if (dblRand2 <= Fitness[0])
-                    {
-                        index2 = 0;
-                    }
-                    else
-                    {
-                        for (int i = 1; i < ProjectConstants.EA_Population; i++)
-                        {
-
-                            if (dblRand2 > Fitness[i - 1] && dblRand2 <= Fitness[i])
-                            {
-                                index2 = i;
-                                break;
-                            }
-                        }
-                    }
-                    if (index1 != index2)
-                    {
-                        blnSame = false;
-                    }
-                    else
-                    {
-                        dblRand2 = (double)r.Next(0, 1000) / 1000;
-                    }
-                    if (loop_count > ProjectConstants.EA_Population)
-                    {
-                        break;
-                    }
-                }
-                #endregion
-
-                #region 2. Path Crossover
-                // Crossover paths
-                List<Point> Father = CurGeneration[index1].Path;
-                List<Point> Mother = CurGeneration[index2].Path;
-                EAPath Son = new EAPath();
-                EAPath Daughter = new EAPath();
-
-                // Randomly pick a node in Father(1,T-1)
-                int split_1_F = r.Next(1, curRequest.T);
-                int split_1_M = 0;
-                int split_2_F = 0;
-                int split_2_M = 0;
-                Point first = Father[split_1_F];
-
-                #region Look until we find a Mother that also has this node
-                int count = 0;
-                List<int> Duplicates = new List<int>();
-                Duplicates.Add(index1);
-                Duplicates.Add(index2);
-                split_1_M = 0;
-                while ((!Mother.Contains(first) || split_1_M == 0) && count < 10)
-                {
-                    // If not, pick another one and try again
-                    // Repeat say 10 times, if still unseccessful, then pick new Father and new Mother
-
-                    // Make sure I am not using the same one to crossover
-                    blnSame = true;
-                    loop_count = 0;
-                    while (blnSame)
-                    {
-                        loop_count++;
-                        dblRand2 = (float)r.Next(0, 1000) / 1000;
-                        if (dblRand2 < Fitness[0])
-                        {
-                            index2 = 0;
-                        }
-                        else
-                        {
-                            for (int i = 1; i < ProjectConstants.EA_Population; i++)
-                            {
-                                if (dblRand2 > Fitness[i - 1] && dblRand2 < Fitness[i])
-                                {
-                                    index2 = i;
-                                    break;
-                                }
-                            }
-                        }
-                        if (!Duplicates.Contains(index2))
-                        {
-                            blnSame = false;
-                        }
-                        if (loop_count > ProjectConstants.EA_Population)
-                        {
-                            break;
-                        }
-                    }
-                    Mother = null;
-                    Mother = CurGeneration[index2].Path;
-                    split_1_M = Mother.IndexOf(first);
-                    Duplicates.Add(index2);
-                    count++;
-                }
-                if (count == 10)
-                {
-                    // Did not find a good Mother
-                    k--;
-                    continue;
-                }
-                #endregion
-
-                // Found a good mother that has the node
-                split_1_M = Mother.IndexOf(first);
-
-                // Look from the end of Father and see if mother also has a second common node (also from end)
-                bool blnTwoCommonNodes = false;
-                for (int i = Father.Count - 1; i > split_1_F + 1; i--)
-                {
-                    split_2_M = Mother.IndexOf(Father[i], split_1_M);
-                    if (Mother.Contains(Father[i]) && split_2_M != -1)
-                    {
-                        split_2_F = i;
-                        blnTwoCommonNodes = true;
-                        break;
-                    }
-                }
-
-                // Perform crossover
-                if (blnTwoCommonNodes)
-                {
-                    // If yes, perform double point crossover
-                    Son.Path.AddRange(Father.GetRange(0, split_1_F));
-                    Son.Path.AddRange(Mother.GetRange(split_1_M, split_2_M - split_1_M));
-                    Son.Path.AddRange(Father.GetRange(split_2_F, curRequest.T + 1 - split_2_F));
-                    Daughter.Path.AddRange(Mother.GetRange(0, split_1_M));
-                    Daughter.Path.AddRange(Father.GetRange(split_1_F, split_2_F - split_1_F));
-                    Daughter.Path.AddRange(Mother.GetRange(split_2_M, curRequest.T + 1 - split_2_M));
-                }
-                else
-                {
-                    // If not, perform single point crossover
-                    Son.Path.AddRange(Father.GetRange(0, split_1_F));
-                    Son.Path.AddRange(Mother.GetRange(split_1_M, curRequest.T + 1 - split_1_M));
-                    Daughter.Path.AddRange(Mother.GetRange(0, split_1_M));
-                    Daughter.Path.AddRange(Father.GetRange(split_1_F, curRequest.T + 1 - split_1_F));
-                }
-
-                #region Make sure there's no flying backward for non-copter
-                bool blnCrossoverFailed = false;
-                if(curRequest.VehicleType!=UAVType.Copter)
-                {
-                    // For the first crossover point 
-                    // For Son
-                    if (split_1_F > 1)
-                    {
-                        if (!ValidMove(Son.Path[split_1_F - 2], Son.Path[split_1_F - 1], Son.Path[split_1_F]))
-                        {
-                            blnCrossoverFailed = true;
-                        }
-                    }
-                    if (Son.Path.Count - 1 > split_1_F)
-                    {
-                        if (!ValidMove(Son.Path[split_1_F - 1], Son.Path[split_1_F], Son.Path[split_1_F + 1]))
-                        {
-                            blnCrossoverFailed = true;
-                        }
-                    }
-                    // For Daughter
-                    if (split_1_M > 1)
-                    {
-                        if (!ValidMove(Daughter.Path[split_1_M - 2], Daughter.Path[split_1_M - 1], Daughter.Path[split_1_M]))
-                        {
-                            blnCrossoverFailed = true;
-                        }
-                    }
-                    if (Daughter.Path.Count - 1 > split_1_M)
-                    {
-                        if (!ValidMove(Daughter.Path[split_1_M - 1], Daughter.Path[split_1_M], Daughter.Path[split_1_M + 1]))
-                        {
-                            blnCrossoverFailed = true;
-                        }
-                    }
-                    if (blnTwoCommonNodes && !blnCrossoverFailed)
-                    {
-                        // For the second crossover point
-                        // For Son
-                        int intTemp = split_1_F + split_2_M - split_1_M;
-                        if (intTemp > 1)
-                        {
-                            if (!ValidMove(Son.Path[intTemp - 2], Son.Path[intTemp - 1], Son.Path[intTemp]))
-                            {
-                                blnCrossoverFailed = true;
-                            }
-                        }
-                        if (Son.Path.Count - 1 > intTemp)
-                        {
-                            if (!ValidMove(Son.Path[intTemp - 1], Son.Path[intTemp], Son.Path[intTemp + 1]))
-                            {
-                                blnCrossoverFailed = true;
-                            }
-                        }
-                        // For Daughter
-                        intTemp = split_1_M + split_2_F - split_1_F;
-                        if (intTemp > 1)
-                        {
-                            if (!ValidMove(Daughter.Path[intTemp - 2], Daughter.Path[intTemp - 1], Daughter.Path[intTemp]))
-                            {
-                                blnCrossoverFailed = true;
-                            }
-                        }
-                        if (Daughter.Path.Count - 1 > intTemp)
-                        {
-                            if (!ValidMove(Daughter.Path[intTemp - 1], Daughter.Path[intTemp], Daughter.Path[intTemp + 1]))
-                            {
-                                blnCrossoverFailed = true;
-                            }
-                        }
-                    }
-                }
-                #endregion
-
-                #region Make sure they still fly all the way.
-                if (!blnCrossoverFailed)
-                {
-                    // Now both children are valid paths
-                    // Let's truncate or extend so they all have length T+1;
-
-                    // After crossover, if Son or Daughter becomes too long, truncate
-                    EAPath ShorterPath = new EAPath();
-                    EAPath LongerPath = new EAPath();
-
-                    if (Son.Path.Count - 1 >= curRequest.T + 1)
-                    {
-                        Son.Path.RemoveRange(curRequest.T + 1, Son.Path.Count - (curRequest.T + 1));
-                        LongerPath = Son;
-                        ShorterPath = Daughter;
-                    }
-                    if (Daughter.Path.Count - 1 >= curRequest.T + 1)
-                    {
-                        Daughter.Path.RemoveRange(curRequest.T + 1, Daughter.Path.Count - (curRequest.T + 1));
-                        LongerPath = Daughter;
-                        ShorterPath = Son;
-                    }
-                    if (LongerPath.Path.Count == 0)
-                    {
-                        LongerPath = Son;
-                        ShorterPath = Daughter;
-                    }
-
-                    // After crossover, if Son or Daughter becomes too short, 
-                    // probablistically randomly pick another path and crossover again.
-                    // This time only keep the longer one and then truncate.
-                    dblRand1 = (float)r.Next(0, 1000) / 1000;
-                    index1 = 0;
-                    if (dblRand1 < Fitness[0])
-                    {
-                        index1 = 0;
-                    }
-                    else
-                    {
-                        for (int i = 1; i < ProjectConstants.EA_Population; i++)
-                        {
-                            if (dblRand1 > Fitness[i - 1] && dblRand1 < Fitness[i])
-                            {
-                                index1 = i;
-                                break;
-                            }
-                        }
-                    }
-                    List<Point> BetterHalf = CurGeneration[index1].Path;
-                    split_1_F = r.Next(1, ShorterPath.Path.Count - 1);
-                    first = BetterHalf[split_1_F];
-                    split_1_M = 0;
-
-                    #region Look until we find a BetterHalf that also has this node
-                    count = 0;
-                    Duplicates.Clear();
-                    Duplicates.Add(index1);
-                    Duplicates.Add(index2);
-                    int indexOfFirst = 0;
-                    while ((!BetterHalf.Contains(first) || indexOfFirst == 0) && count < 10)
-                    {
-                        // If not, pick another one and try again
-                        // Repeat say 10 times, if still unseccessful, then pick new Father and new Mother
-
-                        // Make sure I am not using the same one to crossover
-                        blnSame = true;
-                        loop_count = 0;
-                        while (blnSame)
-                        {
-                            loop_count++;
-                            dblRand2 = (float)r.Next(0, 1000) / 1000;
-                            if (dblRand2 < Fitness[0])
-                            {
-                                index2 = 0;
-                            }
-                            else
-                            {
-                                for (int i = 1; i < ProjectConstants.EA_Population; i++)
-                                {
-                                    if (dblRand2 > Fitness[i - 1] && dblRand2 < Fitness[i])
-                                    {
-                                        index2 = i;
-                                        break;
-                                    }
-                                }
-                            }
-                            if (!Duplicates.Contains(index2))
-                            {
-                                blnSame = false;
-                            }
-                            if (loop_count > ProjectConstants.EA_Population)
-                            {
-                                break;
-                            }
-                        }
-                        BetterHalf = null;
-                        BetterHalf = CurGeneration[index2].Path;
-                        indexOfFirst = BetterHalf.IndexOf(first);
-                        Duplicates.Add(index2);
-                        count++;
-
-                    }
-                    if (count == 10)
-                    {
-                        // Did not find a good Mother
-                        k--;
-                        continue;
-                    }
-                    #endregion
-
-                    EAPath Baby1 = new EAPath();
-                    EAPath Baby2 = new EAPath();
-                    Baby1.Path.AddRange(ShorterPath.Path.GetRange(0, split_1_F));
-                    Baby1.Path.AddRange(BetterHalf.GetRange(split_1_M, curRequest.T + 1 - split_1_M));
-                    Baby2.Path.AddRange(BetterHalf.GetRange(0, split_1_M));
-                    Baby2.Path.AddRange(ShorterPath.Path.GetRange(split_1_F, ShorterPath.Path.Count - split_1_F));
-                    if (Baby1.Path.Count - 1 >= curRequest.T + 1)
-                    {
-                        Baby1.Path.RemoveRange(curRequest.T + 1, Baby1.Path.Count - (curRequest.T + 1));
-                        ShorterPath = null;
-                        ShorterPath = Baby1;
-                    }
-                    else if (Baby2.Path.Count - 1 >= curRequest.T + 1)
-                    {
-                        Baby2.Path.RemoveRange(curRequest.T + 1, Baby2.Path.Count - (curRequest.T + 1));
-                        ShorterPath = null;
-                        ShorterPath = Baby2;
-                    }
-                    else
-                    {
-                        blnCrossoverFailed = true;
-                    }
-
-                    #region Make sure there's no flying backward
-                    if(curRequest.VehicleType!=UAVType.Copter)
-                    {
-                        if (split_1_F > 1)
-                        {
-                            if (!ValidMove(ShorterPath.Path[split_1_F - 2], ShorterPath.Path[split_1_F - 1], ShorterPath.Path[split_1_F]))
-                            {
-                                blnCrossoverFailed = true;
-                            }
-                        }
-                        if (ShorterPath.Path.Count - 1 > split_1_F)
-                        {
-                            if (!ValidMove(ShorterPath.Path[split_1_F - 1], ShorterPath.Path[split_1_F], ShorterPath.Path[split_1_F + 1]))
-                            {
-                                blnCrossoverFailed = true;
-                            }
-                        }
-                    }
-                    #endregion
-
-                    if (!blnCrossoverFailed)
-                    {
-                        // Let's add crossover results to the new generation
-                        NewGeneration.Add(LongerPath);
-                        NewGeneration.Add(ShorterPath);
-                    }
-                    LongerPath = null;
-                    ShorterPath = null;
-                    Baby1 = null;
-                    Baby2 = null;
-                }
-                #endregion
-
-                if (blnCrossoverFailed)
+                // Find father and good mother
+                int split_1_F, split_1_M;
+                List<Point> Father, Mother;
+                if (!FindFatherMother(out split_1_F, out split_1_M, out Father, out Mother))
                 {
                     // Cleaning up
                     Father = null;
                     Mother = null;
-                    Son = null;
-                    Daughter = null;
-
-                    // Try again
+                    // Did not find a good Mother
                     k--;
                     continue;
                 }
-                #endregion
+
+                // Found a good mother that has the node
+                // See if father and mother have second common node
+                // And perform crossover
+                int split_2_F = -1;
+                int split_2_M = -1;
+                EAPath Son = new EAPath();
+                EAPath Daughter = new EAPath();
+                bool blnTwoCommonNodes = FindSecondCommonNode(split_1_F, split_1_M, Father, Mother, ref split_2_F, ref split_2_M);
+                if (blnTwoCommonNodes)
+                {
+                    DoublePointCrossover(split_1_F, split_1_M, Father, Mother, split_2_F, split_2_M, Son, Daughter);
+                }
+                else
+                {
+                    SinglePointCrossover(split_1_F, split_1_M, Father, Mother, Son, Daughter);
+                }
+
+                // Make sure there's no flying backward for non-copter
+                if (curRequest.VehicleType != UAVType.Copter)
+                {
+                    bool blnGoodCrossover = GoodCrossover(split_1_F, split_1_M, split_2_F, split_2_M, Son, Daughter, blnTwoCommonNodes);
+                    if (!blnGoodCrossover)
+                    {
+                        // Cleaning up
+                        Father = null;
+                        Mother = null;
+                        Son = null;
+                        Daughter = null;
+                        // Try again
+                        k--;
+                        continue;
+                    }
+                }
+
+                // Make sure they still fly all the way.
+                // Now both children are valid paths, let's truncate or extend so they all have length T+1;
+                // After crossover, if Son or Daughter becomes too long, truncate
+                EAPath ShorterPath = new EAPath();
+                EAPath LongerPath = new EAPath();
+                TruncateLongerPath(Son, Daughter, ref ShorterPath, ref LongerPath);
+                if (LongerPath.Path.Count == 0)
+                {
+                    // Both Son and Daughter have right length. Move on!
+                    NewGeneration.Add(Son);
+                    NewGeneration.Add(Daughter);
+                    continue;
+                }
+
+                // After crossover, if Son or Daughter becomes too short, 
+                // probablistically randomly pick another path and crossover again.
+                // This time only keep the longer one and then truncate.
+                EAPath OldLongerPath = LongerPath;
+                int index1 = -1;
+                Father = ShorterPath.Path;
+                if (!FindMother(index1, Father, out split_1_F, out split_1_M, out Mother))
+                {
+                    // Cleaning up
+                    Father = null;
+                    Mother = null;
+                    // Did not find a good Mother
+                    k--;
+                    continue;
+                }
+                // Found a good mother that has the node
+                Son = new EAPath();
+                Daughter = new EAPath();
+                SinglePointCrossover(split_1_F, split_1_M, Father, Mother, Son, Daughter);
+                bool SonLonger = TruncateLongerPath(Son, Daughter, ref ShorterPath, ref LongerPath);
+                EAPath NewLongerPath = LongerPath;
+
+                // Make sure there's no flying backward for non-copter
+                if (curRequest.VehicleType != UAVType.Copter)
+                {
+                    // Only worry about LongerPath
+                    if (!SonLonger)
+                    {
+                        split_1_F = split_1_M;
+                        Daughter = Son;
+                    }
+                    bool blnGoodCrossover = GoodCrossover(split_1_F, split_1_F, 0, 0, Son, Son, false);
+                    if (!blnGoodCrossover)
+                    {
+                        // Cleaning up
+                        Father = null;
+                        Mother = null;
+                        Son = null;
+                        Daughter = null;
+                        LongerPath = null;
+                        ShorterPath = null;
+                        OldLongerPath = null;
+                        NewLongerPath = null;
+                        // Try again
+                        k--;
+                        continue;
+                    }
+                }
+                
+                // Add new paths to new generation
+                NewGeneration.Add(OldLongerPath);
+                NewGeneration.Add(NewLongerPath);
+
+                // Cleaning up
+                Father = null;
+                Mother = null;
+                Son = null;
+                Daughter = null;
+                LongerPath = null;
+                ShorterPath = null;
+                OldLongerPath = null;
+                NewLongerPath = null;
             }
+        }
+
+        // Probabilistically select a parent
+        private int SelectParent()
+        {
+            // Pick random number (0,1)
+            double dblRand = (double)r.Next(0, 1000) / 1000;
+            int index = 0;                                        
+            if (dblRand <= ProbabilityCDF[0])
+            {
+                index = 0;
+            }
+            else
+            {
+                for (int i = 1; i < ProjectConstants.EA_Population; i++)
+                {
+                    if (dblRand > ProbabilityCDF[i - 1] && dblRand <= ProbabilityCDF[i])
+                    {
+                        index = i;
+                        break;
+                    }
+                }
+            }
+            return index;
+        }
+
+        // Find father rand good mother
+        private bool FindFatherMother(out int split_1_F, out int split_1_M, out List<Point> Father, out List<Point> Mother)
+        {
+            // Proportionately pick a father
+            int index1 = SelectParent();
+            Father = CurGeneration[index1].Path;
+            return FindMother(index1, Father, out split_1_F, out split_1_M, out Mother);
+        }
+
+        // Once father is known, find mother
+        private bool FindMother(int index1, List<Point> Father, out int split_1_F, out int split_1_M, out List<Point> Mother)
+        {
+            // Randomly pick a node in Father(1,T-1)
+            split_1_F = r.Next(1, Father.Count()-1);
+            Point first = Father[split_1_F];
+
+            // Need to find a mother with same node
+            int index2 = -1;
+            split_1_M = -1;
+            // Loop until we find a Mother that also has this node
+            // If still unseccessful after 10 times, then pick new Father and new Mother (start this step over)
+            int LoopCount = 0;
+            do
+            {
+                LoopCount++;
+                // Make sure I am not using the same one to crossover
+                do
+                {
+                    index2 = SelectParent();
+                } while (index1 == index2);
+                Mother = CurGeneration[index2].Path;
+                split_1_M = Mother.IndexOf(first);
+            } while (split_1_M == -1 && LoopCount < 10);
+
+            // Debug
+            if (Father.Count() == 0 || Mother.Count() == 0)
+            {
+                Console.WriteLine("Something went wrong!");
+            }
+
+            // Did we find a good mother?
+            if (split_1_M == -1)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+        
+        // See if father and mother have second common node
+        private bool FindSecondCommonNode(int split_1_F, int split_1_M, List<Point> Father, List<Point> Mother, ref int split_2_F, ref int split_2_M)
+        {
+            // Look from the end of Father and see if mother also has a second common node (also from end)
+            for (int i = Father.Count - 1; i > split_1_F + 1; i--)
+            {
+                split_2_M = Mother.IndexOf(Father[i], split_1_M);
+                if (split_2_M != -1)
+                {
+                    split_2_F = i;
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // Single Point Crossover
+        private void SinglePointCrossover(int split_1_F, int split_1_M, List<Point> Father, List<Point> Mother, EAPath Son, EAPath Daughter)
+        {
+            Son.Path.AddRange(Father.GetRange(0, split_1_F));
+            Son.Path.AddRange(Mother.GetRange(split_1_M, curRequest.T + 1 - split_1_M));
+            Daughter.Path.AddRange(Mother.GetRange(0, split_1_M));
+            Daughter.Path.AddRange(Father.GetRange(split_1_F, Father.Count() - split_1_F));
+        }
+
+        // Dobule Point Crossover
+        private void DoublePointCrossover(int split_1_F, int split_1_M, List<Point> Father, List<Point> Mother, int split_2_F, int split_2_M, EAPath Son, EAPath Daughter)
+        {
+            Son.Path.AddRange(Father.GetRange(0, split_1_F));
+            Son.Path.AddRange(Mother.GetRange(split_1_M, split_2_M - split_1_M));
+            Son.Path.AddRange(Father.GetRange(split_2_F, curRequest.T + 1 - split_2_F));
+            Daughter.Path.AddRange(Mother.GetRange(0, split_1_M));
+            Daughter.Path.AddRange(Father.GetRange(split_1_F, split_2_F - split_1_F));
+            Daughter.Path.AddRange(Mother.GetRange(split_2_M, curRequest.T + 1 - split_2_M));
+        }
+
+        // Check if crossover points are good
+        private bool GoodCrossover(int split_1_F, int split_1_M, int split_2_F, int split_2_M, EAPath Son, EAPath Daughter, bool blnTwoCommonNodes)
+        {
+            if (blnTwoCommonNodes)
+            {
+                if (ValidCrossover(split_1_F, Son, 2)               // First crossover point for Son
+                    && ValidCrossover(split_1_F, Son, 1)            // First crossover point for Son
+                    && ValidCrossover(split_1_M, Daughter, 2)       // First crossover point for Daughter
+                    && ValidCrossover(split_1_M, Daughter, 1)       // First crossover point for Daughter
+                    && ValidCrossover(split_1_F + split_2_M - split_1_M, Son, 2)        // Second crossover point for Son
+                    && ValidCrossover(split_1_F + split_2_M - split_1_M, Son, 1)        // Second crossover point for Son
+                    && ValidCrossover(split_1_M + split_2_F - split_1_F, Daughter, 2)   // Second crossover point for Daughter
+                    && ValidCrossover(split_1_M + split_2_F - split_1_F, Daughter, 1))  // Second crossover point for Daughter
+                {
+                    // Both crossover points are good
+                    return true;
+                }
+                else
+                {
+                    // Some crossover point is bad
+                    return false;
+                }
+            }
+            else
+            {
+                if (ValidCrossover(split_1_F, Son, 2)           // First crossover point for Son
+                    && ValidCrossover(split_1_F, Son, 1)        // First crossover point for Son
+                    && ValidCrossover(split_1_M, Daughter, 2)   // First crossover point for Daughter
+                    && ValidCrossover(split_1_M, Daughter, 1))  // First crossover point for Daughter
+                {
+                    // First crossover is good
+                    return true;
+                }
+                else
+                {
+                    // First crossover is bad
+                    return false;
+                }
+            }
+        }
+
+        // Check if the crossover is valid for non-copter (no flying backwards)
+        private bool ValidCrossover(int split_point, EAPath Son, int i)
+        {
+            if (split_point != -1)
+            {
+                if (!ValidMove(Son.Path[split_point - i], Son.Path[split_point - i + 1], Son.Path[split_point - i + 2]))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        // Truncate longer path and identify who is who
+        private bool TruncateLongerPath(EAPath Son, EAPath Daughter, ref EAPath ShorterPath, ref EAPath LongerPath)
+        {
+            if (Son.Path.Count > curRequest.T + 1)
+            {
+                Son.Path.RemoveRange(curRequest.T + 1, Son.Path.Count - (curRequest.T + 1));
+                LongerPath = Son;
+                ShorterPath = Daughter;
+                return true;
+            }
+            if (Daughter.Path.Count > curRequest.T + 1)
+            {
+                Daughter.Path.RemoveRange(curRequest.T + 1, Daughter.Path.Count - (curRequest.T + 1));
+                LongerPath = Daughter;
+                ShorterPath = Son;
+                return false;
+            }
+            return true;
         }
 
         // Mutate based on mutation rate
