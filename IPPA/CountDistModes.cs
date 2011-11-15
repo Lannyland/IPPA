@@ -131,6 +131,12 @@ namespace IPPA
             return Count;
         }
 
+        // Publoic method to return modes nodes
+        public RtwMatrix GetModes()
+        {
+            return mModes;
+        }
+
         // Checking whether the distribution is a uniform distribution.
         private bool CheckUniformDist()
         {

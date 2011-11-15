@@ -123,6 +123,10 @@ namespace IPPA
             return distance;
         }
 
-
+        // Calculating Manhattan Distance of two points
+        public static int ManhattanDistance(Point p1, Point p2)
+        {
+            return ManhattanDistance(p1.X, p1.Y, p2.X, p2.Y);
+        }        
     }
 }

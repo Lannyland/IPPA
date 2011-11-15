@@ -59,6 +59,10 @@
     <Compile Include="AlgPF.cs" />
     <Compile Include="AlgRandom.cs" />
     <Compile Include="AlgSearchReverse.cs" />
+    <Compile Include="AlgTopN.cs" />
+    <Compile Include="AlgTopN_E.cs" />
+    <Compile Include="AlgTopTwo.cs" />
+    <Compile Include="AlgTopTwo_E.cs" />
     <Compile Include="ComputeEfficiencyUB.cs" />
     <Compile Include="AlgLHCRandom.cs" />
     <Compile Include="AlgPFLooper.cs" />
@@ -82,6 +86,7 @@
       <DependentUpon>frmServer.cs</DependentUpon>
     </Compile>
     <Compile Include="ImgLib.cs" />
+    <Compile Include="MapModes.cs" />
     <Compile Include="MISCLib.cs" />
     <Compile Include="MyPictureBox.cs">
       <SubType>Component</SubType>

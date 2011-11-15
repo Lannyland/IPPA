@@ -16,7 +16,11 @@ namespace IPPA
         // Private variables
         private int ModeCount = 0;
         private List<float> arrlCurCDFs = new List<float>();
-        
+        private int GWCount;
+        private int ConvCount;
+        private int CTFGWCoraseLevel;
+        private int CTFGWLevelCount;
+        private int PFCount;
         #endregion
 
         #region Constructor, Destructor
@@ -27,6 +31,10 @@ namespace IPPA
             : base (_curRequest, _mDistReachable, _mDiffReachable, _Efficiency_UB)
         {
             ModeCount = _ModeCount;
+            GWCount = ProjectConstants.GWCount;
+            ConvCount = ProjectConstants.ConvCount;
+            CTFGWCoraseLevel = ProjectConstants.CTFGWCoraseLevel;
+            CTFGWLevelCount = ProjectConstants.CTFGWLevelCount;
         }
 
         // Destructor
@@ -42,6 +50,13 @@ namespace IPPA
         // Algorithm specific implementation of the path planning
         protected override void DoPathPlanning()
         {
+            // If GWCount is 1, then
+            if (GWCount == 1)
+            {
+                NoGWSearch();
+                return;
+            }
+
             // If using hiararchical search
             if (curRequest.UseHiararchy)
             {
@@ -102,10 +117,10 @@ namespace IPPA
             // Find max value
             float[] minmax = mGW.MinMaxValue();
             float max = minmax[1];
-            float rise = max / ProjectConstants.GWCount;
+            float rise = max / GWCount;
 
             // Loop many times
-            for (int i = 0; i < ProjectConstants.GWCount; i++)
+            for (int i = 0; i < GWCount; i++)
             {
                 //Console.Write("i=" + i + " ");
                 // Don't rise ocean for first search
@@ -120,7 +135,7 @@ namespace IPPA
                 if (PlanPathAtCurrentGW(mGW))
                 {
                     // Already found the best path, no need to continue.
-                    i = ProjectConstants.GWCount;
+                    i = GWCount;
                 }
             }
 
@@ -135,21 +150,21 @@ namespace IPPA
             RtwMatrix mGW = mDist.Clone();
 
             // How many to search on each side?
-            int sideSearch = ProjectConstants.CTFGWCoraseLevel - 1;
+            int sideSearch = CTFGWCoraseLevel - 1;
 
             // Find max value
             float[] minmax = mGW.MinMaxValue();
             float globalMax = minmax[1];
             float curMiddle = globalMax;
 
-            float rise = curMiddle / ProjectConstants.CTFGWCoraseLevel;
+            float rise = curMiddle / CTFGWCoraseLevel;
 
-            for (int i = 0; i < ProjectConstants.CTFGWLevelCount; i++)
+            for (int i = 0; i < CTFGWLevelCount; i++)
             {
                 float curLeft = curMiddle + sideSearch * rise;
                 float curRight = curMiddle - sideSearch * rise;
                 // Array of CDFs for all searches (left, middle, and right)
-                float[] CDFs = new float[ProjectConstants.CTFGWCoraseLevel * 2 - 1];
+                float[] CDFs = new float[CTFGWCoraseLevel * 2 - 1];
 
                 // Compute middle
                 if (PlanPathAtCurrentGW(mGW))
@@ -190,7 +205,7 @@ namespace IPPA
                     OceanRises(mGW, indexDiff * rise);
 
                     curMiddle = curMiddle - indexDiff * rise;
-                    rise = rise / ProjectConstants.CTFGWCoraseLevel;
+                    rise = rise / CTFGWCoraseLevel;
                 }
             }
 
@@ -206,7 +221,7 @@ namespace IPPA
                 sign = 1;
             }
 
-            for (int i = 0; i < ProjectConstants.CTFGWCoraseLevel - 1; i++)
+            for (int i = 0; i < CTFGWCoraseLevel - 1; i++)
             {
                 OceanRises(mGW, sign * rise);
                 if (PlanPathAtCurrentGW(mGW))
@@ -217,7 +232,7 @@ namespace IPPA
                 else
                 {
                     arrlCurCDFs.Sort();
-                    CDFs[ProjectConstants.CTFGWCoraseLevel - 1 + sign + sign * i] = arrlCurCDFs[arrlCurCDFs.Count - 1];
+                    CDFs[CTFGWCoraseLevel - 1 + sign + sign * i] = arrlCurCDFs[arrlCurCDFs.Count - 1];
                     arrlCurCDFs.Clear();
                 }
             }
@@ -260,7 +275,7 @@ namespace IPPA
             {
                 // If LHCGWCONV, search multiple convolution kernal sizes
                 int dim = Math.Max(mDist.Rows, mDist.Columns);
-                for (int j = 3; j < dim; j += (int)(dim / ProjectConstants.ConvCount))
+                for (int j = 3; j < dim; j += (int)(dim / ConvCount))
                 {
                     //Console.Write("j=" + j + "\n");
                     AlgLHCGWCONV myAlg = new AlgLHCGWCONV(curRequest, mGW, mDiff, Efficiency_UB, j);
@@ -286,7 +301,7 @@ namespace IPPA
                 // If LHCGWPF, search three convolution kernal sizes
                 int dim = Math.Max(mDist.Rows, mDist.Columns);
                 int Sigma = 0;
-                for (int j = 0; j < ProjectConstants.PFCount; j++)
+                for (int j = 0; j < PFCount; j++)
                 {
                     //Console.Write("j=" + j + "\n");
                     Sigma += Convert.ToInt16(dim / 3);
@@ -312,7 +327,7 @@ namespace IPPA
             {
                 // If CONV, search multiple convolution kernal sizes
                 int dim = Math.Max(mDist.Rows, mDist.Columns);
-                for (int j = 3; j < dim; j += (int)(dim / ProjectConstants.ConvCount))
+                for (int j = 3; j < dim; j += (int)(dim / ConvCount))
                 {
                     //Console.Write("j=" + j + "\n");
                     AlgCONV myAlg = new AlgCONV(curRequest, mGW, mDiff, Efficiency_UB, j);
@@ -350,6 +365,16 @@ namespace IPPA
                 CDF = RealCDF;
                 Path = myAlg.GetPath();
             }
+        }
+
+        // Getters and Setters
+        public void SetGWCount(int _GWCount)
+        {
+            GWCount = _GWCount;
+        }
+        public void SetConvCount(int _ConvCount)
+        {
+            ConvCount = _ConvCount;
         }
 
         // Debugging shouts

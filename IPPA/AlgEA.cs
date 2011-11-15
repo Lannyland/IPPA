@@ -711,6 +711,7 @@ namespace IPPA
         // Mutate based on mutation rate
         private void Mutate()
         {
+            //TODO Fix the flying back bug here.
             List<int> RemoveIndex = new List<int>();
             int mRate = Convert.ToInt16(ProjectConstants.EA_MutationRate * 100);
             for (int i = 0; i < ProjectConstants.EA_Population; i++)

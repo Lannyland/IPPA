@@ -31,6 +31,8 @@ namespace IPPA
         private Point Start = new Point(0,0);
         private Point End = new Point(0,0);
 
+        PathPlanningRequest test;
+
         #endregion
 
         #region Constructor, Destructor
@@ -93,6 +95,8 @@ namespace IPPA
             lstAlg.Items.Add("Random");
             lstAlg.Items.Add("CONV");
             lstAlg.Items.Add("PF");
+            lstAlg.Items.Add("TopTwo");
+            lstAlg.Items.Add("TopN");
             lstAlg.Items.Add("EA-Path");
 
             lvQueue.Clear();
@@ -362,6 +366,12 @@ namespace IPPA
                         case "PF":
                             newRequest.AlgToUse = AlgType.PF_E;
                             break;
+                        case "TopTwo":
+                            newRequest.AlgToUse = AlgType.TopTwo_E;
+                            break;
+                        case "TopN":
+                            newRequest.AlgToUse = AlgType.TopN_E;
+                            break;
                         case "EA":
                             newRequest.AlgToUse = AlgType.EA_E;
                             break;
@@ -391,6 +401,12 @@ namespace IPPA
                             break;
                         case "PF":
                             newRequest.AlgToUse = AlgType.PF;
+                            break;
+                        case "TopTwo":
+                            newRequest.AlgToUse = AlgType.TopTwo;
+                            break;
+                        case "TopN":
+                            newRequest.AlgToUse = AlgType.TopN;
                             break;
                         case "EA":
                             newRequest.AlgToUse = AlgType.EA;
@@ -424,6 +440,9 @@ namespace IPPA
                     return;
                 }
                 #endregion
+
+                // Debug: Test
+                test = newRequest;
 
                 // Add to server queue and pass alone the object
                 frmParent.SubmitToRequestQueue(newRequest);
@@ -569,11 +588,52 @@ namespace IPPA
         private void btnTest_Click(object sender, EventArgs e)
         {
             DateTime startTime = DateTime.Now;
-            CountDistModes myCount = new CountDistModes(CurDistMap);
+            CountDistModes myCount;
+            if (chkUseDiff.Checked)
+            {
+                RtwMatrix mDistReachable = test.DistMap.Clone();
+                RtwMatrix mDiffReachable = test.DiffMap.Clone();
+
+                RtwMatrix mRealModes = new RtwMatrix(CurDiffMap.Rows, CurDiffMap.Columns);
+                for (int i = 0; i < mRealModes.Rows; i++)
+                {
+                    for (int j = 0; j < mRealModes.Columns; j++)
+                    {
+                        mRealModes[i, j] = mDistReachable[i, j] *
+                            (float)test.DiffRates[Convert.ToInt32(mDiffReachable[i, j])];
+                    }
+                }
+                myCount = new CountDistModes(mRealModes);
+            }
+            else
+            {
+                myCount = new CountDistModes(CurDiffMap);
+            }
+
             Log(myCount.GetCount().ToString()+"\n");
             DateTime stopTime = DateTime.Now;
             TimeSpan duration = stopTime - startTime;
             Log("Computation took " + duration.ToString() + " seconds.\n");
+            // Show mode nodes
+            RtwMatrix myModes = myCount.GetModes().Clone();
+            for (int i = 0; i < myModes.Rows; i++)
+            {
+                for (int j = 0; j < myModes.Columns; j++)
+                {
+                    if (myModes[i, j] > 0)
+                    {
+                        myModes[i, j] = 255;
+                    }                }
+            }
+            // Convert matrix to image
+            Bitmap CurBMP = new Bitmap(myModes.Columns, myModes.Rows);
+            ImgLib.MatrixToImage(ref myModes, ref CurBMP);
+            // Showing map in map form
+            frmMap myModesForm = new frmMap(this);
+            myModesForm.Text = "Modes Map";
+            myModesForm.setImage(CurBMP);
+            myModesForm.Show();
+
             myCount = null;
         }
 

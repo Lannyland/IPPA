@@ -93,6 +93,7 @@ namespace IPPA
             }
             
             int ModeCount = myCount.GetCount();
+            RtwMatrix mModes = myCount.GetModes();
             myCount = null;
             Console.WriteLine("ModeCount = " + ModeCount);
 
@@ -107,7 +108,7 @@ namespace IPPA
             for (int i = 0; i < BatchCount; i++)
             {
                 // Run them sequencially and don't use multiple threads.
-                PathPlanningTask curTask = new PathPlanningTask(curRequest, ModeCount, mDistReachable, mDiffReachable, Efficiency_UB);
+                PathPlanningTask curTask = new PathPlanningTask(curRequest, ModeCount, mModes, mDistReachable, mDiffReachable, Efficiency_UB);
                 curTask.Run();
                 AllRunTimes.Add(curTask.GetRunTime());
                 AvgRunTime += curTask.GetRunTime();

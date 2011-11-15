@@ -17,6 +17,7 @@ namespace IPPA
         // Private members
         private PathPlanningRequest curRequest;
         private int ModeCount = 0;
+        private RtwMatrix mModes;
         private RtwMatrix mDistReachable;
         private RtwMatrix mDiffReachable;
         private double Efficiency_UB = 0;
@@ -30,11 +31,12 @@ namespace IPPA
         #region Constructor, Destructor
 
         // Constructor
-        public PathPlanningTask(PathPlanningRequest _curRequest, int _ModeCount,
+        public PathPlanningTask(PathPlanningRequest _curRequest, int _ModeCount, RtwMatrix _mModes,
             RtwMatrix _mDistReachable, RtwMatrix _mDiffReachable, double _Efficiency_UB)
         {
             curRequest = _curRequest;
             ModeCount = _ModeCount;
+            mModes = _mModes;
             mDistReachable = _mDistReachable;
             mDiffReachable = _mDiffReachable;
             Efficiency_UB = _Efficiency_UB;
@@ -45,6 +47,7 @@ namespace IPPA
         {
             // Cleaning up
             curRequest = null;
+            mModes = null;
             mDistReachable = null;
             mDiffReachable = null;
             curAlg = null;
@@ -114,6 +117,22 @@ namespace IPPA
                     break;
                 case AlgType.PF_E:
                     curAlg = new AlgSearchReverse(curRequest, ModeCount, mDistReachable, mDiffReachable, Efficiency_UB);
+                    curAlg.PlanPath();
+                    break;
+                case AlgType.TopTwo:
+                    curAlg = new AlgTopTwo(curRequest, ModeCount, mModes, mDistReachable, mDiffReachable, Efficiency_UB);
+                    curAlg.PlanPath();
+                    break;
+                case AlgType.TopTwo_E:
+                    curAlg = new AlgTopTwo_E(curRequest, ModeCount, mModes, mDistReachable, mDiffReachable, Efficiency_UB);
+                    curAlg.PlanPath();
+                    break;
+                case AlgType.TopN:
+                    curAlg = new AlgTopN(curRequest, ModeCount, mModes, mDistReachable, mDiffReachable, Efficiency_UB);
+                    curAlg.PlanPath();
+                    break;
+                case AlgType.TopN_E:
+                    curAlg = new AlgTopN_E(curRequest, ModeCount, mModes, mDistReachable, mDiffReachable, Efficiency_UB);
                     curAlg.PlanPath();
                     break;
                 case AlgType.EA:
