@@ -35,6 +35,7 @@ namespace IPPA
             ConvCount = ProjectConstants.ConvCount;
             CTFGWCoraseLevel = ProjectConstants.CTFGWCoraseLevel;
             CTFGWLevelCount = ProjectConstants.CTFGWLevelCount;
+            PFCount = ProjectConstants.PFCount;
         }
 
         // Destructor
@@ -155,10 +156,11 @@ namespace IPPA
             // Find max value
             float[] minmax = mGW.MinMaxValue();
             float globalMax = minmax[1];
+            // Start from one side (no ocean rise)
             float curMiddle = globalMax;
 
+            // Actual search
             float rise = curMiddle / CTFGWCoraseLevel;
-
             for (int i = 0; i < CTFGWLevelCount; i++)
             {
                 float curLeft = curMiddle + sideSearch * rise;
@@ -195,8 +197,15 @@ namespace IPPA
                     mGWRight = null;
                 }                
 
+                // Debug: log
+                for (int k = 0; k < CDFs.Length; k++)
+                {
+                    curRequest.SetLog(CDFs[k].ToString() + ", ");
+                }
+                curRequest.SetLog("\n");
+
                 // No need to do this again in the last level
-                if (i < sideSearch)
+                if (i < CTFGWLevelCount - 1)
                 {
                     // Find best CDF 
                     int indexBest = Array.IndexOf(CDFs, CDFs.Max());

@@ -486,10 +486,11 @@ namespace IPPA
             SetDestPoint(false, End);
         }
 
-        // GW Iterations numerical box value is changed
+        // GW Iterations numerical box value is changed (also manages TopTwo SearchResolution)
         private void ntxtGWCount_ValueChanged(object sender, EventArgs e)
         {
             ProjectConstants.GWCount = Convert.ToInt32(ntxtGWCount.Value);
+            ProjectConstants.SearchResolution = Convert.ToInt32(ntxtGWCount.Value);
         }
 
         // Conv Iterations numerical box value is changed
