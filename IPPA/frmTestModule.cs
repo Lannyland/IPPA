@@ -434,6 +434,12 @@ namespace IPPA
                     newRequest.DiffRates = DiffRates;
                 }
 
+                // Remember TopN parameter for TopN algorithm
+                if (newRequest.AlgToUse == AlgType.TopN || newRequest.AlgToUse == AlgType.TopN_E)
+                {
+                    newRequest.TopN = Convert.ToInt32(ntxtGWCount.Value);
+                }
+
                 if (!newRequest.SanityCheck())
                 {
                     System.Windows.Forms.MessageBox.Show(newRequest.GetLog());
@@ -636,6 +642,13 @@ namespace IPPA
             myModesForm.Show();
 
             myCount = null;
+
+
+            // Test permutation
+            Permutation newPerm = new Permutation(3);
+            newPerm.PrintResult();
+            newPerm = new Permutation(5);
+            newPerm.PrintResult();
         }
 
         

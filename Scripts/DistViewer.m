@@ -24,7 +24,7 @@ for x = 1:height
     end;
 end;
 
-figure(2);
+figure;
 clf;
 hAx1=subplot('position', [0 0 1 1]); % 3D Surface of probability distribution
 % Draw the surface

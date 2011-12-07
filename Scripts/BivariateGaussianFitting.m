@@ -19,6 +19,7 @@ for x = 1:height
     end;
 end;
 obj = gmdistribution.fit(r,1);
+figure;
 ezsurf(@(x,y)pdf(obj,[x y]),[0 50],[0 50])
 
 

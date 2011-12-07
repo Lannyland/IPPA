@@ -46,6 +46,7 @@ namespace IPPA
         // Method to to find top N modes
         private void FindTopNModes()
         {
+            #region Debug Code
             // Debug code: show modes
             // Show mode nodes
             for (int i = 0; i < mModes.Rows; i++)
@@ -66,8 +67,7 @@ namespace IPPA
             myModesForm.Text = "Modes Map";
             myModesForm.setImage(CurBMP);
             myModesForm.Show();
-
-
+            #endregion
 
             // Sanity check: make sure we do have that many modes
             if (N > ModeCount)
@@ -83,6 +83,7 @@ namespace IPPA
 
             // Find best N modes and erase other modes
 
+            // TODO If TopN > Modecount, then make TopN = ModeCount
         }
 
         // Method to find mode centroids for all modes

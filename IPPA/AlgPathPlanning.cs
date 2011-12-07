@@ -22,6 +22,7 @@ namespace IPPA
         protected double RunTime = 0;
         protected double Efficiency = 0;
         protected List<Point> Path = new List<Point>();
+        protected bool Status = true;
        
         #endregion
 
@@ -56,24 +57,26 @@ namespace IPPA
         // Every path planning algorithm needs to find a path
         public void PlanPath()
         {
-            // Start timer
-            DateTime startTime = DateTime.Now;
+            try
+            {
+                // Start timer
+                DateTime startTime = DateTime.Now;
 
-            // Individual implementation of path planning based on algorithm choosen
-            DoPathPlanning();
+                // Individual implementation of path planning based on algorithm choosen
+                DoPathPlanning();
 
-            // Compute run time
-            DateTime stopTime = DateTime.Now;
-            TimeSpan duration = stopTime - startTime;
-            RunTime = duration.TotalSeconds;
+                // Compute run time
+                DateTime stopTime = DateTime.Now;
+                TimeSpan duration = stopTime - startTime;
+                RunTime = duration.TotalSeconds;
 
-            // Compute Efficiency
-            Efficiency = CDF / Efficiency_UB;
+                // Compute Efficiency
+                Efficiency = CDF / Efficiency_UB;
 
-            #region Debug
-            //// Debug code, show actual path
-            //if (curRequest.DrawPath)
-            //{
+                #region Debug Code
+                //// Debug code, show actual path
+                //if (curRequest.DrawPath)
+                //{
                 //// Draw coverage
                 //Bitmap CurBMP = new Bitmap(mDistReachable.Columns, mDistReachable.Rows);
                 //ImgLib.MatrixToImage(ref mDistReachable, ref CurBMP);
@@ -114,11 +117,18 @@ namespace IPPA
                 //    map3.setPointColor(p, remains[i]);
                 //    map3.Refresh();
                 //}
-            //}
-            
-            PathSanityCheck(Path);
-            
-            #endregion
+                //}
+
+                PathSanityCheck(Path);
+                #endregion
+            }
+            catch (Exception e)
+            {
+                // Set path planning status to false
+                Status = false;
+                // Write to console debug info
+                Console.WriteLine("{0} Exception caught.", e);
+            }
         }
 
         // Individual implementation of path planning based on algorithm choosen
@@ -337,6 +347,12 @@ namespace IPPA
                 remains.Add(remain);
             }
             return remains;
+        }
+
+        // Return path planning status
+        public bool GetPathPlanningStatus()
+        {
+            return Status;
         }
 
         // Debugging shouts

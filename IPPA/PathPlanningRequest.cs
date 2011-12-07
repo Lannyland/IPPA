@@ -42,6 +42,7 @@ namespace IPPA
         public double[] DiffRates;
         public bool DrawPath = false;
         public int d = 0;                                       // Distance from Start point to the nearest non-zero node
+        public int TopN = 2;                                    // How many modes to consider
         
         #endregion
 

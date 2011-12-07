@@ -124,7 +124,7 @@ namespace IPPA
                     curAlg.PlanPath();
                     break;
                 case AlgType.TopTwo_E:
-                    curAlg = new AlgTopTwo_E(curRequest, ModeCount, mModes, mDistReachable, mDiffReachable, Efficiency_UB);
+                    curAlg = new AlgTopTwo(curRequest, ModeCount, mModes, mDistReachable, mDiffReachable, Efficiency_UB);
                     curAlg.PlanPath();
                     break;
                 case AlgType.TopN:

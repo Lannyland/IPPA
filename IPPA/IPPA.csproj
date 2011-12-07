@@ -62,7 +62,6 @@
     <Compile Include="AlgTopN.cs" />
     <Compile Include="AlgTopN_E.cs" />
     <Compile Include="AlgTopTwo.cs" />
-    <Compile Include="AlgTopTwo_E.cs" />
     <Compile Include="ComputeEfficiencyUB.cs" />
     <Compile Include="AlgLHCRandom.cs" />
     <Compile Include="AlgPFLooper.cs" />
@@ -95,6 +94,7 @@
     <Compile Include="PathPlanningRequest.cs" />
     <Compile Include="PathPlanningServer.cs" />
     <Compile Include="PathPlanningTask.cs" />
+    <Compile Include="Permutation.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ProjectConstants.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -12,28 +12,29 @@ namespace IPPA
         #region Members
 
         // Private variables
-        Point Start = new Point();
-        Point End = new Point();
-        Point Centroid1 = new Point();
-        Point Centroid2 = new Point();
-        Point End1 = new Point();
-        Point End2 = new Point();
-        Point MiddlePoint = new Point();
-        int d1 = 0;
-        int d2 = 0;
-        int d3 = 0;
-        int d4 = 0;
-        int t1 = 0;
-        int t2 = 0;
-        int t3 = 0;
-        int t4 = 0;
-        AlgLHCGWCONV Seg1 = null;
-        AlgGlobalWarming Seg2 = null;
-        AlgGlobalWarming Seg3 = null;
-        AlgLHCGWCONV Seg4 = null;
+        private Point Start = new Point();
+        private Point End = new Point();
+        private Point Centroid1 = new Point();
+        private Point Centroid2 = new Point();
+        private Point End1 = new Point();
+        private Point End2 = new Point();
+        private Point MiddlePoint = new Point();
+        private int d1 = 0;
+        private int d2 = 0;
+        private int d3 = 0;
+        private int d4 = 0;
+        private int t1 = 0;
+        private int t2 = 0;
+        private int t3 = 0;
+        private int t4 = 0;
+        private AlgLHCGWCONV Seg1 = null;
+        private AlgGlobalWarming Seg2 = null;
+        private AlgGlobalWarming Seg3 = null;
+        private AlgLHCGWCONV Seg4 = null;
 
-        MapModes myModes = null;
+        private MapModes myModes = null;
         private double curCDF = 0;
+        private RtwMatrix mDistAfterSeg1Seg4;
         private List<Point> curPath2;
         private List<Point> curPath3;
         private int StepSize = 0;
@@ -54,6 +55,7 @@ namespace IPPA
             myModes = new MapModes(_ModeCount, _mModes, 2);
             CTFTTCoraseLevel = ProjectConstants.CTFTTCoraseLevel;
             CTFTTLevelCount = ProjectConstants.CTFTTLevelCount;
+            mDistAfterSeg1Seg4 = mDist;
         }
 
         // Destructor
@@ -285,7 +287,7 @@ namespace IPPA
                 else
                 {
                     // Extensive Search (like GW)
-                    ExtensiveSearch(ref Centroid1, ref Centroid2, ref End1, ref End2, t2Min, t3Max, t2Max, Seg1);
+                    ExtensiveSearch();
                 }
 
             }
@@ -295,27 +297,8 @@ namespace IPPA
                 // Option 2 Do simultaneous path planning of all four segments
             }
 
-            // Plan shortest path to closest centroid using t1.
-            //TODO For now just assume copter (not checking the if flying backward at joint of Seg1 and Seg2.
-
-            int t2Min = MISCLib.ManhattanDistance(Centroid1, End1);
-            int t3Max = curRequest.T - t1 - t2Min - 2;
-            int t3Min = MISCLib.ManhattanDistance(Centroid2, End2);
-            int t2Max = curRequest.T - t1 - t3Min - 2;
-            if (curRequest.VehicleType == UAVType.Copter)
-            {
-                t3Max += 2;
-                t2Max += 2;
-            }
-            StepSize = Convert.ToInt16(Math.Round(Convert.ToDouble(t2Max - t2Min) / ProjectConstants.SearchResolution));
-
-            // First plan path from Start to Centroid1 (shortest path)
-            
-
-
-
             // Join three pieces into one path
-            JoinPathSegments(MiddlePoint, Seg1);
+            JoinPathSegments();
         }
 
         // Method to plan path for segment 1
@@ -325,8 +308,10 @@ namespace IPPA
             newRequest1.UseEndPoint = true;
             newRequest1.pEnd = new DistPoint(Centroid1.Y, Centroid1.X);
             newRequest1.T = t1;
+            newRequest1.AlgToUse = AlgType.LHCGWCONV;
             Seg1 = new AlgLHCGWCONV(newRequest1, mDist, mDiff, Efficiency_UB, 3);
             Seg1.PlanPath();
+            mDistAfterSeg1Seg4 = Seg1.GetmCurDist();
         }
 
         // Method to plan path for segment 4
@@ -337,24 +322,39 @@ namespace IPPA
             newRequest4.pStart = new DistPoint(End.Y, End.X);
             newRequest4.pEnd = new DistPoint(Centroid2.Y, Centroid2.X);
             newRequest4.T = t4;
-            Seg4 = new AlgLHCGWCONV(newRequest4, mDist, mDiff, Efficiency_UB, 3);
+            newRequest4.AlgToUse = AlgType.LHCGWCONV;
+            Seg4 = new AlgLHCGWCONV(newRequest4, mDistAfterSeg1Seg4, mDiff, Efficiency_UB, 3);
             Seg4.PlanPath();
+            mDistAfterSeg1Seg4 = Seg4.GetmCurDist();
         }
 
         // Method to perform extensive search in the T space
-        private void ExtensiveSearch(ref Point Centroid1, ref Point Centroid2, ref Point End1, ref Point End2, int t2Min, int t3Max, int t2Max, AlgLHCGWCONV Seg1)
+        private void ExtensiveSearch()
         {
-            int t2 = t2Min;
-            int t3 = t3Max;
-            while (t2 <= t2Max)
+            //TODO For now just assume copter (not checking the if flying backward at joint of Seg1 Seg2 and joint of Seg3 Seg4.
+            int t2Min = MISCLib.ManhattanDistance(Centroid1, End1);
+            int t3Max = curRequest.T - t1 - t4 - t2Min - 2;
+            int t3Min = MISCLib.ManhattanDistance(Centroid2, End2);
+            int t2Max = curRequest.T - t1 - t4 - t3Min - 2;
+            if (curRequest.VehicleType == UAVType.Copter)
             {
-                PlanPathSeg2Seg3(ref Centroid1, ref Centroid2, ref End1, ref End2, Seg1, t2, t3, out Seg2, out Seg3);
+                t3Max += 2;
+                t2Max += 2;
+            }
+            StepSize = Convert.ToInt16(Math.Round(Convert.ToDouble(t2Max - t2Min) / ProjectConstants.SearchResolution));
+
+            // Now let's search
+            t2 = t2Min;
+            t3 = t3Max;
+            while (t2 <= t2Max && StepSize>0)
+            {
+                PlanPathSeg2Seg3();
 
                 // Debug: Log
                 curRequest.SetLog((Seg2.GetCDF() + Seg3.GetCDF()).ToString() + "\n");
 
                 // Remember if true CDF is better
-                RememberBestPath(Seg2, Seg3);
+                RememberBestPath();
 
                 // Next search
                 t2 += StepSize;
@@ -367,21 +367,21 @@ namespace IPPA
         }
 
         // Method to plan path for segment 2 given t2 and t3
-        private void PlanPathSeg2Seg3(ref Point Centroid1, ref Point Centroid2, ref Point End1, ref Point End2, AlgLHCGWCONV Seg1, int t2, int t3, out AlgGlobalWarming Seg2, out AlgGlobalWarming Seg3)
+        private void PlanPathSeg2Seg3()
         {
-            // Plan path from closest centroid to end with current allocated t
+            // Plan path from closest centroid to end with current allocated t2
             PathPlanningRequest newRequest2 = curRequest.Clone();
             newRequest2.UseEndPoint = true;
             newRequest2.pStart = new DistPoint(Centroid1.Y, Centroid1.X);
             newRequest2.pEnd = new DistPoint(End1.Y, End1.X);
             newRequest2.AlgToUse = AlgType.LHCGWCONV_E;
             newRequest2.T = t2;
-            Seg2 = new AlgGlobalWarming(newRequest2, myModes.GetModeCount(), Seg1.GetmCurDist(), mDiff, Efficiency_UB);
+            Seg2 = new AlgGlobalWarming(newRequest2, myModes.GetModeCount(), mDistAfterSeg1Seg4, mDiff, Efficiency_UB);
             Seg2.SetGWCount(1);
             Seg2.SetConvCount(3);
             Seg2.PlanPath();
 
-            // Plan path from the other centroid to end with allocated t
+            // Plan path from the other centroid to end with allocated t3
             PathPlanningRequest newRequest3 = curRequest.Clone();
             newRequest3.UseEndPoint = true;
             newRequest3.pStart = new DistPoint(Centroid2.Y, Centroid2.X);
@@ -398,10 +398,10 @@ namespace IPPA
             newRequest3 = null;
         }
 
-        // Compute true CDF based on original dist map (no GW) and remember the best
-        private void RememberBestPath(AlgGlobalWarming Seg2, AlgGlobalWarming Seg3)
+        // Remember the best combo of Seg2 and Seg3
+        private void RememberBestPath()
         {
-            if (curCDF < Seg2.GetCDF() + Seg3.GetCDF())
+            if (curCDF < (Seg2.GetCDF() + Seg3.GetCDF()))
             {
                 curCDF = Seg2.GetCDF() + Seg3.GetCDF();
                 curPath2 = Seg2.GetPath();
@@ -410,10 +410,13 @@ namespace IPPA
         }
 
         // Method to join path segments together
-        private void JoinPathSegments(Point MiddlePoint, AlgLHCGWCONV Seg1)
+        private void JoinPathSegments()
         {
-            Path.AddRange(Seg1.GetPath());
-            Path.RemoveAt(Path.Count - 1);
+            if (Seg1 != null)
+            {
+                Path.AddRange(Seg1.GetPath());
+                Path.RemoveAt(Path.Count - 1);
+            }
             Path.AddRange(curPath2);
             if (curRequest.VehicleType == UAVType.Copter)
             {
@@ -425,6 +428,12 @@ namespace IPPA
             }
             curPath3.Reverse();
             Path.AddRange(curPath3);
+            if (Seg4!=null)
+            {
+                Path.RemoveAt(Path.Count - 1);
+                Seg4.GetPath().Reverse();
+                Path.AddRange(Seg4.GetPath());
+            }
         }
 
         // Debugging shouts

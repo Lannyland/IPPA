@@ -415,9 +415,9 @@
             this.label11.AutoSize = true;
             this.label11.Location = new System.Drawing.Point(227, 66);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(75, 13);
+            this.label11.Size = new System.Drawing.Size(113, 13);
             this.label11.TabIndex = 22;
-            this.label11.Text = "GW Iterations:";
+            this.label11.Text = "GW Iterations / TopN:";
             // 
             // ntxtGWCount
             // 
