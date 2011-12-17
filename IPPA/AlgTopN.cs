@@ -59,11 +59,27 @@ namespace IPPA
                 //If Yes, N is good. If No, use mode count as N.
                 N = myModes.GetModeCount();
             }
+                        
+            // Sanity check: make sure T is enough to cover all centroids
+            lstCentroids = myModes.GetModeCentroids();
+            int[] distances = new int[lstCentroids.Count-1];
+            int[] CentroidsIndexes = new int[lstCentroids.Count];
+            for(int i=0; i<lstCentroids.Count; i++)
+            {
+                CentroidsIndexes[i] = i;
+            }
+            foreach (IEnumerable<T> permutation in PermuteUtils.Permute<T>(CentroidsIndexes, lstCentroids.Count))
+            {
+                foreach (T i in permutation)
+                {
+                    
+                }
+            }
+            if(false)
+            {
+            }
 
             /*
-            // Sanity check: make sure T is enough to cover all centroids
-            if(
-
             // Figuring our all points
             FigureOutAllPoints();
 

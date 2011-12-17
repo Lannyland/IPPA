@@ -594,63 +594,80 @@ namespace IPPA
         // When the test button is pressed (Count how many modes)
         private void btnTest_Click(object sender, EventArgs e)
         {
-            DateTime startTime = DateTime.Now;
-            CountDistModes myCount;
-            if (chkUseDiff.Checked)
-            {
-                RtwMatrix mDistReachable = test.DistMap.Clone();
-                RtwMatrix mDiffReachable = test.DiffMap.Clone();
+            #region Test Mode Count
+            //DateTime startTime = DateTime.Now;
+            //CountDistModes myCount;
+            //if (chkUseDiff.Checked)
+            //{
+            //    RtwMatrix mDistReachable = test.DistMap.Clone();
+            //    RtwMatrix mDiffReachable = test.DiffMap.Clone();
 
-                RtwMatrix mRealModes = new RtwMatrix(CurDiffMap.Rows, CurDiffMap.Columns);
-                for (int i = 0; i < mRealModes.Rows; i++)
-                {
-                    for (int j = 0; j < mRealModes.Columns; j++)
-                    {
-                        mRealModes[i, j] = mDistReachable[i, j] *
-                            (float)test.DiffRates[Convert.ToInt32(mDiffReachable[i, j])];
-                    }
-                }
-                myCount = new CountDistModes(mRealModes);
-            }
-            else
-            {
-                myCount = new CountDistModes(CurDiffMap);
-            }
+            //    RtwMatrix mRealModes = new RtwMatrix(CurDiffMap.Rows, CurDiffMap.Columns);
+            //    for (int i = 0; i < mRealModes.Rows; i++)
+            //    {
+            //        for (int j = 0; j < mRealModes.Columns; j++)
+            //        {
+            //            mRealModes[i, j] = mDistReachable[i, j] *
+            //                (float)test.DiffRates[Convert.ToInt32(mDiffReachable[i, j])];
+            //        }
+            //    }
+            //    myCount = new CountDistModes(mRealModes);
+            //}
+            //else
+            //{
+            //    myCount = new CountDistModes(CurDiffMap);
+            //}
 
-            Log(myCount.GetCount().ToString()+"\n");
-            DateTime stopTime = DateTime.Now;
-            TimeSpan duration = stopTime - startTime;
-            Log("Computation took " + duration.ToString() + " seconds.\n");
-            // Show mode nodes
-            RtwMatrix myModes = myCount.GetModes().Clone();
-            for (int i = 0; i < myModes.Rows; i++)
-            {
-                for (int j = 0; j < myModes.Columns; j++)
-                {
-                    if (myModes[i, j] > 0)
-                    {
-                        myModes[i, j] = 255;
-                    }                }
-            }
-            // Convert matrix to image
-            Bitmap CurBMP = new Bitmap(myModes.Columns, myModes.Rows);
-            ImgLib.MatrixToImage(ref myModes, ref CurBMP);
-            // Showing map in map form
-            frmMap myModesForm = new frmMap(this);
-            myModesForm.Text = "Modes Map";
-            myModesForm.setImage(CurBMP);
-            myModesForm.Show();
+            //Log(myCount.GetCount().ToString()+"\n");
+            //DateTime stopTime = DateTime.Now;
+            //TimeSpan duration = stopTime - startTime;
+            //Log("Computation took " + duration.ToString() + " seconds.\n");
+            //// Show mode nodes
+            //RtwMatrix myModes = myCount.GetModes().Clone();
+            //for (int i = 0; i < myModes.Rows; i++)
+            //{
+            //    for (int j = 0; j < myModes.Columns; j++)
+            //    {
+            //        if (myModes[i, j] > 0)
+            //        {
+            //            myModes[i, j] = 255;
+            //        }                }
+            //}
+            //// Convert matrix to image
+            //Bitmap CurBMP = new Bitmap(myModes.Columns, myModes.Rows);
+            //ImgLib.MatrixToImage(ref myModes, ref CurBMP);
+            //// Showing map in map form
+            //frmMap myModesForm = new frmMap(this);
+            //myModesForm.Text = "Modes Map";
+            //myModesForm.setImage(CurBMP);
+            //myModesForm.Show();
 
-            myCount = null;
+            //myCount = null;
+            #endregion 
 
+            #region Test permutation
+            int[] intInput = { 1, 2, 3, 4};
+            Log(ShowPermutations<int>(intInput, 4));
 
-            // Test permutation
-            Permutation newPerm = new Permutation(3);
-            newPerm.PrintResult();
-            newPerm = new Permutation(5);
-            newPerm.PrintResult();
+            string[] stringInput = { "Hello", "World", "Foo" };
+            Log(ShowPermutations<string>(stringInput, 3));
+            #endregion
         }
 
+        // Print out the permutations of the input 
+        static string ShowPermutations<T>(IEnumerable<T> input, int count)
+        {
+            string s = "";
+            foreach (IEnumerable<T> permutation in PermuteUtils.Permute<T>(input, count))
+            {
+                foreach (T i in permutation)
+                {
+                    s+=" " + i.ToString();
+                }
+                s+="\n";
+            }
+            return s;
+        }
         
         
         
