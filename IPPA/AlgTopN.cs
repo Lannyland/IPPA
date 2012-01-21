@@ -30,7 +30,7 @@ namespace IPPA
             RtwMatrix _mDiffReachable, double _Efficiency_UB) 
             : base (_curRequest, _mDistReachable, _mDiffReachable, _Efficiency_UB)
         {
-            myModes = new MapModes(_ModeCount, _mModes, curRequest.TopN);
+            myModes = new MapModes(_ModeCount, _mModes, curRequest, mDist, mDiff);
         }
 
         // Destructor
@@ -52,22 +52,23 @@ namespace IPPA
                 return;
             }
 
-            //Determine whether there are TopN modes.
+            // Determine whether there are TopN modes.
             N = curRequest.TopN;
             if (N > myModes.GetModeCount())
             {
-                //If Yes, N is good. If No, use mode count as N.
+                // If Yes, N is good. If No, use mode count as N.
                 N = myModes.GetModeCount();
             }
                         
-            // Sanity check: make sure T is enough to cover all centroids
-            lstCentroids = myModes.GetModeCentroids();
+            // Sanity check: make sure T is enough to cover all TopN centroids
+            lstCentroids = myModes.GetModeCentroids();          // Only topN
             int[] distances = new int[lstCentroids.Count-1];
             int[] CentroidsIndexes = new int[lstCentroids.Count];
             for(int i=0; i<lstCentroids.Count; i++)
             {
                 CentroidsIndexes[i] = i;
             }
+            /*
             foreach (IEnumerable<T> permutation in PermuteUtils.Permute<T>(CentroidsIndexes, lstCentroids.Count))
             {
                 foreach (T i in permutation)
@@ -78,6 +79,17 @@ namespace IPPA
             if(false)
             {
             }
+            */
+
+            //TODO Finish implementing this
+            //TODO What happens if there is not enough T? Drop least favorite mode and repeat?
+
+            //TODO Compute TopN time. Why isn't it working?
+            //TODO Start to closest centroid and end to closest centroid. If same, give it to the shorter path
+
+            //TODO Simultaneous LHC from centroids. One coming out of start/end centroid and two coming out of other centroids
+            //TODO Keep a counter of worst distance among all endpoints of path segments
+            //TODO Check when counter too high to make sure we still have enough time to connect all ends.
 
             /*
             // Figuring our all points
@@ -95,7 +107,7 @@ namespace IPPA
             //TODO Do it until reaching T.
             //TODO Plan LHC to join them.
             //TODO Deal with flying backwards
-             */
+            */
         }
 
         /*

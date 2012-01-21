@@ -95,7 +95,7 @@ namespace IPPA
             int ModeCount = myCount.GetCount();
             RtwMatrix mModes = myCount.GetModes();
             myCount = null;
-            Console.WriteLine("ModeCount = " + ModeCount);
+            //Console.WriteLine("ModeCount = " + ModeCount);
 
             // Then do efficiency lower bound
             ComputeEfficiencyUB myELB = new ComputeEfficiencyUB(curRequest);

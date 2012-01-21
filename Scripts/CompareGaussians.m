@@ -25,3 +25,11 @@ for i=1:8
     arrowEnds = [a*D(1,1)+o; b*D(2,2)+o];          %# Ending points for arrows
     arrow(arrowStarts,arrowEnds);   %# Plot arrows
 end;
+
+% mu1 = [1 2];
+% sigma1 = [3 .2; .2 2];
+% mu2 = [-1 -2];
+% sigma2 = [2 0; 0 1];
+% X = [mvnrnd(mu1,sigma1,200);mvnrnd(mu2,sigma2,100)];
+% 
+% scatter(X(:,1),X(:,2),10,'ko')

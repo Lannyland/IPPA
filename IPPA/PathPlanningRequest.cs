@@ -124,6 +124,13 @@ namespace IPPA
                     AllVerified = false;
                 }
             }
+            // Make sure N > 1 if we are using TopN algorithm
+            if (TopN < 2)
+            {
+                // No point of using TopN algorithm
+                Log += "Please make sure N is greater than 1!\n";
+                AllVerified = false;
+            }
 
             return AllVerified;
         }

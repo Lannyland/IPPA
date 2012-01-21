@@ -2,7 +2,7 @@
 format compact;
 
 % Read in map file
-map = csvread('C:\Lanny\MAMI\IPPA\Maps\DistMaps\Unimodal_Real.csv');
+map = csvread('C:\Lanny\MAMI\IPPA\Maps\DistMaps\Real_BimodalClose.csv');
 
 % Specify specific parameters
 [height, width] =   size(map);
@@ -28,7 +28,7 @@ figure;
 clf;
 hAx1=subplot('position', [0 0 1 1]); % 3D Surface of probability distribution
 % Draw the surface
-hSurf1=surf(hAx1,X,Y,img2);
+hSurf1=surf(hAx1,X.',Y.',fliplr(img2));
 colormap jet;
 axis([0 height 0 width 0 255]);
 drawnow;

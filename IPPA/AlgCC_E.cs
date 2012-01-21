@@ -9,8 +9,6 @@ namespace IPPA
 {
     class AlgCC_E : AlgCC
     {
-        // TODO Implement AlgCC_E
-
         #region Members
 
         // Private variables

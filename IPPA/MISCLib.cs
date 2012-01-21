@@ -127,6 +127,19 @@ namespace IPPA
         public static int ManhattanDistance(Point p1, Point p2)
         {
             return ManhattanDistance(p1.X, p1.Y, p2.X, p2.Y);
+        }
+
+        // Calculating Euclidian Distance
+        public static double EuclidianDistance(int x1, int y1, int x2, int y2)
+        {
+            double distance = Math.Sqrt(Math.Pow(Math.Abs(x1 - x2), 2) + Math.Pow(Math.Abs(y1 - y2), 2));
+            return distance;
+        }
+
+        // Calculating Euclidian Distance of two points
+        public static double EuclidianDistance(Point p1, Point p2)
+        {
+            return EuclidianDistance(p1.X, p1.Y, p2.X, p2.Y);
         }        
     }
 }
