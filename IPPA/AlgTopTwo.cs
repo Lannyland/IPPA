@@ -106,6 +106,7 @@ namespace IPPA
             List<Point> lstCentroids = myModes.GetModeCentroids();
 
             // Find closest centroid and make that centriod1            
+            //TODO Fix the bug of when End is closer to the centroid closest to Start. Really should permute.
             d1 = MISCLib.ManhattanDistance(Start, lstCentroids[0]);
             d2 = MISCLib.ManhattanDistance(Start, lstCentroids[1]);
             if (d1 < d2)
@@ -289,7 +290,6 @@ namespace IPPA
                     // Extensive Search (like GW)
                     ExtensiveSearch();
                 }
-
             }
 
             if (option == 2)

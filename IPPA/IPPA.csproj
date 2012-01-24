@@ -64,7 +64,6 @@
     <Compile Include="AlgRandom.cs" />
     <Compile Include="AlgSearchReverse.cs" />
     <Compile Include="AlgTopN.cs" />
-    <Compile Include="AlgTopN_E.cs" />
     <Compile Include="AlgTopTwo.cs" />
     <Compile Include="ComputeEfficiencyUB.cs" />
     <Compile Include="AlgLHCRandom.cs" />

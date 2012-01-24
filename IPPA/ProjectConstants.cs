@@ -10,15 +10,18 @@ namespace IPPA
         public static int DefaultDimension = 60;
         public static int MinFlightTime = 10;
         public static int MaxFlightTime = 3600;
+        public static int DefaultFlightTime = 1200;
         public static string MapsDir = @"C:\Lanny\MAMI\IPPA\Maps";
-        public static string DefaultDistMap = @"C:\Lanny\MAMI\IPPA\Maps\DistMaps\Simple_BimodalFar.csv";
+        // public static string DefaultDistMap = @"C:\Lanny\MAMI\IPPA\Maps\DistMaps\Simple_BimodalFar.csv";
+        public static string DefaultDistMap = @"C:\Lanny\MAMI\IPPA\Maps\DistMaps\Real_Complex2.csv";
         public static string DefaultDiffMap = @"C:\Lanny\MAMI\IPPA\Maps\DiffMaps\Diff_Simple_BimodalFar1.csv";
         
         // Down sample scale in CountDistModes class
         public static int DownSampleScale = 1;
 
         // Global Warming parameters
-        public static int GWCount = 40;             // How many extensive GWs to search for
+        // public static int GWCount = 40;             // How many extensive GWs to search for
+        public static int GWCount = 4;             // How many extensive GWs to search for
         public static int ConvCount = 10;           // How many convolution kernals to use
         public static int PFCount = 6;              // How many PF discount functions to use
         public static int CTFGWCoraseLevel = 4;     // How many GW to perform at each coarse-to-fine level
@@ -59,5 +62,7 @@ namespace IPPA
         public static int CTFTTCoraseLevel = 4;     // How many searches to perform at each coarse-to-fine level
         public static int CTFTTLevelCount = 3;      // How many coarse-to-fine levels to search for
 
+        // TopN parameters
+        public static int Kernel_Size = 5;          // What size kenel for convolution       
     }
 }

@@ -57,8 +57,8 @@ namespace IPPA
         // Every path planning algorithm needs to find a path
         public void PlanPath()
         {
-            try
-            {
+            //try
+            //{
                 // Start timer
                 DateTime startTime = DateTime.Now;
 
@@ -121,14 +121,14 @@ namespace IPPA
 
                 PathSanityCheck(Path);
                 #endregion
-            }
-            catch (Exception e)
-            {
-                // Set path planning status to false
-                Status = false;
-                // Write to console debug info
-                Console.WriteLine("{0} Exception caught.", e);
-            }
+            //}
+            //catch (Exception e)
+            //{
+            //    // Set path planning status to false
+            //    Status = false;
+            //    // Write to console debug info
+            //    Console.WriteLine("{0} Exception caught.", e);
+            //}
         }
 
         // Individual implementation of path planning based on algorithm choosen

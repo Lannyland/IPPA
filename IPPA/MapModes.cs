@@ -149,7 +149,7 @@ namespace IPPA
                 {
                     if (mModes[i, j] > 0)
                     {
-                        AllModes[Convert.ToInt16(mModes[i, j])-1].Add(new Point(i, j));
+                        AllModes[Convert.ToInt16(mModes[i, j])-1].Add(new Point(j, i));
                     }
                 }
             }

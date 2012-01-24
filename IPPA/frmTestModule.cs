@@ -80,10 +80,10 @@ namespace IPPA
             ntxtSY.Maximum = ProjectConstants.DefaultDimension - 1;
             trbFlightTime.Minimum = ProjectConstants.MinFlightTime;
             trbFlightTime.Maximum = ProjectConstants.MaxFlightTime;
-            trbFlightTime.Value = ProjectConstants.MaxFlightTime;
+            trbFlightTime.Value = ProjectConstants.DefaultFlightTime;
             ntxtFlightTime.Minimum = ProjectConstants.MinFlightTime;
             ntxtFlightTime.Maximum = ProjectConstants.MaxFlightTime;
-            ntxtFlightTime.Value = 150;
+            ntxtFlightTime.Value = ProjectConstants.DefaultFlightTime;
             ntxtGWCount.Value = ProjectConstants.GWCount;
             ntxtConvCount.Value = ProjectConstants.ConvCount;
             ntxtPFCount.Value = ProjectConstants.PFCount;
@@ -650,13 +650,13 @@ namespace IPPA
             #endregion 
 
             #region Test permutation
-            /*
+            
             int[] intInput = { 1, 2, 3, 4};
-            Log(ShowPermutations<int>(intInput, 4));
+            Log(ShowPermutations<int>(intInput, 3));
 
             string[] stringInput = { "Hello", "World", "Foo" };
-            Log(ShowPermutations<string>(stringInput, 3));
-            */
+            Log(ShowPermutations<string>(stringInput, 2));
+            
             #endregion
 
             #region Test MATLAB
@@ -713,20 +713,20 @@ namespace IPPA
             #endregion
         }
 
-        //// Print out the permutations of the input 
-        //static string ShowPermutations<T>(IEnumerable<T> input, int count)
-        //{
-        //    string s = "";
-        //    foreach (IEnumerable<T> permutation in PermuteUtils.Permute<T>(input, count))
-        //    {
-        //        foreach (T i in permutation)
-        //        {
-        //            s+=" " + i.ToString();
-        //        }
-        //        s+="\n";
-        //    }
-        //    return s;
-        //}
+        // Print out the permutations of the input 
+        static string ShowPermutations<T>(IEnumerable<T> input, int count)
+        {
+            string s = "";
+            foreach (IEnumerable<T> permutation in PermuteUtils.Permute<T>(input, count))
+            {
+                foreach (T i in permutation)
+                {
+                    s += " " + i.ToString();
+                }
+                s += "\n";
+            }
+            return s;
+        }
 
         //static private void UseEngine(Array ar, Array ai, Array br,
         //    Array bi, ref Array cr, ref Array ci, ref Array dr, ref Array di)
