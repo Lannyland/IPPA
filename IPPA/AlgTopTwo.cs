@@ -52,7 +52,7 @@ namespace IPPA
             RtwMatrix _mDiffReachable, double _Efficiency_UB) 
             : base (_curRequest, _mDistReachable, _mDiffReachable, _Efficiency_UB)
         {
-            myModes = new MapModes(_ModeCount, _mModes, curRequest);
+            myModes = new MapModes(_ModeCount, _mModes, curRequest, _mDistReachable, _mDiffReachable);
             CTFTTCoraseLevel = ProjectConstants.CTFTTCoraseLevel;
             CTFTTLevelCount = ProjectConstants.CTFTTLevelCount;
             mDistAfterSeg1Seg4 = mDist;

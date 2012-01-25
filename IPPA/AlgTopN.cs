@@ -61,9 +61,9 @@ namespace IPPA
         protected override void DoPathPlanning()
         {
             // Sanity check: Don't do this when there is no mode or just 1 mode
-            if (myModes.GetModeCount() < 2)
+            if (myModes.GetModeCount() < 3)
             {
-                System.Windows.Forms.MessageBox.Show("Can't use TopN algorithm because there are less than 2 modes!");
+                System.Windows.Forms.MessageBox.Show("Can't use TopN algorithm because there are less than 3 modes!");
                 return;
             }
 
@@ -177,10 +177,10 @@ namespace IPPA
             }
 
             // Plan first and last segments of the path
-            int remainingT = curRequest.T;
+            int remainingT = curRequest.T + 1;
             Point newStart = new Point(0, 0);
             Point newEnd = new Point(0, 0);
-            RtwMatrix mDistAfterSegFirstSegLast = mDist;
+            RtwMatrix mDistAfterSegFirstSegLast = mDist.Clone();
             // Plan first seg
             StraightToClosestCentroid(Start, allCentroids, ref newStart, ref remainingT, ref SegFirst, mDistAfterSegFirstSegLast);
             if(curRequest.UseEndPoint)
@@ -210,8 +210,8 @@ namespace IPPA
             if (p1.X == p2.X && p1.Y == p2.Y)
             {
                 Path.AddRange(SegFirstPath);
-                Path.AddRange(MidSegments[0]);
                 Path.RemoveAt(Path.Count - 1);
+                Path.AddRange(MidSegments[0]);
             }
             else
             {
@@ -248,8 +248,45 @@ namespace IPPA
             }
             // 0 1-2 3-4 5-6 ...
             FinalRealOrder.Insert(0, 0);
+
+            //// Sanity Check:
+            //int testDist = 0;
+            //int d = 0;
+            //d = MISCLib.ManhattanDistance(
+            //    MidSegments[FinalRealOrder[0]][MidSegments[FinalRealOrder[0]].Count - 1],
+            //    MidSegments[FinalRealOrder[1]][MidSegments[FinalRealOrder[1]].Count - 1]);
+            //Console.Write(" 0-3: " + (d - 1));
+            //if(d>0)
+            //{ 
+            //    testDist = testDist + d + 1 - 2;
+            //}
+            //d = MISCLib.ManhattanDistance(
+            //    MidSegments[FinalRealOrder[2]][MidSegments[FinalRealOrder[2]].Count - 1],
+            //    MidSegments[FinalRealOrder[3]][MidSegments[FinalRealOrder[3]].Count - 1]);
+            //Console.Write(" 2-7: " + (d - 1));
+            //if(d>0)
+            //{
+            //    testDist = testDist + d + 1 - 2;
+            //}
+            //d = MISCLib.ManhattanDistance(
+            //    MidSegments[FinalRealOrder[4]][MidSegments[FinalRealOrder[4]].Count - 1],
+            //    MidSegments[FinalRealOrder[5]][MidSegments[FinalRealOrder[5]].Count - 1]);
+            //Console.Write(" 6-4: " + (d - 1));
+            //if(d>0)
+            //{
+            //    testDist = testDist + d + 1 - 2;
+            //}
+            //d = MISCLib.ManhattanDistance(
+            //    MidSegments[FinalRealOrder[6]][MidSegments[FinalRealOrder[6]].Count - 1],
+            //    MidSegments[1][MidSegments[1].Count - 1]);
+            //Console.Write(" 5-1: " + (d - 1));
+            //if(d>0)
+            //{
+            //    testDist = testDist + d + 1 - 2;
+            //}
+
             // Mid Joins
-            for (int i = 0; i < FinalRealOrder.Count; i=i+2)
+            for (int i = 0; i < FinalRealOrder.Count - 1; i = i + 2)
             {
                 p1 = MidSegments[FinalRealOrder[i]][MidSegments[FinalRealOrder[i]].Count - 1];
                 p2 = MidSegments[FinalRealOrder[i + 1]][MidSegments[FinalRealOrder[i + 1]].Count - 1];
@@ -272,6 +309,7 @@ namespace IPPA
                     AlgLHCGWCONV curSeg = new AlgLHCGWCONV(newRequest, mCurDist, mDiff, Efficiency_UB, 3);
                     curSeg.PlanPath();
                     mCurDist = curSeg.GetmCurDist();
+                    Path.RemoveAt(Path.Count - 1);
                     Path.AddRange(curSeg.GetPath());
                     Path.RemoveAt(Path.Count - 1);
                     List<Point> reversePath = MidSegments[FinalRealOrder[i + 1]];
@@ -307,6 +345,7 @@ namespace IPPA
                     AlgLHCGWCONV curSeg = new AlgLHCGWCONV(newRequest, mCurDist, mDiff, Efficiency_UB, 3);
                     curSeg.PlanPath();
                     mCurDist = curSeg.GetmCurDist();
+                    Path.RemoveAt(Path.Count - 1);
                     Path.AddRange(curSeg.GetPath());
                     Path.RemoveAt(Path.Count - 1);
                     Path.AddRange(reversePath);
@@ -316,17 +355,27 @@ namespace IPPA
                                 
                 List<Point> SegLastPath = SegLast.GetPath();
                 SegLastPath.Reverse();
-                p1 = MidSegments[1][0];
+                p1 = MidSegments[1][MidSegments[1].Count - 1];      // Already reversed from previous step
                 p2 = SegLastPath[0];
                 if (p1.X == p2.X && p1.Y == p2.Y)
                 {
-                    Path.AddRange(SegFirstPath);
+                    Path.AddRange(SegLastPath);
                 }
                 else
                 {
                     // Something is wrong!
-                    System.Windows.Forms.MessageBox.Show("Seg1 and Seg2 don't connect.");
+                    System.Windows.Forms.MessageBox.Show("SegLast and the one before it don't connect.");
                     return;
+                }
+            }
+
+            // In case distance from start to end is odd but T is even (or vise versa) for copter
+            if (curRequest.VehicleType == UAVType.Copter)
+            {
+                if (Path.Count == curRequest.T)
+                {
+                    // Just hover at end point
+                    Path.Add(Path[Path.Count - 1]);
                 }
             }
         }
@@ -347,8 +396,8 @@ namespace IPPA
                     d = dist;
                 }
             }
-            // Time used up is d1
-            remainingT -= d;
+            // Time used up is d
+            remainingT = remainingT - d - 1;
 
             // Remember the closest centroid and remove it from list.
             newPoint = allCentroids[closestCentroidIndex];
@@ -369,14 +418,16 @@ namespace IPPA
         private void PlanMidPathSegments(List<List<Point>> MidSegments, Point newStart, Point newEnd, List<Point> allCentroids, 
             RtwMatrix mDistAfterSegFirstSegLast, int remainingT)
         {
-            //if (curRequest.DrawPath)
-            //{
+            // In order to draw path, have to make these available to other sections of codes
+            frmMap map = new frmMap();
+            Bitmap CurBMP = new Bitmap(mDist.Columns, mDist.Rows);
+            ImgLib.MatrixToImage(ref mDist, ref CurBMP);
+            map.Text = "UAV trajectory and coverage";
+            map.setImage(CurBMP);
+
+            if (curRequest.DrawPath)
+            {
                 // Showing path and map remains as we plan
-                Bitmap CurBMP = new Bitmap(mDist.Columns, mDist.Rows);
-                ImgLib.MatrixToImage(ref mDist, ref CurBMP);
-                frmMap map = new frmMap();
-                map.Text = "UAV trajectory and coverage";
-                map.setImage(CurBMP);
                 map.Show();
                 map.resetImage();
                 // Draw first segment and last segment
@@ -392,7 +443,7 @@ namespace IPPA
                     map.setPointColor(p, VacuumProbability(p));
                     map.Refresh();
                 }
-            //}
+            }
             mCurDist = mDistAfterSegFirstSegLast;
 
             // Initialize all mid segment paths
@@ -423,16 +474,16 @@ namespace IPPA
                 MidSegments[i * 2 + 2].Add(curPair[0]);
                 MidSegments[i * 2 + 3].Add(curPair[1]);
                 AllLooseEndsPairs.Add(curPair);
-                // Deduct time
-                remainingT -= allCentroids.Count * 2;
                 // Show path planning process
-                //if (curRequest.DrawPath)
-                //{
+                if (curRequest.DrawPath)
+                {
                     map.setPointColor(curPair[0], mCurDist[curPair[0].Y, curPair[0].X]);
                     map.setPointColor(curPair[1], mCurDist[curPair[1].Y, curPair[1].X]);
                     map.Refresh();
-                //}
+                }
             }
+            // Deduct time
+            remainingT -= allCentroids.Count * 2;
             
             // Loop through remaining flight time.
             int thresholdT = 0;
@@ -476,9 +527,9 @@ namespace IPPA
 
                 // Keep a counter of worst distance among all endpoints of path segments
                 thresholdT += 2;
-                Console.Write(thresholdT.ToString() + " ");
-                if (thresholdT > remainingT - t - 1)
+                if (thresholdT >= remainingT - (t + 1) - 1)         // t+1 to compensate 0-based t. -1 to compensate hover for 1 step in order to land on end point
                 {
+                    // Console.Write("\nthresholdT=" + thresholdT + " remainingT-t-1=" + (remainingT - t - 1));
                     // Check if there's enough time to join everything together.                    
                     // Create permuatation
                     List<List<int>> allPerms = Permute(allCentroids, allCentroids.Count);
@@ -486,17 +537,18 @@ namespace IPPA
                     {
                         List<int> curPerm = allPerms[j];
                         int totalDist = ComputeTotalDistances(curPerm, MidSegments, AllLooseEndsPairs);
-                        if (totalDist < remainingT - t - 1)
+                        // Console.Write(" totalDist=" + totalDist);
+                        if (totalDist < remainingT - (t + 1) - 1)
                         {
                             // Stil enough time, no need to check further.
-                            thresholdT = 0;
+                            thresholdT = totalDist;
                             FinalPerm = null;
                             FinalPerm2 = null;
                             break;
                         }
                         else
                         {
-                            if (totalDist == remainingT - t - 1)
+                            if (totalDist == remainingT - (t + 1) || totalDist == remainingT - (t + 1) - 1)
                             {
                                 FinalPerm = curPerm;
                             }
@@ -519,19 +571,49 @@ namespace IPPA
                                     }
                                     // Check if total distance is enough to connect all loose ends.
                                     totalDist = ComputeTotalDistances(curPerm, MidSegments, PairsClone);
-                                    if (totalDist < remainingT - t - 1)
+                                    // Console.Write(" totalDist=" + totalDist);                                 
+                                    if (totalDist < remainingT - (t + 1) - 1)
                                     {
-                                        thresholdT = 0;
+                                        thresholdT = totalDist;
                                         l = allPerms2.Count;
                                         k = allCentroids.Count;
                                         j = allPerms.Count;
                                         FinalPerm = null;
                                         FinalPerm2 = null;
                                     }
-                                    else if (totalDist == remainingT - t - 1)
+                                    if (totalDist == remainingT - (t + 1) || totalDist == remainingT - (t + 1) - 1)
                                     {
                                         FinalPerm = curPerm;
                                         FinalPerm2 = curPerm2;
+                                        //// Debug code
+                                        //Console.Write(" curPerm=" + curPerm[0] + curPerm[1] + curPerm[2]);
+                                        //Console.Write(" curPerm2=");
+                                        //for (int xx = 0; xx < curPerm2.Count; xx++)
+                                        //{
+                                        //    Console.Write(curPerm2[xx] + " ");
+                                        //}
+                                        //// Print out AllPairs
+                                        //Console.Write(" AllLooseEndsPairs=");
+                                        //for (int xx = 0; xx < AllLooseEndsPairs.Count; xx++)
+                                        //{
+                                        //    Console.Write("[");
+                                        //    for (int yy = 0; yy < AllLooseEndsPairs[xx].Count; yy++)
+                                        //    {
+                                        //        Console.Write("(" + AllLooseEndsPairs[xx][yy].X + "," + AllLooseEndsPairs[xx][yy].Y + ")");
+                                        //    }
+                                        //    Console.Write("] ");
+                                        //}
+                                        //// Print out swapped pairs
+                                        //Console.Write(" PairsClone=");
+                                        //for (int xx = 0; xx < PairsClone.Count; xx++)
+                                        //{
+                                        //    Console.Write("[");
+                                        //    for (int yy = 0; yy < PairsClone[xx].Count; yy++)
+                                        //    {
+                                        //        Console.Write("(" + PairsClone[xx][yy].X + "," + PairsClone[xx][yy].Y + ")");
+                                        //    }
+                                        //    Console.Write("] ");
+                                        //}
                                     }
                                 }
                             }
@@ -551,11 +633,11 @@ namespace IPPA
                 //}
                 
                 // Show path planning process
-                //if (curRequest.DrawPath)
-                //{
+                if (curRequest.DrawPath)
+                {
                     map.setPointColor(bestPoint, mCurDist[bestPoint.Y, bestPoint.X]);
                     map.Refresh();
-                //}
+                }
             }
         }
 
@@ -739,14 +821,26 @@ namespace IPPA
         {
             int dist = 0;
             // Distance from newStart loose end to first loose end in perm
-            dist += MISCLib.ManhattanDistance(MidSegments[0][MidSegments[0].Count - 1], LooseEndsPairs[0][0]);
+            int d = MISCLib.ManhattanDistance(MidSegments[0][MidSegments[0].Count - 1], LooseEndsPairs[0][0]);
+            if (d > 0)
+            {
+                dist = dist + d + 1 - 2;
+            }
             for (int i = 0; i < curPerm.Count - 1; i++)
             {
-                dist += MISCLib.ManhattanDistance(LooseEndsPairs[i][1], LooseEndsPairs[i + 1][0]);
+                d = MISCLib.ManhattanDistance(LooseEndsPairs[curPerm[i]][1], LooseEndsPairs[curPerm[i + 1]][0]);
+                if (d > 0)
+                {
+                    dist = dist + d + 1 - 2;
+                }
             }
             if (curRequest.UseEndPoint)
             {
-                dist += MISCLib.ManhattanDistance(LooseEndsPairs[LooseEndsPairs.Count - 1][1], MidSegments[1][MidSegments[1].Count - 1]);
+                d = MISCLib.ManhattanDistance(LooseEndsPairs[curPerm[curPerm.Count - 1]][1], MidSegments[1][MidSegments[1].Count - 1]);
+                if (d > 0)
+                {
+                    dist = dist + d + 1 - 2;
+                }
             }
             return dist;
         }

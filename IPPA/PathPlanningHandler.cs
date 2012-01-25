@@ -67,8 +67,8 @@ namespace IPPA
             }
             else
             {
-                mDistReachable = curRequest.DistMap;
-                mDiffReachable = curRequest.DiffMap;
+                mDistReachable = curRequest.DistMap.Clone();
+                mDiffReachable = curRequest.DiffMap.Clone();
             }
 
             // Then do mode count (If Diff map is used, multiply first)

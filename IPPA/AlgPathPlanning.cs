@@ -13,6 +13,8 @@ namespace IPPA
         #region Members
 
         // Private members
+        private DateTime startTime;
+
         protected PathPlanningRequest curRequest;
         protected RtwMatrix mDist;
         protected RtwMatrix mDiff;
@@ -32,6 +34,9 @@ namespace IPPA
         public AlgPathPlanning(PathPlanningRequest _curRequest,
             RtwMatrix _mDist, RtwMatrix _mDiff, double _Efficiency_UB)
         {
+            // Start timer
+            startTime = DateTime.Now;
+
             curRequest = _curRequest;
             mDist = _mDist;
             mDiff = _mDiff;
@@ -59,9 +64,6 @@ namespace IPPA
         {
             //try
             //{
-                // Start timer
-                DateTime startTime = DateTime.Now;
-
                 // Individual implementation of path planning based on algorithm choosen
                 DoPathPlanning();
 
@@ -119,7 +121,7 @@ namespace IPPA
                 //}
                 //}
 
-                PathSanityCheck(Path);
+                // PathSanityCheck(Path);
                 #endregion
             //}
             //catch (Exception e)
@@ -374,6 +376,26 @@ namespace IPPA
                         System.Windows.Forms.MessageBox.Show("Bummer!");
                         return;
                     }
+                }
+            }
+
+            // Debug code: Sanity check to make sure path is all connected
+            for (int i = 1; i < curPath.Count(); i++)
+            {
+                Point p1 = curPath[i - 1];
+                Point p2 = curPath[i];
+                if ((p1.X == p2.X && p1.Y == p2.Y) ||
+                    (p1.X == p2.X && Math.Abs(p1.Y - p2.Y) == 1) ||
+                    (Math.Abs(p1.X - p2.X) == 1 && p1.Y == p2.Y))
+                {
+                    // Good. Connected
+                }
+                else
+                {
+                    System.Windows.Forms.MessageBox.Show("Path broke!");
+                    Console.Write("\n");
+                    Console.WriteLine("i=" + i + " p1=(" + p1.X + "," + p1.Y + ") p2=(" + p2.X + "," + p2.Y);
+                    return;
                 }
             }
         }
