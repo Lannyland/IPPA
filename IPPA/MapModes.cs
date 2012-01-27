@@ -100,14 +100,18 @@ namespace IPPA
                     }
                 }
             }
-            // Convert matrix to image
-            Bitmap CurBMP = new Bitmap(mModes2.Columns, mModes2.Rows);
-            ImgLib.MatrixToImage(ref mModes2, ref CurBMP);
-            // Showing map in map form
-            frmMap myModesForm = new frmMap();
-            myModesForm.Text = "Modes Map";
-            myModesForm.setImage(CurBMP);
-            myModesForm.Show();
+
+            if (curRequest.DrawPath)
+            {
+                // Convert matrix to image
+                Bitmap CurBMP = new Bitmap(mModes2.Columns, mModes2.Rows);
+                ImgLib.MatrixToImage(ref mModes2, ref CurBMP);
+                // Showing map in map form
+                frmMap myModesForm = new frmMap();
+                myModesForm.Text = "Modes Map";
+                myModesForm.setImage(CurBMP);
+                myModesForm.Show();
+            }
             #endregion
 
             // Identify centroids for all modes
@@ -176,17 +180,34 @@ namespace IPPA
             //TODO implement this
 
             // Multiple dist map and diff map if necessary
+            //DateTime startTime = DateTime.Now;
             ComputeRealMap();
+            //DateTime stopTime = DateTime.Now;
+            //TimeSpan duration = stopTime - startTime;
+            //double RunTime = duration.TotalSeconds;
+            //System.Windows.Forms.MessageBox.Show("ComputeRealMap Run time " + RunTime + " seconds!");
 
             // Generate samples from map to get read to perform mixed Gaussian fitting
+            //startTime = DateTime.Now;
             double[,] arrSamplesR;
             double[,] arrSamplesI;
             PrepareSamples(out arrSamplesR, out arrSamplesI);
-                        
+            //stopTime = DateTime.Now;
+            //duration = stopTime - startTime;
+            //RunTime = duration.TotalSeconds;
+            //System.Windows.Forms.MessageBox.Show("PrepareSamples Run time " + RunTime + " seconds!");
+
+
             // Perform mixed Gaussian fitting and get parameters
-            
+
+            //startTime = DateTime.Now;
             // Allocate memory for output matrices
             int n = lstCentroids.Count;     // find as many Gaussians as modes. Later find topN Gaussians as Hiariarchical Search
+            // Don't do too many Gaussians because it will take a long time and perform poorly
+            if (n > ProjectConstants.Max_N)
+            {
+                n = ProjectConstants.Max_N;
+            }
             Array arrModes = new double[n];
             Array arrMUs = new double[n, 2];
             Array arrSigmaXSigmaY = new double[n];
@@ -195,6 +216,10 @@ namespace IPPA
             Array junkSigmaXSigmaY = new double[n];
 
             GaussianFitting(n, arrSamplesR, arrSamplesI, ref arrModes, ref arrMUs, ref arrSigmaXSigmaY, ref junkModes, ref junkMUs, ref junkSigmaXSigmaY);
+            //stopTime = DateTime.Now;
+            //duration = stopTime - startTime;
+            //RunTime = duration.TotalSeconds;
+            //System.Windows.Forms.MessageBox.Show("GaussianFitting Run time " + RunTime + " seconds!");
 
             //// Debug code
             //for (int i = 0; i < arrMUs.Length / 2; i++)
@@ -207,13 +232,23 @@ namespace IPPA
             //    Console.Write(arrSigmaXSigmaY.GetValue(i) + "  ");
             //}
             //Console.Write("\n");
-            
+
+            //startTime = DateTime.Now;
             // Match centroids to Gaussians
             List<MapMode> lstGaussians = new List<MapMode>();           // Results stored in a list of MapModes for sorting
             MatchCentroidsToGaussians(arrMUs, lstGaussians);
-            
+            //stopTime = DateTime.Now;
+            //duration = stopTime - startTime;
+            //RunTime = duration.TotalSeconds;
+            //System.Windows.Forms.MessageBox.Show("MatchCentroidsToGaussians Run time " + RunTime + " seconds!");
+
+            //startTime = DateTime.Now;
             // Evaluate Goodness Rating
             EvaluateGoodnessRatings(arrModes, arrSigmaXSigmaY, lstGaussians);
+            //stopTime = DateTime.Now;
+            //duration = stopTime - startTime;
+            //RunTime = duration.TotalSeconds;
+            //System.Windows.Forms.MessageBox.Show("EvaluateGoodnessRatings Run time " + RunTime + " seconds!");
 
             // Find top N modes
             lstGaussians.Sort();
@@ -286,24 +321,39 @@ namespace IPPA
             // Instantiate MATLAB Engine Interface through com
             MLApp.MLAppClass matlab = new MLApp.MLAppClass();
 
+            DateTime startTime = DateTime.Now;
             // Set input matrices
             matlab.PutFullMatrix("samples", "base", arrSamplesR, arrSamplesI);
+            DateTime stopTime = DateTime.Now;
+            TimeSpan duration = stopTime - startTime;
+            double RunTime = duration.TotalSeconds;
+            System.Windows.Forms.MessageBox.Show("Set input paramters " + RunTime + " seconds!");
             double[] NR = new double[1];
             double[] NI = new double[1];
             NR[0] = n;
             NI[0] = 0;
             matlab.PutFullMatrix("N", "base", NR, NI);
 
+            startTime = DateTime.Now;
             // Using Engine Interface, execute ML script file
             string appPath = System.IO.Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath);
             matlab.Execute("cd " + appPath);
             matlab.Execute("cd ..\\..\\..\\Scripts");
             matlab.Execute("[modes, MUs, SigmaXSigmaY] = IPPAGaussianFitting(samples, N);");
+            stopTime = DateTime.Now;
+            duration = stopTime - startTime;
+            RunTime = duration.TotalSeconds;
+            System.Windows.Forms.MessageBox.Show("Execute ML Script " + RunTime + " seconds!");
 
+            startTime = DateTime.Now;
             // Using Engine Interface, get matrices from the base workspace.
             matlab.GetFullMatrix("modes", "base", ref arrModes, ref junkModes);
             matlab.GetFullMatrix("MUs", "base", ref arrMUs, ref junkMUs);
             matlab.GetFullMatrix("SigmaXSigmaY", "base", ref arrSigmaXSigmaY, ref junkSigmaXSigmaY);
+            stopTime = DateTime.Now;
+            duration = stopTime - startTime;
+            RunTime = duration.TotalSeconds;
+            System.Windows.Forms.MessageBox.Show("Retrieve matrices " + RunTime + " seconds!");
         }
 
         // Matching centroids to Gaussians because they might differ.
@@ -329,7 +379,7 @@ namespace IPPA
                         minIndex = j;
                         break;
                     }
-                    // More than one centrods left
+                    // More than one centroids left
                     Point centroid = lstCentroids[j];
                     double curDist = MISCLib.EuclidianDistance(MU, centroid);
                     if (curDist <= minDist)

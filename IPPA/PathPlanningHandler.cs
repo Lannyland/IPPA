@@ -98,7 +98,7 @@ namespace IPPA
             //Console.WriteLine("ModeCount = " + ModeCount);
 
             // Then do efficiency lower bound
-            ComputeEfficiencyUB myELB = new ComputeEfficiencyUB(curRequest);
+            ComputeEfficiencyUB myELB = new ComputeEfficiencyUB(curRequest, mDistReachable, mDiffReachable);
             double Efficiency_UB = myELB.GetEfficiency_UB();
             myELB = null;
 

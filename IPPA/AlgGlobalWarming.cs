@@ -284,7 +284,7 @@ namespace IPPA
             {
                 // If LHCGWCONV, search multiple convolution kernal sizes
                 int dim = Math.Max(mDist.Rows, mDist.Columns);
-                for (int j = 3; j < dim; j += (int)(dim / ConvCount))
+                for (int j = 5; j < dim; j += (int)(dim / ConvCount))
                 {
                     //Console.Write("j=" + j + "\n");
                     AlgLHCGWCONV myAlg = new AlgLHCGWCONV(curRequest, mGW, mDiff, Efficiency_UB, j);

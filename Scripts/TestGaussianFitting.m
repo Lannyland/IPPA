@@ -2,7 +2,7 @@
 % Try real dist map
 % ========================
 % Read in map file
-map = csvread('C:\Lanny\MAMI\IPPA\Maps\DistMaps\5_modal_identical.csv');
+map = csvread('C:\Lanny\MAMI\IPPA\Maps\DistMaps\Real_Complex2.csv');
 [height, width] =  size(map);
 % Convert bin results back to points
 r = [];
@@ -20,6 +20,8 @@ end;
 % axis([0 height 0 width 0 1]);
 
 clc;
-N = 5;
+N = 4;
+tStart = tic;
 [modes, MUs, SigmaXSigmaY] = IPPAGaussianFitting(r, N);
+tElapsed = toc(tStart)
 

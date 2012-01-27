@@ -599,63 +599,73 @@ namespace IPPA
         private void btnTest_Click(object sender, EventArgs e)
         {
             #region Test Mode Count
-            //DateTime startTime = DateTime.Now;
-            //CountDistModes myCount;
-            //if (chkUseDiff.Checked)
-            //{
-            //    RtwMatrix mDistReachable = test.DistMap.Clone();
-            //    RtwMatrix mDiffReachable = test.DiffMap.Clone();
+            DateTime startTime = DateTime.Now;
+            CountDistModes myCount;
+            if (chkUseDiff.Checked)
+            {
+                RtwMatrix mDistReachable = test.DistMap.Clone();
+                RtwMatrix mDiffReachable = test.DiffMap.Clone();
 
-            //    RtwMatrix mRealModes = new RtwMatrix(CurDiffMap.Rows, CurDiffMap.Columns);
-            //    for (int i = 0; i < mRealModes.Rows; i++)
-            //    {
-            //        for (int j = 0; j < mRealModes.Columns; j++)
-            //        {
-            //            mRealModes[i, j] = mDistReachable[i, j] *
-            //                (float)test.DiffRates[Convert.ToInt32(mDiffReachable[i, j])];
-            //        }
-            //    }
-            //    myCount = new CountDistModes(mRealModes);
-            //}
-            //else
-            //{
-            //    myCount = new CountDistModes(CurDiffMap);
-            //}
+                RtwMatrix mRealModes = new RtwMatrix(CurDiffMap.Rows, CurDiffMap.Columns);
+                for (int i = 0; i < mRealModes.Rows; i++)
+                {
+                    for (int j = 0; j < mRealModes.Columns; j++)
+                    {
+                        mRealModes[i, j] = mDistReachable[i, j] *
+                            (float)test.DiffRates[Convert.ToInt32(mDiffReachable[i, j])];
+                    }
+                }
+                myCount = new CountDistModes(mRealModes);
 
-            //Log(myCount.GetCount().ToString()+"\n");
-            //DateTime stopTime = DateTime.Now;
-            //TimeSpan duration = stopTime - startTime;
-            //Log("Computation took " + duration.ToString() + " seconds.\n");
-            //// Show mode nodes
-            //RtwMatrix myModes = myCount.GetModes().Clone();
-            //for (int i = 0; i < myModes.Rows; i++)
-            //{
-            //    for (int j = 0; j < myModes.Columns; j++)
-            //    {
-            //        if (myModes[i, j] > 0)
-            //        {
-            //            myModes[i, j] = 255;
-            //        }                }
-            //}
-            //// Convert matrix to image
-            //Bitmap CurBMP = new Bitmap(myModes.Columns, myModes.Rows);
-            //ImgLib.MatrixToImage(ref myModes, ref CurBMP);
-            //// Showing map in map form
-            //frmMap myModesForm = new frmMap(this);
-            //myModesForm.Text = "Modes Map";
-            //myModesForm.setImage(CurBMP);
-            //myModesForm.Show();
+                // Debug code: Showing the product of dist and diff
+                frmMap mapReal = new frmMap();
+                Bitmap CurBMPReal = new Bitmap(mRealModes.Columns, mRealModes.Rows);
+                ImgLib.MatrixToImage(ref mRealModes, ref CurBMPReal);
+                mapReal.Text = "Real probability distribution with respect to difficulty map";
+                mapReal.setImage(CurBMPReal);
+                mapReal.Show();
+                mapReal.resetImage();
+            }
+            else
+            {
+                myCount = new CountDistModes(CurDiffMap);
+            }
 
-            //myCount = null;
+            Log(myCount.GetCount().ToString() + "\n");
+            DateTime stopTime = DateTime.Now;
+            TimeSpan duration = stopTime - startTime;
+            Log("Computation took " + duration.ToString() + " seconds.\n");
+            // Show mode nodes
+            RtwMatrix myModes = myCount.GetModes().Clone();
+            for (int i = 0; i < myModes.Rows; i++)
+            {
+                for (int j = 0; j < myModes.Columns; j++)
+                {
+                    if (myModes[i, j] > 0)
+                    {
+                        myModes[i, j] = 255;
+                    }
+                }
+            }
+            // Convert matrix to image
+            Bitmap CurBMP = new Bitmap(myModes.Columns, myModes.Rows);
+            ImgLib.MatrixToImage(ref myModes, ref CurBMP);
+            // Showing map in map form
+            frmMap myModesForm = new frmMap(this);
+            myModesForm.Text = "Modes Map";
+            myModesForm.setImage(CurBMP);
+            myModesForm.Show();
+
+            myCount = null;
             #endregion 
 
             #region Test permutation
             
-            int[] intInput = { 1, 2, 3, 4};
-            Log(ShowPermutations<int>(intInput, 3));
+            //int[] intInput = { 1, 2, 3, 4};
+            //Log(ShowPermutations<int>(intInput, 3));
 
-            string[] stringInput = { "Hello", "World", "Foo" };
-            Log(ShowPermutations<string>(stringInput, 2));
+            //string[] stringInput = { "Hello", "World", "Foo" };
+            //Log(ShowPermutations<string>(stringInput, 2));
             
             #endregion
 
@@ -713,20 +723,20 @@ namespace IPPA
             #endregion
         }
 
-        // Print out the permutations of the input 
-        static string ShowPermutations<T>(IEnumerable<T> input, int count)
-        {
-            string s = "";
-            foreach (IEnumerable<T> permutation in PermuteUtils.Permute<T>(input, count))
-            {
-                foreach (T i in permutation)
-                {
-                    s += " " + i.ToString();
-                }
-                s += "\n";
-            }
-            return s;
-        }
+        //// Print out the permutations of the input 
+        //static string ShowPermutations<T>(IEnumerable<T> input, int count)
+        //{
+        //    string s = "";
+        //    foreach (IEnumerable<T> permutation in PermuteUtils.Permute<T>(input, count))
+        //    {
+        //        foreach (T i in permutation)
+        //        {
+        //            s += " " + i.ToString();
+        //        }
+        //        s += "\n";
+        //    }
+        //    return s;
+        //}
 
         //static private void UseEngine(Array ar, Array ai, Array br,
         //    Array bi, ref Array cr, ref Array ci, ref Array dr, ref Array di)

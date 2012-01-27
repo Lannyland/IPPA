@@ -28,8 +28,10 @@ namespace IPPA
         private int t3 = 0;
         private int t4 = 0;
         private AlgLHCGWCONV Seg1 = null;
-        private AlgGlobalWarming Seg2 = null;
-        private AlgGlobalWarming Seg3 = null;
+        // private AlgGlobalWarming Seg2 = null;
+        private AlgLHCGWCONV Seg2 = null;
+        // private AlgGlobalWarming Seg3 = null;
+        private AlgLHCGWCONV Seg3 = null;
         private AlgLHCGWCONV Seg4 = null;
 
         private MapModes myModes = null;
@@ -52,7 +54,14 @@ namespace IPPA
             RtwMatrix _mDiffReachable, double _Efficiency_UB) 
             : base (_curRequest, _mDistReachable, _mDiffReachable, _Efficiency_UB)
         {
+            // Start timer
+            //DateTime startTime = DateTime.Now;
             myModes = new MapModes(_ModeCount, _mModes, curRequest, _mDistReachable, _mDiffReachable);
+            //DateTime stopTime = DateTime.Now;
+            //TimeSpan duration = stopTime - startTime;
+            //double RunTime = duration.TotalSeconds;
+            //System.Windows.Forms.MessageBox.Show("Run time " + RunTime + " seconds!");
+
             CTFTTCoraseLevel = ProjectConstants.CTFTTCoraseLevel;
             CTFTTLevelCount = ProjectConstants.CTFTTLevelCount;
             mDistAfterSeg1Seg4 = mDist;
@@ -346,13 +355,22 @@ namespace IPPA
             // Now let's search
             t2 = t2Min;
             t3 = t3Max;
+            int count = 0;
             while (t2 <= t2Max && StepSize>0)
             {
+                count++;
                 PlanPathSeg2Seg3();
 
-                // Debug: Log
-                curRequest.SetLog((Seg2.GetCDF() + Seg3.GetCDF()).ToString() + "\n");
-
+                //// Debug: Log
+                //if (curRequest.UseEndPoint)
+                //{
+                //    curRequest.SetLog((Seg1.GetCDF() + Seg2.GetCDF() + Seg3.GetCDF() + Seg4.GetCDF()).ToString() + "\n");
+                //}
+                //else
+                //{
+                //    curRequest.SetLog((Seg1.GetCDF() + Seg2.GetCDF() + Seg3.GetCDF()).ToString() + "\n");
+                //}
+                
                 // Remember if true CDF is better
                 RememberBestPath();
 
@@ -364,6 +382,8 @@ namespace IPPA
                 Seg2 = null;
                 Seg3 = null;
             }
+            
+            // Console.WriteLine("Count = " + count);
         }
 
         // Method to plan path for segment 2 given t2 and t3
@@ -376,9 +396,10 @@ namespace IPPA
             newRequest2.pEnd = new DistPoint(End1.Y, End1.X);
             newRequest2.AlgToUse = AlgType.LHCGWCONV_E;
             newRequest2.T = t2;
-            Seg2 = new AlgGlobalWarming(newRequest2, myModes.GetModeCount(), mDistAfterSeg1Seg4, mDiff, Efficiency_UB);
-            Seg2.SetGWCount(1);
-            Seg2.SetConvCount(3);
+            // Seg2 = new AlgGlobalWarming(newRequest2, myModes.GetModeCount(), mDistAfterSeg1Seg4, mDiff, Efficiency_UB);
+            // Seg2.SetGWCount(1);
+            // Seg2.SetConvCount(3);
+            Seg2 = new AlgLHCGWCONV(newRequest2, mDistAfterSeg1Seg4, mDiff, Efficiency_UB, 3);
             Seg2.PlanPath();
 
             // Plan path from the other centroid to end with allocated t3
@@ -387,10 +408,11 @@ namespace IPPA
             newRequest3.pStart = new DistPoint(Centroid2.Y, Centroid2.X);
             newRequest3.pEnd = new DistPoint(End2.Y, End2.X);
             newRequest3.AlgToUse = AlgType.LHCGWCONV_E;
-            newRequest3.T = t3;
-            Seg3 = new AlgGlobalWarming(newRequest3, myModes.GetModeCount(), Seg2.GetmCurDist(), mDiff, Efficiency_UB);
-            Seg3.SetGWCount(1);
-            Seg3.SetConvCount(3);
+            newRequest3.T = t3;            
+            // Seg3 = new AlgGlobalWarming(newRequest3, myModes.GetModeCount(), Seg2.GetmCurDist(), mDiff, Efficiency_UB);
+            // Seg3.SetGWCount(1);
+            // Seg3.SetConvCount(3);
+            Seg3 = new AlgLHCGWCONV(newRequest3, Seg2.GetmCurDist(), mDiff, Efficiency_UB, 3);
             Seg3.PlanPath();
 
             // Cleaning up

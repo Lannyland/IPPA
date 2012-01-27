@@ -990,7 +990,7 @@ namespace IPPA
         {
             foreach (EAPath eap in EAPList)
             {
-                PathSanityCheck(eap.Path);
+                // PathSanityCheck(eap.Path);
             }
         }
         

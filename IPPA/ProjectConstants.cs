@@ -64,5 +64,6 @@ namespace IPPA
 
         // TopN parameters
         public static int Kernel_Size = 5;          // What size kenel for convolution       
+        public static int Max_N = 5;                // Maximum number of Gaussians to fit 
     }
 }

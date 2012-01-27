@@ -36,12 +36,19 @@ namespace IPPA
             RtwMatrix _mDiffReachable, double _Efficiency_UB) 
             : base (_curRequest, _mDistReachable, _mDiffReachable, _Efficiency_UB)
         {
+            //DateTime startTime = DateTime.Now;
             myModes = new MapModes(_ModeCount, _mModes, curRequest, mDist, mDiff);
+            //DateTime stopTime = DateTime.Now;
+            //TimeSpan duration = stopTime - startTime;
+            //double RunTime = duration.TotalSeconds;
+            //System.Windows.Forms.MessageBox.Show("Run time " + RunTime + " seconds!");
+
             Start = new Point(curRequest.pStart.column, curRequest.pStart.row);
             if (curRequest.UseEndPoint)
             {
                 End = new Point(curRequest.pEnd.column, curRequest.pEnd.row);
             }
+            N = curRequest.TopN;
         }
 
         // Destructor
@@ -68,11 +75,16 @@ namespace IPPA
             }
 
             // Determine whether there are TopN modes.
-            N = curRequest.TopN;
             if (N > myModes.GetModeCount())
             {
                 // If Yes, N is good. If No, use mode count as N.
                 N = myModes.GetModeCount();
+            }
+
+            // Make sure not to do too many Gaussian fittings
+            if (N > ProjectConstants.Max_N)
+            {
+                N = ProjectConstants.Max_N;
             }
 
             // Get only topN centroids.
@@ -80,7 +92,7 @@ namespace IPPA
             
             // Sanity check: make sure T is enough to cover all TopN centroids
             bool TBigEnough = false;
-            while (!TBigEnough && curRequest.TopN > 0)
+            while (!TBigEnough && N > 0)
             {
                 // Create permuatation
                 List<List<int>> allPerms = Permute(lstCentroids, lstCentroids.Count);
@@ -91,13 +103,12 @@ namespace IPPA
                 else
                 {
                     // Reduce TopN by 1
-                    curRequest.TopN = curRequest.TopN - 1;
-                    N = curRequest.TopN;
+                    N = N - 1;
                     lstCentroids.RemoveAt(lstCentroids.Count - 1);
                 }
             }
             // Can't do TopN algorithm when there's not enough time to hit even the top 1 mode.
-            if (curRequest.TopN == 0)
+            if (N == 0)
             {
                 System.Windows.Forms.MessageBox.Show("Can't use TopN algorithm because not enough flight time to reach any mode.");
                 return;
@@ -106,6 +117,11 @@ namespace IPPA
             // Searth different combinations and find the best one
             PlanPathSegments();
 
+            // Debug
+            if (Path.Count > curRequest.T + 1)
+            {
+                System.Windows.Forms.MessageBox.Show("Path is longer than T+1!");
+            }
             // Get real CDF
             CDF = GetTrueCDF(Path);
         }
@@ -256,15 +272,15 @@ namespace IPPA
             //    MidSegments[FinalRealOrder[0]][MidSegments[FinalRealOrder[0]].Count - 1],
             //    MidSegments[FinalRealOrder[1]][MidSegments[FinalRealOrder[1]].Count - 1]);
             //Console.Write(" 0-3: " + (d - 1));
-            //if(d>0)
-            //{ 
+            //if (d > 0)
+            //{
             //    testDist = testDist + d + 1 - 2;
             //}
             //d = MISCLib.ManhattanDistance(
             //    MidSegments[FinalRealOrder[2]][MidSegments[FinalRealOrder[2]].Count - 1],
             //    MidSegments[FinalRealOrder[3]][MidSegments[FinalRealOrder[3]].Count - 1]);
             //Console.Write(" 2-7: " + (d - 1));
-            //if(d>0)
+            //if (d > 0)
             //{
             //    testDist = testDist + d + 1 - 2;
             //}
@@ -272,7 +288,7 @@ namespace IPPA
             //    MidSegments[FinalRealOrder[4]][MidSegments[FinalRealOrder[4]].Count - 1],
             //    MidSegments[FinalRealOrder[5]][MidSegments[FinalRealOrder[5]].Count - 1]);
             //Console.Write(" 6-4: " + (d - 1));
-            //if(d>0)
+            //if (d > 0)
             //{
             //    testDist = testDist + d + 1 - 2;
             //}
@@ -280,7 +296,7 @@ namespace IPPA
             //    MidSegments[FinalRealOrder[6]][MidSegments[FinalRealOrder[6]].Count - 1],
             //    MidSegments[1][MidSegments[1].Count - 1]);
             //Console.Write(" 5-1: " + (d - 1));
-            //if(d>0)
+            //if (d > 0)
             //{
             //    testDist = testDist + d + 1 - 2;
             //}
@@ -437,11 +453,14 @@ namespace IPPA
                     map.setPointColor(p, VacuumProbability(p));
                     map.Refresh();
                 }
-                for (int i = 0; i < SegLast.GetPath().Count; i++)
+                if (curRequest.UseEndPoint)
                 {
-                    Point p = SegLast.GetPath()[i];
-                    map.setPointColor(p, VacuumProbability(p));
-                    map.Refresh();
+                    for (int i = 0; i < SegLast.GetPath().Count; i++)
+                    {
+                        Point p = SegLast.GetPath()[i];
+                        map.setPointColor(p, VacuumProbability(p));
+                        map.Refresh();
+                    }
                 }
             }
             mCurDist = mDistAfterSegFirstSegLast;
@@ -586,7 +605,11 @@ namespace IPPA
                                         FinalPerm = curPerm;
                                         FinalPerm2 = curPerm2;
                                         //// Debug code
-                                        //Console.Write(" curPerm=" + curPerm[0] + curPerm[1] + curPerm[2]);
+                                        //Console.Write(" curPerm=");
+                                        //for (int xx = 0; xx < curPerm.Count; xx++)
+                                        //{
+                                        //    Console.Write(curPerm[xx]);
+                                        //}                                        
                                         //Console.Write(" curPerm2=");
                                         //for (int xx = 0; xx < curPerm2.Count; xx++)
                                         //{
@@ -821,7 +844,7 @@ namespace IPPA
         {
             int dist = 0;
             // Distance from newStart loose end to first loose end in perm
-            int d = MISCLib.ManhattanDistance(MidSegments[0][MidSegments[0].Count - 1], LooseEndsPairs[0][0]);
+            int d = MISCLib.ManhattanDistance(MidSegments[0][MidSegments[0].Count - 1], LooseEndsPairs[curPerm[0]][0]);
             if (d > 0)
             {
                 dist = dist + d + 1 - 2;
