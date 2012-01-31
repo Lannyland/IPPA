@@ -599,64 +599,64 @@ namespace IPPA
         private void btnTest_Click(object sender, EventArgs e)
         {
             #region Test Mode Count
-            DateTime startTime = DateTime.Now;
-            CountDistModes myCount;
-            if (chkUseDiff.Checked)
-            {
-                RtwMatrix mDistReachable = test.DistMap.Clone();
-                RtwMatrix mDiffReachable = test.DiffMap.Clone();
+            //DateTime startTime = DateTime.Now;
+            //CountDistModes myCount;
+            //if (chkUseDiff.Checked)
+            //{
+            //    RtwMatrix mDistReachable = test.DistMap.Clone();
+            //    RtwMatrix mDiffReachable = test.DiffMap.Clone();
 
-                RtwMatrix mRealModes = new RtwMatrix(CurDiffMap.Rows, CurDiffMap.Columns);
-                for (int i = 0; i < mRealModes.Rows; i++)
-                {
-                    for (int j = 0; j < mRealModes.Columns; j++)
-                    {
-                        mRealModes[i, j] = mDistReachable[i, j] *
-                            (float)test.DiffRates[Convert.ToInt32(mDiffReachable[i, j])];
-                    }
-                }
-                myCount = new CountDistModes(mRealModes);
+            //    RtwMatrix mRealModes = new RtwMatrix(CurDiffMap.Rows, CurDiffMap.Columns);
+            //    for (int i = 0; i < mRealModes.Rows; i++)
+            //    {
+            //        for (int j = 0; j < mRealModes.Columns; j++)
+            //        {
+            //            mRealModes[i, j] = mDistReachable[i, j] *
+            //                (float)test.DiffRates[Convert.ToInt32(mDiffReachable[i, j])];
+            //        }
+            //    }
+            //    myCount = new CountDistModes(mRealModes);
 
-                // Debug code: Showing the product of dist and diff
-                frmMap mapReal = new frmMap();
-                Bitmap CurBMPReal = new Bitmap(mRealModes.Columns, mRealModes.Rows);
-                ImgLib.MatrixToImage(ref mRealModes, ref CurBMPReal);
-                mapReal.Text = "Real probability distribution with respect to difficulty map";
-                mapReal.setImage(CurBMPReal);
-                mapReal.Show();
-                mapReal.resetImage();
-            }
-            else
-            {
-                myCount = new CountDistModes(CurDiffMap);
-            }
+            //    // Debug code: Showing the product of dist and diff
+            //    frmMap mapReal = new frmMap();
+            //    Bitmap CurBMPReal = new Bitmap(mRealModes.Columns, mRealModes.Rows);
+            //    ImgLib.MatrixToImage(ref mRealModes, ref CurBMPReal);
+            //    mapReal.Text = "Real probability distribution with respect to difficulty map";
+            //    mapReal.setImage(CurBMPReal);
+            //    mapReal.Show();
+            //    mapReal.resetImage();
+            //}
+            //else
+            //{
+            //    myCount = new CountDistModes(CurDiffMap);
+            //}
 
-            Log(myCount.GetCount().ToString() + "\n");
-            DateTime stopTime = DateTime.Now;
-            TimeSpan duration = stopTime - startTime;
-            Log("Computation took " + duration.ToString() + " seconds.\n");
-            // Show mode nodes
-            RtwMatrix myModes = myCount.GetModes().Clone();
-            for (int i = 0; i < myModes.Rows; i++)
-            {
-                for (int j = 0; j < myModes.Columns; j++)
-                {
-                    if (myModes[i, j] > 0)
-                    {
-                        myModes[i, j] = 255;
-                    }
-                }
-            }
-            // Convert matrix to image
-            Bitmap CurBMP = new Bitmap(myModes.Columns, myModes.Rows);
-            ImgLib.MatrixToImage(ref myModes, ref CurBMP);
-            // Showing map in map form
-            frmMap myModesForm = new frmMap(this);
-            myModesForm.Text = "Modes Map";
-            myModesForm.setImage(CurBMP);
-            myModesForm.Show();
+            //Log(myCount.GetCount().ToString() + "\n");
+            //DateTime stopTime = DateTime.Now;
+            //TimeSpan duration = stopTime - startTime;
+            //Log("Computation took " + duration.ToString() + " seconds.\n");
+            //// Show mode nodes
+            //RtwMatrix myModes = myCount.GetModes().Clone();
+            //for (int i = 0; i < myModes.Rows; i++)
+            //{
+            //    for (int j = 0; j < myModes.Columns; j++)
+            //    {
+            //        if (myModes[i, j] > 0)
+            //        {
+            //            myModes[i, j] = 255;
+            //        }
+            //    }
+            //}
+            //// Convert matrix to image
+            //Bitmap CurBMP = new Bitmap(myModes.Columns, myModes.Rows);
+            //ImgLib.MatrixToImage(ref myModes, ref CurBMP);
+            //// Showing map in map form
+            //frmMap myModesForm = new frmMap(this);
+            //myModesForm.Text = "Modes Map";
+            //myModesForm.setImage(CurBMP);
+            //myModesForm.Show();
 
-            myCount = null;
+            //myCount = null;
             #endregion 
 
             #region Test permutation
@@ -670,56 +670,56 @@ namespace IPPA
             #endregion
 
             #region Test MATLAB
-            //////////////////////
-            //// Input Parameters
-            //////////////////////
+            ////////////////////
+            // Input Parameters
+            ////////////////////
 
-            //// create an array ar for the real part of "a"
-            //System.Array ar = new double[2];
-            //ar.SetValue(11, 0);
-            //ar.SetValue(12, 1);
+            // create an array ar for the real part of "a"
+            System.Array ar = new double[2];
+            ar.SetValue(11, 0);
+            ar.SetValue(12, 1);
 
-            //// create an array ai for the imaginary part of "a"
-            //System.Array ai = new double[2];
-            //ai.SetValue(1, 0);
-            //ai.SetValue(2, 1);
+            // create an array ai for the imaginary part of "a"
+            System.Array ai = new double[2];
+            ai.SetValue(1, 0);
+            ai.SetValue(2, 1);
 
-            //// create an array br for the real part of "b"
-            //System.Array br = new double[2];
-            //br.SetValue(21, 0);
-            //br.SetValue(22, 1);
+            // create an array br for the real part of "b"
+            System.Array br = new double[2];
+            br.SetValue(21, 0);
+            br.SetValue(22, 1);
 
-            //// create an array bi for the imaginary part of "b"
-            //System.Array bi = new double[2];
-            //bi.SetValue(3, 0);
-            //bi.SetValue(4, 1);
+            // create an array bi for the imaginary part of "b"
+            System.Array bi = new double[2];
+            bi.SetValue(3, 0);
+            bi.SetValue(4, 1);
 
-            ///////////////////////
-            //// Output Parameters
-            ///////////////////////
+            /////////////////////
+            // Output Parameters
+            /////////////////////
 
-            //// initialize variables for return value from ML
-            //System.Array cr = new double[2];
-            //System.Array ci = new double[2];
-            //System.Array dr = new double[2];
-            //System.Array di = new double[2];
+            // initialize variables for return value from ML
+            System.Array cr = new double[2];
+            System.Array ci = new double[2];
+            System.Array dr = new double[2];
+            System.Array di = new double[2];
 
 
-            //////////////////////////
-            //// Call MATLAB function
-            //////////////////////////
-            //// call appropriate function/method based on Mode
-            //// use MATLAB engine
-            //UseEngine(ar, ai, br, bi, ref cr, ref ci, ref dr, ref di);
+            ////////////////////////
+            // Call MATLAB function
+            ////////////////////////
+            // call appropriate function/method based on Mode
+            // use MATLAB engine
+            UseEngine(ar, ai, br, bi, ref cr, ref ci, ref dr, ref di);
 
-            //Log("ar = " + ar.GetValue(0).ToString() + " " + ar.GetValue(1).ToString() + "\n");
-            //Log("ai = " + ai.GetValue(0).ToString() + " " + ai.GetValue(1).ToString() + "\n");
-            //Log("br = " + br.GetValue(0).ToString() + " " + br.GetValue(1).ToString() + "\n");
-            //Log("bi = " + bi.GetValue(0).ToString() + " " + bi.GetValue(1).ToString() + "\n");
-            //Log("cr = " + cr.GetValue(0).ToString() + " " + cr.GetValue(1).ToString() + "\n");
-            //Log("ci = " + ci.GetValue(0).ToString() + " " + ci.GetValue(1).ToString() + "\n");
-            //Log("dr = " + dr.GetValue(0).ToString() + " " + dr.GetValue(1).ToString() + "\n");
-            //Log("di = " + di.GetValue(0).ToString() + " " + di.GetValue(1).ToString() + "\n");
+            Log("ar = " + ar.GetValue(0).ToString() + " " + ar.GetValue(1).ToString() + "\n");
+            Log("ai = " + ai.GetValue(0).ToString() + " " + ai.GetValue(1).ToString() + "\n");
+            Log("br = " + br.GetValue(0).ToString() + " " + br.GetValue(1).ToString() + "\n");
+            Log("bi = " + bi.GetValue(0).ToString() + " " + bi.GetValue(1).ToString() + "\n");
+            Log("cr = " + cr.GetValue(0).ToString() + " " + cr.GetValue(1).ToString() + "\n");
+            Log("ci = " + ci.GetValue(0).ToString() + " " + ci.GetValue(1).ToString() + "\n");
+            Log("dr = " + dr.GetValue(0).ToString() + " " + dr.GetValue(1).ToString() + "\n");
+            Log("di = " + di.GetValue(0).ToString() + " " + di.GetValue(1).ToString() + "\n");
             #endregion
         }
 
@@ -738,100 +738,100 @@ namespace IPPA
         //    return s;
         //}
 
-        //static private void UseEngine(Array ar, Array ai, Array br,
-        //    Array bi, ref Array cr, ref Array ci, ref Array dr, ref Array di)
-        //{
-        //    /*
-        //     * This function calls the math_by_numbers routine inside
-        //     * MATLAB using the MATLAB Engine's com interface
-        //     */
+        static private void UseEngine(Array ar, Array ai, Array br,
+            Array bi, ref Array cr, ref Array ci, ref Array dr, ref Array di)
+        {
+            /*
+             * This function calls the math_by_numbers routine inside
+             * MATLAB using the MATLAB Engine's com interface
+             */
 
-        //    // Instantiate MATLAB Engine Interface through com
-        //    MLApp.MLAppClass matlab = new MLApp.MLAppClass();
+            // Instantiate MATLAB Engine Interface through com
+            MLApp.MLAppClass matlab = new MLApp.MLAppClass();
 
-        //    // Using Engine Interface, put the matrix "a" into 
-        //    // the base workspace.
-        //    // "a" is a complex variable with a real part of ar,
-        //    // and an imaginary part of ai
-        //    matlab.PutFullMatrix("a", "base", ar, ai);
+            // Using Engine Interface, put the matrix "a" into 
+            // the base workspace.
+            // "a" is a complex variable with a real part of ar,
+            // and an imaginary part of ai
+            matlab.PutFullMatrix("a", "base", ar, ai);
 
-        //    // Using Engine Interface, put the matrix "b" into 
-        //    // the base workspace.
-        //    // "b" is a complex variable with a real part of br,
-        //    // and an imaginary part of bi
-        //    matlab.PutFullMatrix("b", "base", br, bi);
+            // Using Engine Interface, put the matrix "b" into 
+            // the base workspace.
+            // "b" is a complex variable with a real part of br,
+            // and an imaginary part of bi
+            matlab.PutFullMatrix("b", "base", br, bi);
 
-        //    // Put test array into base workspace
-        //    double[,] SR = new double[2, 2];
-        //    double[,] SI = new double[2, 2];
-        //    SR[0, 0] = 1;
-        //    SR[0, 1] = 2;
-        //    SR[1, 0] = 3;
-        //    SR[1, 1] = 4;
+            // Put test array into base workspace
+            double[,] SR = new double[2, 2];
+            double[,] SI = new double[2, 2];
+            SR[0, 0] = 1;
+            SR[0, 1] = 2;
+            SR[1, 0] = 3;
+            SR[1, 1] = 4;
 
-        //    SI[0, 0] = 0;
-        //    SI[0, 1] = 0;
-        //    SI[1, 0] = 0;
-        //    SI[1, 1] = 0;
+            SI[0, 0] = 0;
+            SI[0, 1] = 0;
+            SI[1, 0] = 0;
+            SI[1, 1] = 0;
 
-        //    System.Array TR = new double[2];
-        //    System.Array TI = new double[2];
-        //    TR.SetValue(1, 0);
-        //    TR.SetValue(2, 1);
-        //    TI.SetValue(0, 0);
-        //    TI.SetValue(0, 1);
+            System.Array TR = new double[2];
+            System.Array TI = new double[2];
+            TR.SetValue(1, 0);
+            TR.SetValue(2, 1);
+            TI.SetValue(0, 0);
+            TI.SetValue(0, 1);
 
-        //    // Test List
-        //    List<double[]> samples = new List<double[]>();
-        //    double[] aaa = new double[2];
-        //    double[] bbb = new double[2];
-        //    aaa[0] = 5;
-        //    aaa[1] = 6;
-        //    bbb[0] = 7;
-        //    bbb[1] = 8;
-        //    samples.Add(aaa);
-        //    samples.Add(bbb);
-        //    double[,] arrSamplesR = new double[samples.Count, 2];
-        //    double[,] arrSamplesI = new double[samples.Count, 2];
-        //    for (int i = 0; i < samples.Count; i++)
-        //    {
-        //        double[] b = samples[i];
-        //        arrSamplesR[i, 0] = b[0];
-        //        arrSamplesR[i, 1] = b[1];
-        //        arrSamplesI[i, 0] = 0;
-        //        arrSamplesI[i, 1] = 0;
-        //    }
-        //    matlab.PutFullMatrix("ss", "base", arrSamplesR, arrSamplesI);
+            // Test List
+            List<double[]> samples = new List<double[]>();
+            double[] aaa = new double[2];
+            double[] bbb = new double[2];
+            aaa[0] = 5;
+            aaa[1] = 6;
+            bbb[0] = 7;
+            bbb[1] = 8;
+            samples.Add(aaa);
+            samples.Add(bbb);
+            double[,] arrSamplesR = new double[samples.Count, 2];
+            double[,] arrSamplesI = new double[samples.Count, 2];
+            for (int i = 0; i < samples.Count; i++)
+            {
+                double[] b = samples[i];
+                arrSamplesR[i, 0] = b[0];
+                arrSamplesR[i, 1] = b[1];
+                arrSamplesI[i, 0] = 0;
+                arrSamplesI[i, 1] = 0;
+            }
+            matlab.PutFullMatrix("ss", "base", arrSamplesR, arrSamplesI);
 
-        //    // Using Engine Interface, execute the ML command
-        //    // contained in quotes.
-        //    matlab.Execute("cd 'C:\\Lanny\\MAMI\\ZPlayGround\\C# Calling MATLAB\\CSharp_MATLAB\\CSharp_MATLAB\\mcode';");
-        //    matlab.Execute("open math_on_numbers.m");
-        //    matlab.Execute("dbstop in math_on_numbers.m");
-        //    matlab.Execute("[c, d] = math_on_numbers(a,b);");
-        //    matlab.Execute("com.mathworks.mlservices.MLEditorServices.closeAll");
-        //    //matlab.Execute("dbquit all");
+            // Using Engine Interface, execute the ML command
+            // contained in quotes.
+            matlab.Execute("cd 'C:\\Lanny\\MAMI\\ZPlayGround\\C# Calling MATLAB\\CSharp_MATLAB\\CSharp_MATLAB\\mcode';");
+            matlab.Execute("open math_on_numbers.m");
+            matlab.Execute("dbstop in math_on_numbers.m");
+            matlab.Execute("[c, d] = math_on_numbers(a,b);");
+            matlab.Execute("com.mathworks.mlservices.MLEditorServices.closeAll");
+            //matlab.Execute("dbquit all");
 
-        //    // Using Engine Interface, get the matrix "c" from
-        //    // the base workspace.
-        //    // "c" is a complex variable with a real part of cr,
-        //    // and an imaginary part of ci
-        //    matlab.GetFullMatrix("c", "base", ref cr, ref ci);
+            // Using Engine Interface, get the matrix "c" from
+            // the base workspace.
+            // "c" is a complex variable with a real part of cr,
+            // and an imaginary part of ci
+            matlab.GetFullMatrix("c", "base", ref cr, ref ci);
 
-        //    // using engine interface, get the matrix "c" from
-        //    // the base workspace.
-        //    // "d" is a complex variable with a real part of dr,
-        //    // and an imaginary part of di
-        //    matlab.GetFullMatrix("d", "base", ref dr, ref di);
+            // using engine interface, get the matrix "c" from
+            // the base workspace.
+            // "d" is a complex variable with a real part of dr,
+            // and an imaginary part of di
+            matlab.GetFullMatrix("d", "base", ref dr, ref di);
 
-        //    System.Array resultsR = new double[2, 2];
-        //    System.Array resultsI = new double[2, 2];
-        //    matlab.GetFullMatrix("ss", "base", ref resultsR, ref resultsI);
-        //    Console.WriteLine(resultsR.GetValue(0, 0).ToString() + " "
-        //                    + resultsR.GetValue(0, 1).ToString() + " "
-        //                    + resultsR.GetValue(1, 0).ToString() + " "
-        //                    + resultsR.GetValue(1, 1).ToString());
-        //}
+            System.Array resultsR = new double[2, 2];
+            System.Array resultsI = new double[2, 2];
+            matlab.GetFullMatrix("ss", "base", ref resultsR, ref resultsI);
+            Console.WriteLine(resultsR.GetValue(0, 0).ToString() + " "
+                            + resultsR.GetValue(0, 1).ToString() + " "
+                            + resultsR.GetValue(1, 0).ToString() + " "
+                            + resultsR.GetValue(1, 1).ToString());
+        }
         
         #endregion
 

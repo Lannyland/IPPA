@@ -25,6 +25,7 @@ namespace IPPA
         protected double Efficiency = 0;
         protected List<Point> Path = new List<Point>();
         protected bool Status = true;
+        protected List<float> CDFGraph = new List<float>();
        
         #endregion
 
@@ -330,7 +331,6 @@ namespace IPPA
                 curCDF += GetPartialDetection(curPath[i], mCDF);
                 mCDF[curPath[i].Y, curPath[i].X] = VacuumProbability(curPath[i], mCDF);
             }
-
             // Cleaning up
             mCDF = null;
 
@@ -398,6 +398,31 @@ namespace IPPA
                     return;
                 }
             }
+        }
+
+        // Print to console CDF progress for graphing purposes
+        protected void PrintCDFGraph()
+        {
+            PrintCDFGraph(Path, mDist);
+        }
+
+        // Print to console CDF progress for graphing purposes
+        protected void PrintCDFGraph(List<Point> curPath, RtwMatrix curDist)
+        {
+            float curCDF = 0;
+
+            RtwMatrix mCDF = curDist.Clone();
+            Console.Write("curCDF=");
+            for (int i = 0; i < curRequest.T + 1; i++)
+            {
+                curCDF += GetPartialDetection(curPath[i], mCDF);
+                mCDF[curPath[i].Y, curPath[i].X] = VacuumProbability(curPath[i], mCDF);
+                // Write out CDF as time progresses for chart
+                Console.Write(curCDF + " ");
+            }
+            Console.Write("\n");
+            // Cleaning up
+            mCDF = null;
         }
 
         #region Getters

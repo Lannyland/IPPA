@@ -321,39 +321,39 @@ namespace IPPA
             // Instantiate MATLAB Engine Interface through com
             MLApp.MLAppClass matlab = new MLApp.MLAppClass();
 
-            DateTime startTime = DateTime.Now;
+            //DateTime startTime = DateTime.Now;
             // Set input matrices
             matlab.PutFullMatrix("samples", "base", arrSamplesR, arrSamplesI);
-            DateTime stopTime = DateTime.Now;
-            TimeSpan duration = stopTime - startTime;
-            double RunTime = duration.TotalSeconds;
-            System.Windows.Forms.MessageBox.Show("Set input paramters " + RunTime + " seconds!");
+            //DateTime stopTime = DateTime.Now;
+            //TimeSpan duration = stopTime - startTime;
+            //double RunTime = duration.TotalSeconds;
+            //System.Windows.Forms.MessageBox.Show("Set input paramters " + RunTime + " seconds!");
             double[] NR = new double[1];
             double[] NI = new double[1];
             NR[0] = n;
             NI[0] = 0;
             matlab.PutFullMatrix("N", "base", NR, NI);
 
-            startTime = DateTime.Now;
+            //startTime = DateTime.Now;
             // Using Engine Interface, execute ML script file
             string appPath = System.IO.Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath);
             matlab.Execute("cd " + appPath);
             matlab.Execute("cd ..\\..\\..\\Scripts");
             matlab.Execute("[modes, MUs, SigmaXSigmaY] = IPPAGaussianFitting(samples, N);");
-            stopTime = DateTime.Now;
-            duration = stopTime - startTime;
-            RunTime = duration.TotalSeconds;
-            System.Windows.Forms.MessageBox.Show("Execute ML Script " + RunTime + " seconds!");
+            //stopTime = DateTime.Now;
+            //duration = stopTime - startTime;
+            //RunTime = duration.TotalSeconds;
+            //System.Windows.Forms.MessageBox.Show("Execute ML Script " + RunTime + " seconds!");
 
-            startTime = DateTime.Now;
+            //startTime = DateTime.Now;
             // Using Engine Interface, get matrices from the base workspace.
             matlab.GetFullMatrix("modes", "base", ref arrModes, ref junkModes);
             matlab.GetFullMatrix("MUs", "base", ref arrMUs, ref junkMUs);
             matlab.GetFullMatrix("SigmaXSigmaY", "base", ref arrSigmaXSigmaY, ref junkSigmaXSigmaY);
-            stopTime = DateTime.Now;
-            duration = stopTime - startTime;
-            RunTime = duration.TotalSeconds;
-            System.Windows.Forms.MessageBox.Show("Retrieve matrices " + RunTime + " seconds!");
+            //stopTime = DateTime.Now;
+            //duration = stopTime - startTime;
+            //RunTime = duration.TotalSeconds;
+            //System.Windows.Forms.MessageBox.Show("Retrieve matrices " + RunTime + " seconds!");
         }
 
         // Matching centroids to Gaussians because they might differ.

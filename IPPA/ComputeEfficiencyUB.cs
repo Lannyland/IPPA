@@ -14,6 +14,7 @@ namespace IPPA
         RtwMatrix mDistReachable;
         RtwMatrix mDiffReachable;
         double Efficiency_UB = 0;
+        List<Point> TeleportPath = new List<Point>();
         #endregion
 
         #region Constructor, Destructor
@@ -48,6 +49,9 @@ namespace IPPA
             // Clone dist map so we can update it.
             RtwMatrix mCurDist = mDistReachable.Clone();
 
+            // Total CDF:
+            float totalCDF = 0;
+
             // Find closest non-zero node and remember distance
             int dStart = mCurDist.Rows + mCurDist.Columns;
             int dEnd = dStart;
@@ -78,8 +82,11 @@ namespace IPPA
                             }
                         }
                     }
+                    totalCDF += mCurDist[i, j];
                 }
             }
+            Console.WriteLine("totalCDF=" + totalCDF);
+
             int d = dStart;
             if (curRequest.UseEndPoint)
             {
@@ -111,6 +118,8 @@ namespace IPPA
                 maxCDF += pMax;
                 // Update map
                 mCurDist[iMax, jMax] -= pMax;
+                // Add to path
+                TeleportPath.Add(new Point(jMax, iMax));
             }
 
             // Found the best one can do.
@@ -173,6 +182,11 @@ namespace IPPA
         {
             return Efficiency_UB;
         }
+        public List<Point> GetTeleportPath()
+        {
+            return TeleportPath;
+        }
+
         #endregion
 
         #endregion

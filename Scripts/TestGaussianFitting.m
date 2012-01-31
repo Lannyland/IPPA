@@ -20,7 +20,7 @@ end;
 % axis([0 height 0 width 0 1]);
 
 clc;
-N = 4;
+N = 5;
 tStart = tic;
 [modes, MUs, SigmaXSigmaY] = IPPAGaussianFitting(r, N);
 tElapsed = toc(tStart)

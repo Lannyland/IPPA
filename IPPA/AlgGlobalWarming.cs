@@ -142,6 +142,9 @@ namespace IPPA
 
             // Cleaning up                        
             mGW = null;
+
+            // Print out CDF Graph
+            // PrintCDFGraph();
         }
 
         // Search GW intelligently

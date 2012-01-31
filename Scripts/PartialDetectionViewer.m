@@ -3,11 +3,14 @@ format compact;
 
 % Read in map file
 % map = csvread('C:\Lanny\MAMI\IPPA\Maps\DistMaps\Real_BimodalFar.csv');
-% map = csvread('C:\Lanny\MAMI\IPPA\Maps\DiffMaps\Diff_Real_BimodalFar.csv');
 % map = csvread('C:\Lanny\MAMI\IPPA\Maps\DistMaps\Real_BimodalClose.csv');
-% map = csvread('C:\Lanny\MAMI\IPPA\Maps\DiffMaps\Diff_Real_BimodalClose.csv');
 map = csvread('C:\Lanny\MAMI\IPPA\Maps\DistMaps\Real_Complex2.csv');
-% map = csvread('C:\Lanny\MAMI\IPPA\Maps\DiffMaps\Diff_Real_Complex2.csv');
+
+% diff = csvread('C:\Lanny\MAMI\IPPA\Maps\DiffMaps\Diff_Real_BimodalFar.csv');
+% diff = csvread('C:\Lanny\MAMI\IPPA\Maps\DiffMaps\Diff_Real_BimodalClose.csv');
+diff = csvread('C:\Lanny\MAMI\IPPA\Maps\DiffMaps\Diff_Real_Complex2.csv');
+partial = (max(max(diff))+1-diff)./(max(max(diff))+1);
+final = map.*partial
 
 % Specify specific parameters
 [height, width] =   size(map);
@@ -19,7 +22,7 @@ map = csvread('C:\Lanny\MAMI\IPPA\Maps\DistMaps\Real_Complex2.csv');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Create a grid of states     %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-img2 = double(map);
+img2 = double(final);
 X = zeros(width, height);
 Y = zeros(width, height);
 for x = 1:height
@@ -35,6 +38,6 @@ hAx1=subplot('position', [0 0 1 1]); % 3D Surface of probability distribution
 % Draw the surface
 hSurf1=surf(hAx1,X.',Y.',fliplr(img2));
 colormap jet;
+% axis([0 height 0 width 0 255]);
 axis([0 height 0 width 0 255]);
-% axis([0 height 0 width 0 4]);
 drawnow;

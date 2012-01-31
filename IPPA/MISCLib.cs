@@ -58,7 +58,7 @@ namespace IPPA
             Bitmap bitmap = new Bitmap(width, height);
             Graphics bitmapGraphics = Graphics.FromImage(bitmap);
             Pen p = new Pen(Color.Red);
-            SolidBrush sb = new SolidBrush(Color.Black);
+            SolidBrush sb = new SolidBrush(Color.Gray);
 
             //
             // Draw Board background
@@ -140,6 +140,6 @@ namespace IPPA
         public static double EuclidianDistance(Point p1, Point p2)
         {
             return EuclidianDistance(p1.X, p1.Y, p2.X, p2.Y);
-        }        
+        }
     }
 }

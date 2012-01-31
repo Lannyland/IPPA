@@ -124,6 +124,9 @@ namespace IPPA
             }
             // Get real CDF
             CDF = GetTrueCDF(Path);
+
+            // Print out CDF Graph
+            // PrintCDFGraph();
         }
 
         // Create permutation
