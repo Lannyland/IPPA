@@ -24,7 +24,6 @@ namespace IPPA
         private List<int> FinalPerm = null;
         private List<int> FinalPerm2 = null;
 
-
         // Public variables
 
         #endregion
@@ -664,7 +663,7 @@ namespace IPPA
                     map.setPointColor(bestPoint, mCurDist[bestPoint.Y, bestPoint.X]);
                     map.Refresh();
                 }
-            }
+            }   
         }
 
         // Clone AllLooseEndsPairs
