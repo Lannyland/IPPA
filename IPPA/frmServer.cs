@@ -24,7 +24,7 @@ namespace IPPA
         // Private members
         private bool blnServerRunning = false;
         private List<PathPlanningRequest> lstRequestQueue = new List<PathPlanningRequest>();
-        private PathPlanningServer myServer = new PathPlanningServer();
+        private PathPlanningServer myServer;
                 
         #endregion
 
@@ -34,6 +34,7 @@ namespace IPPA
         public frmServer()
         {
             InitializeComponent();
+            myServer = new PathPlanningServer(this);
         }
 
         // Destructor
@@ -156,7 +157,7 @@ namespace IPPA
         #region Other Functions
 
         // Code to display logs in log rich text box (refresh and scroll to bottom)
-        private void Log(string str)
+        public void Log(string str)
         {
             rtxtLog.AppendText(str);
             rtxtLog.Refresh();

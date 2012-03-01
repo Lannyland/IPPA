@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IPPA", "IPPA.csproj", "{73897A08-F3B0-4FBB-B635-90C404C7CDCF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TCPIPTest", "..\TCPIPTest\TCPIPTest.csproj", "{2F005FDC-E8CF-4DC5-833A-4BFBA2248F40}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -13,6 +15,10 @@ Global
 		{73897A08-F3B0-4FBB-B635-90C404C7CDCF}.Debug|x86.Build.0 = Debug|x86
 		{73897A08-F3B0-4FBB-B635-90C404C7CDCF}.Release|x86.ActiveCfg = Release|x86
 		{73897A08-F3B0-4FBB-B635-90C404C7CDCF}.Release|x86.Build.0 = Release|x86
+		{2F005FDC-E8CF-4DC5-833A-4BFBA2248F40}.Debug|x86.ActiveCfg = Debug|x86
+		{2F005FDC-E8CF-4DC5-833A-4BFBA2248F40}.Debug|x86.Build.0 = Debug|x86
+		{2F005FDC-E8CF-4DC5-833A-4BFBA2248F40}.Release|x86.ActiveCfg = Release|x86
+		{2F005FDC-E8CF-4DC5-833A-4BFBA2248F40}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
