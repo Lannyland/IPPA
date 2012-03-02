@@ -5,6 +5,8 @@ using System.Text;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using System.IO;
+using tutorial;  //TODO to be removed later
 
 namespace IPPA
 {
@@ -83,27 +85,61 @@ namespace IPPA
                 try
                 {
                     // Data is send in bytes -- so we need to convert a C# string to a Byte[]
-                    byte[] bytesFrom = new byte[10025];
+                    byte[] bytesFrom = new byte[113];
                     // Blocks until a client sends a message
-                    clientStream.Read(bytesFrom, 0, (int)clientSocket.ReceiveBufferSize);
-                    string dataFromClient = System.Text.Encoding.ASCII.GetString(bytesFrom);
-                    dataFromClient = dataFromClient.Substring(0, dataFromClient.IndexOf("$"));
-                    theForm.Log(dataFromClient + "\n");
+                    //clientStream.Read(bytesFrom, 0, (int)clientSocket.ReceiveBufferSize);
+                    clientStream.Read(bytesFrom, 0, 113);
+
+                    //// Plain text
+                    //string dataFromClient = System.Text.Encoding.ASCII.GetString(bytesFrom);
+                    //dataFromClient = dataFromClient.Substring(0, dataFromClient.IndexOf("$"));
+                    //theForm.Log(dataFromClient + "\n");
+
+                    // Object via protocol buffer
+                    // Only get the useful part of the byte array
+
+                    //byte end = 0;    
+                    //int size = Array.IndexOf(bytesFrom, end);
+                    //byte[] bytesTrimmed = new byte[size];
+                    //Array.Copy(bytesFrom, 0, bytesTrimmed, 0, size);
+
+                    //AddressBook restored = AddressBook.CreateBuilder().MergeFrom(bytesTrimmed).Build();
+                    //Person p1 = restored.GetPerson(0);
+                    //theForm.Log(p1.Id + " " + p1.Name + " " + p1.PhoneList[0] + " " + p1.Email + "\n");
+
+                    ProtoBuffer.SimpleItem restored = ProtoBuffer.SimpleItem.CreateBuilder().MergeFrom(bytesFrom).Build();
+                    theForm.Log("UseDistributionMap = " + restored.CurRequest.UseDistributionMap + "\n");
+                    theForm.Log("UseTaskDifficultyMap = " + restored.CurRequest.UseTaskDifficultyMap + "\n");
+                    theForm.Log("UseHiararchy = " + restored.CurRequest.UseHiararchy + "\n");
+                    theForm.Log("VehicleType = " + restored.CurRequest.VehicleType + "\n");
+                    theForm.Log("pStart = (" + restored.CurRequest.PStart.Column + "," + restored.CurRequest.PStart.Row + "\n");
+                    theForm.Log("pEnd = (" + restored.CurRequest.PEnd.Column + "," + restored.CurRequest.PEnd.Row + "\n");
+                    theForm.Log("DiffRate = " + restored.CurRequest.GetDiffRate(0) + ","
+                                              + restored.CurRequest.GetDiffRate(1) + ","
+                                              + restored.CurRequest.GetDiffRate(2) + ","
+                                              + restored.CurRequest.GetDiffRate(3) + "\n");
+                    
                     // Send server reponse
-                    string serverResponse = "Responding to " + dataFromClient;
+                    string serverResponse = "Responding!" + "\n";
                     Byte[] sendBytes = Encoding.ASCII.GetBytes(serverResponse);
                     clientStream.Write(sendBytes, 0, sendBytes.Length);
                     clientStream.Flush();
                 }
-                catch
+                catch(Exception e)
                 {
                     //a socket error has occured
+                    theForm.Log(e.Message);
                     break;
                 }
             }
 
             clientSocket.Close();
         }
+
+        static void Sample()
+        {
+        }
+
 
         // Method to add server queue items
         public void AddRequest(ServerQueueItem item)
