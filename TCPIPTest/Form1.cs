@@ -38,7 +38,16 @@ namespace TCPIPTest
             }
             rtxtReceiveText.AppendText("\n\n");
 
-            serverStream.Write(outStream, 0, outStream.Length);
+            // Count byte size and conver to byte[4]
+            int size = outStream.Length;
+            byte[] header = BitConverter.GetBytes(size);
+            
+            // Include header in stream
+            byte[] outStreamFinal = new byte[size + 4];
+            Array.Copy(header, 0, outStreamFinal, 0, header.Length);
+            Array.Copy(outStream, 0, outStreamFinal, 4, size);
+
+            serverStream.Write(outStreamFinal, 0, outStreamFinal.Length);
             serverStream.Flush();
 
             byte[] inStream = new byte[10025];
