@@ -47,9 +47,11 @@ namespace TCPIPTest
             Array.Copy(header, 0, outStreamFinal, 0, header.Length);
             Array.Copy(outStream, 0, outStreamFinal, 4, size);
 
+            // Send data over socket connection
             serverStream.Write(outStreamFinal, 0, outStreamFinal.Length);
             serverStream.Flush();
 
+            // Get server response
             byte[] inStream = new byte[10025];
             serverStream.Read(inStream, 0, (int)clientSocket.ReceiveBufferSize);
             string returndata = System.Text.Encoding.ASCII.GetString(inStream);

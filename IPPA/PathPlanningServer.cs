@@ -119,6 +119,9 @@ namespace IPPA
                                               + restored.CurRequest.GetDiffRate(2) + ","
                                               + restored.CurRequest.GetDiffRate(3) + "\n");
                     
+                    // Wait three seconds
+                    Thread.Sleep(3000);
+
                     // Send server reponse
                     string serverResponse = "Responding!" + "\n";
                     Byte[] sendBytes = Encoding.ASCII.GetBytes(serverResponse);
