@@ -138,14 +138,14 @@ namespace TCPIPTest
             ProtoBuffer.PathPlanningRequest Request = newRequest.Build();
             newRequest = null;
             // Finally the ServerQueueItem
-            ProtoBuffer.SimpleItem.Builder newServerQueueItem = new ProtoBuffer.SimpleItem.Builder();
+            ProtoBuffer.ServerQueueItem.Builder newServerQueueItem = new ProtoBuffer.ServerQueueItem.Builder();
             newServerQueueItem.SetCallerIP("127.0.0.1")
                               .SetCurRequest(Request);
-            ProtoBuffer.SimpleItem ServerQueueItem = newServerQueueItem.Build();
+            ProtoBuffer.ServerQueueItem ServerQueueItem = newServerQueueItem.Build();
             newServerQueueItem = null;
             bytes = ServerQueueItem.ToByteArray();
 
-            ProtoBuffer.SimpleItem restored = ProtoBuffer.SimpleItem.CreateBuilder().MergeFrom(bytes).Build();
+            ProtoBuffer.ServerQueueItem restored = ProtoBuffer.ServerQueueItem.CreateBuilder().MergeFrom(bytes).Build();
             return bytes;
         }
     }

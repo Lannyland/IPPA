@@ -85,10 +85,9 @@ namespace IPPA
                 try
                 {
                     // Data is send in bytes -- so we need to convert a C# string to a Byte[]
-                    byte[] bytesFrom = new byte[113];
+                    byte[] bytesFrom = new byte[10025];
                     // Blocks until a client sends a message
-                    //clientStream.Read(bytesFrom, 0, (int)clientSocket.ReceiveBufferSize);
-                    clientStream.Read(bytesFrom, 0, 113);
+                    clientStream.Read(bytesFrom, 0, (int)clientSocket.ReceiveBufferSize);
 
                     //// Plain text
                     //string dataFromClient = System.Text.Encoding.ASCII.GetString(bytesFrom);
@@ -98,16 +97,15 @@ namespace IPPA
                     // Object via protocol buffer
                     // Only get the useful part of the byte array
 
-                    //byte end = 0;    
-                    //int size = Array.IndexOf(bytesFrom, end);
-                    //byte[] bytesTrimmed = new byte[size];
-                    //Array.Copy(bytesFrom, 0, bytesTrimmed, 0, size);
+                    int size = BitConverter.ToInt32(bytesFrom, 0);
+                    byte[] bytesTrimmed = new byte[size];
+                    Array.Copy(bytesFrom, 4, bytesTrimmed, 0, size);
 
                     //AddressBook restored = AddressBook.CreateBuilder().MergeFrom(bytesTrimmed).Build();
                     //Person p1 = restored.GetPerson(0);
                     //theForm.Log(p1.Id + " " + p1.Name + " " + p1.PhoneList[0] + " " + p1.Email + "\n");
 
-                    ProtoBuffer.SimpleItem restored = ProtoBuffer.SimpleItem.CreateBuilder().MergeFrom(bytesFrom).Build();
+                    ProtoBuffer.ServerQueueItem restored = ProtoBuffer.ServerQueueItem.CreateBuilder().MergeFrom(bytesTrimmed).Build();
                     theForm.Log("UseDistributionMap = " + restored.CurRequest.UseDistributionMap + "\n");
                     theForm.Log("UseTaskDifficultyMap = " + restored.CurRequest.UseTaskDifficultyMap + "\n");
                     theForm.Log("UseHiararchy = " + restored.CurRequest.UseHiararchy + "\n");
@@ -137,10 +135,6 @@ namespace IPPA
             }
 
             clientSocket.Close();
-        }
-
-        static void Sample()
-        {
         }
 
 

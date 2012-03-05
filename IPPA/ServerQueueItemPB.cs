@@ -8,83 +8,97 @@ using pbd = global::Google.ProtocolBuffers.Descriptors;
 using scg = global::System.Collections.Generic;
 namespace ProtoBuffer {
   
-  namespace Proto {
-    
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-    [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ProtoGen", "2.4.1.473")]
-    public static partial class SimpleItem {
-    
-      #region Extension registration
-      public static void RegisterAllExtensions(pb::ExtensionRegistry registry) {
-      }
-      #endregion
-      #region Static variables
-      internal static pbd::MessageDescriptor internal__static_ProtoBuffer_PathPlanningRequest__Descriptor;
-      internal static pb::FieldAccess.FieldAccessorTable<global::ProtoBuffer.PathPlanningRequest, global::ProtoBuffer.PathPlanningRequest.Builder> internal__static_ProtoBuffer_PathPlanningRequest__FieldAccessorTable;
-      internal static pbd::MessageDescriptor internal__static_ProtoBuffer_PathPlanningRequest_DistPoint__Descriptor;
-      internal static pb::FieldAccess.FieldAccessorTable<global::ProtoBuffer.PathPlanningRequest.Types.DistPoint, global::ProtoBuffer.PathPlanningRequest.Types.DistPoint.Builder> internal__static_ProtoBuffer_PathPlanningRequest_DistPoint__FieldAccessorTable;
-      internal static pbd::MessageDescriptor internal__static_ProtoBuffer_SimpleItem__Descriptor;
-      internal static pb::FieldAccess.FieldAccessorTable<global::ProtoBuffer.SimpleItem, global::ProtoBuffer.SimpleItem.Builder> internal__static_ProtoBuffer_SimpleItem__FieldAccessorTable;
-      #endregion
-      #region Descriptor
-      public static pbd::FileDescriptor Descriptor {
-        get { return descriptor; }
-      }
-      private static pbd::FileDescriptor descriptor;
-      
-      static SimpleItem() {
-        byte[] descriptorData = global::System.Convert.FromBase64String(
-            "Chl0dXRvcmlhbC9TaW1wbGVJdGVtLnByb3RvEgtQcm90b0J1ZmZlciKZCAoT" + 
-            "UGF0aFBsYW5uaW5nUmVxdWVzdBIaChJVc2VEaXN0cmlidXRpb25NYXAYASAC" + 
-            "KAgSHAoUVXNlVGFza0RpZmZpY3VsdHlNYXAYAiACKAgSFAoMVXNlSGlhcmFy" + 
-            "Y2h5GAMgAigIEh0KFVVzZUNvYXJzZVRvRmluZVNlYXJjaBgEIAIoCBIdChVV" + 
-            "c2VQYXJhbGxlbFByb2Nlc3NpbmcYBSACKAgSPQoLVmVoaWNsZVR5cGUYBiAC" + 
-            "KA4yKC5Qcm90b0J1ZmZlci5QYXRoUGxhbm5pbmdSZXF1ZXN0LlVBVlR5cGUS" + 
-            "PQoNRGV0ZWN0aW9uVHlwZRgHIAIoDjImLlByb3RvQnVmZmVyLlBhdGhQbGFu" + 
-            "bmluZ1JlcXVlc3QuRFR5cGUSFQoNRGV0ZWN0aW9uUmF0ZRgIIAIoARITCgtV" + 
-            "c2VFbmRQb2ludBgLIAIoCBIJCgFUGAwgAigFEjoKBnBTdGFydBgNIAIoCzIq" + 
-            "LlByb3RvQnVmZmVyLlBhdGhQbGFubmluZ1JlcXVlc3QuRGlzdFBvaW50EjgK" + 
-            "BHBFbmQYDiACKAsyKi5Qcm90b0J1ZmZlci5QYXRoUGxhbm5pbmdSZXF1ZXN0" + 
-            "LkRpc3RQb2ludBI6CghBbGdUb1VzZRgPIAIoDjIoLlByb3RvQnVmZmVyLlBh" + 
-            "dGhQbGFubmluZ1JlcXVlc3QuQWxnVHlwZRIQCghCYXRjaFJ1bhgQIAIoCBIQ" + 
-            "CghSdW5UaW1lcxgRIAIoBRIVCg1NYXhEaWZmaWN1bHR5GBIgAigFEhAKCERp" + 
-            "ZmZSYXRlGBMgAygBEhAKCERyYXdQYXRoGBQgAigIEgkKAWQYFSACKAUSEQoJ" + 
-            "VG9wTkNvdW50GBYgAigFGigKCURpc3RQb2ludBILCgNyb3cYASACKAUSDgoG" + 
-            "Y29sdW1uGAIgAigFIiIKB1VBVlR5cGUSCwoHRml4V2luZxAAEgoKBkNvcHRl" + 
-            "chABIkQKBURUeXBlEg0KCUZpeEFtb3VudBAAEhkKFUZpeEFtb3VudEluUGVy" + 
-            "Y2VudGFnZRABEhEKDUZpeFBlcmNlbnRhZ2UQAiL7AQoHQWxnVHlwZRIGCgJD" + 
-            "QxAAEggKBENDX0UQARINCglMSENHV0NPTlYQAhIPCgtMSENHV0NPTlZfRRAD" + 
-            "EgsKB0xIQ0dXUEYQBBINCglMSENHV1BGX0UQBRINCglMSENSYW5kb20QBhIP" + 
-            "CgtMSENSYW5kb21fRRAHEgoKBlJhbmRvbRAIEgwKCFJhbmRvbV9FEAkSCAoE" + 
-            "Q09OVhAKEgoKBkNPTlZfRRALEgYKAlBGEAwSCAoEUEZfRRANEgoKBlRvcFR3" + 
-            "bxAOEgwKCFRvcFR3b19FEA8SCAoEVG9wThAQEgoKBlRvcE5fRRAREgYKAkVB" + 
-            "EBISCAoERUFfRRATIlQKClNpbXBsZUl0ZW0SEAoIQ2FsbGVySVAYASACKAkS" + 
-            "NAoKY3VyUmVxdWVzdBgCIAIoCzIgLlByb3RvQnVmZmVyLlBhdGhQbGFubmlu" + 
-            "Z1JlcXVlc3RCAkgB");
-        pbd::FileDescriptor.InternalDescriptorAssigner assigner = delegate(pbd::FileDescriptor root) {
-          descriptor = root;
-          internal__static_ProtoBuffer_PathPlanningRequest__Descriptor = Descriptor.MessageTypes[0];
-          internal__static_ProtoBuffer_PathPlanningRequest__FieldAccessorTable = 
-              new pb::FieldAccess.FieldAccessorTable<global::ProtoBuffer.PathPlanningRequest, global::ProtoBuffer.PathPlanningRequest.Builder>(internal__static_ProtoBuffer_PathPlanningRequest__Descriptor,
-                  new string[] { "UseDistributionMap", "UseTaskDifficultyMap", "UseHiararchy", "UseCoarseToFineSearch", "UseParallelProcessing", "VehicleType", "DetectionType", "DetectionRate", "UseEndPoint", "T", "PStart", "PEnd", "AlgToUse", "BatchRun", "RunTimes", "MaxDifficulty", "DiffRate", "DrawPath", "D", "TopNCount", });
-          internal__static_ProtoBuffer_PathPlanningRequest_DistPoint__Descriptor = internal__static_ProtoBuffer_PathPlanningRequest__Descriptor.NestedTypes[0];
-          internal__static_ProtoBuffer_PathPlanningRequest_DistPoint__FieldAccessorTable = 
-              new pb::FieldAccess.FieldAccessorTable<global::ProtoBuffer.PathPlanningRequest.Types.DistPoint, global::ProtoBuffer.PathPlanningRequest.Types.DistPoint.Builder>(internal__static_ProtoBuffer_PathPlanningRequest_DistPoint__Descriptor,
-                  new string[] { "Row", "Column", });
-          internal__static_ProtoBuffer_SimpleItem__Descriptor = Descriptor.MessageTypes[1];
-          internal__static_ProtoBuffer_SimpleItem__FieldAccessorTable = 
-              new pb::FieldAccess.FieldAccessorTable<global::ProtoBuffer.SimpleItem, global::ProtoBuffer.SimpleItem.Builder>(internal__static_ProtoBuffer_SimpleItem__Descriptor,
-                  new string[] { "CallerIP", "CurRequest", });
-          return null;
-        };
-        pbd::FileDescriptor.InternalBuildGeneratedFileFrom(descriptorData,
-            new pbd::FileDescriptor[] {
-            }, assigner);
-      }
-      #endregion
-      
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+  [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+  [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ProtoGen", "2.4.1.473")]
+  public static partial class ServerQueueItemPB {
+  
+    #region Extension registration
+    public static void RegisterAllExtensions(pb::ExtensionRegistry registry) {
     }
+    #endregion
+    #region Static variables
+    internal static pbd::MessageDescriptor internal__static_ProtoBuffer_PathPlanningRequest__Descriptor;
+    internal static pb::FieldAccess.FieldAccessorTable<global::ProtoBuffer.PathPlanningRequest, global::ProtoBuffer.PathPlanningRequest.Builder> internal__static_ProtoBuffer_PathPlanningRequest__FieldAccessorTable;
+    internal static pbd::MessageDescriptor internal__static_ProtoBuffer_PathPlanningRequest_MatrixRow__Descriptor;
+    internal static pb::FieldAccess.FieldAccessorTable<global::ProtoBuffer.PathPlanningRequest.Types.MatrixRow, global::ProtoBuffer.PathPlanningRequest.Types.MatrixRow.Builder> internal__static_ProtoBuffer_PathPlanningRequest_MatrixRow__FieldAccessorTable;
+    internal static pbd::MessageDescriptor internal__static_ProtoBuffer_PathPlanningRequest_Matrix__Descriptor;
+    internal static pb::FieldAccess.FieldAccessorTable<global::ProtoBuffer.PathPlanningRequest.Types.Matrix, global::ProtoBuffer.PathPlanningRequest.Types.Matrix.Builder> internal__static_ProtoBuffer_PathPlanningRequest_Matrix__FieldAccessorTable;
+    internal static pbd::MessageDescriptor internal__static_ProtoBuffer_PathPlanningRequest_DistPoint__Descriptor;
+    internal static pb::FieldAccess.FieldAccessorTable<global::ProtoBuffer.PathPlanningRequest.Types.DistPoint, global::ProtoBuffer.PathPlanningRequest.Types.DistPoint.Builder> internal__static_ProtoBuffer_PathPlanningRequest_DistPoint__FieldAccessorTable;
+    internal static pbd::MessageDescriptor internal__static_ProtoBuffer_ServerQueueItem__Descriptor;
+    internal static pb::FieldAccess.FieldAccessorTable<global::ProtoBuffer.ServerQueueItem, global::ProtoBuffer.ServerQueueItem.Builder> internal__static_ProtoBuffer_ServerQueueItem__FieldAccessorTable;
+    #endregion
+    #region Descriptor
+    public static pbd::FileDescriptor Descriptor {
+      get { return descriptor; }
+    }
+    private static pbd::FileDescriptor descriptor;
+    
+    static ServerQueueItemPB() {
+      byte[] descriptorData = global::System.Convert.FromBase64String(
+          "CiB0dXRvcmlhbC9TZXJ2ZXJRdWV1ZUl0ZW1QQi5wcm90bxILUHJvdG9CdWZm" + 
+          "ZXIi8wkKE1BhdGhQbGFubmluZ1JlcXVlc3QSIAoSVXNlRGlzdHJpYnV0aW9u" + 
+          "TWFwGAEgASgIOgR0cnVlEiMKFFVzZVRhc2tEaWZmaWN1bHR5TWFwGAIgASgI" + 
+          "OgVmYWxzZRIbCgxVc2VIaWFyYXJjaHkYAyABKAg6BWZhbHNlEiQKFVVzZUNv" + 
+          "YXJzZVRvRmluZVNlYXJjaBgEIAEoCDoFZmFsc2USJAoVVXNlUGFyYWxsZWxQ" + 
+          "cm9jZXNzaW5nGAUgASgIOgVmYWxzZRJFCgtWZWhpY2xlVHlwZRgGIAEoDjIo" + 
+          "LlByb3RvQnVmZmVyLlBhdGhQbGFubmluZ1JlcXVlc3QuVUFWVHlwZToGQ29w" + 
+          "dGVyElQKDURldGVjdGlvblR5cGUYByABKA4yJi5Qcm90b0J1ZmZlci5QYXRo" + 
+          "UGxhbm5pbmdSZXF1ZXN0LkRUeXBlOhVGaXhBbW91bnRJblBlcmNlbnRhZ2US" + 
+          "GAoNRGV0ZWN0aW9uUmF0ZRgIIAEoAToBMRIaCgtVc2VFbmRQb2ludBgLIAEo" + 
+          "CDoFZmFsc2USDgoBVBgMIAEoBToDNjAwEjoKBnBTdGFydBgNIAEoCzIqLlBy" + 
+          "b3RvQnVmZmVyLlBhdGhQbGFubmluZ1JlcXVlc3QuRGlzdFBvaW50EjgKBHBF" + 
+          "bmQYDiABKAsyKi5Qcm90b0J1ZmZlci5QYXRoUGxhbm5pbmdSZXF1ZXN0LkRp" + 
+          "c3RQb2ludBJFCghBbGdUb1VzZRgPIAEoDjIoLlByb3RvQnVmZmVyLlBhdGhQ" + 
+          "bGFubmluZ1JlcXVlc3QuQWxnVHlwZToJTEhDR1dDT05WEhcKCEJhdGNoUnVu" + 
+          "GBAgASgIOgVmYWxzZRIUCghSdW5UaW1lcxgRIAEoBToCMTASGAoNTWF4RGlm" + 
+          "ZmljdWx0eRgSIAEoBToBMxIQCghEaWZmUmF0ZRgTIAMoARIXCghEcmF3UGF0" + 
+          "aBgUIAEoCDoFZmFsc2USDAoBZBgVIAEoBToBMBIUCglUb3BOQ291bnQYFiAB" + 
+          "KAU6ATMaGQoJTWF0cml4Um93EgwKBGNlbGwYASADKAIaQQoGTWF0cml4EjcK" + 
+          "A3JvdxgBIAMoCzIqLlByb3RvQnVmZmVyLlBhdGhQbGFubmluZ1JlcXVlc3Qu" + 
+          "TWF0cml4Um93Gi4KCURpc3RQb2ludBIOCgNyb3cYASABKAU6ATASEQoGY29s" + 
+          "dW1uGAIgASgFOgEwIiIKB1VBVlR5cGUSCwoHRml4V2luZxAAEgoKBkNvcHRl" + 
+          "chABIkQKBURUeXBlEg0KCUZpeEFtb3VudBAAEhkKFUZpeEFtb3VudEluUGVy" + 
+          "Y2VudGFnZRABEhEKDUZpeFBlcmNlbnRhZ2UQAiL7AQoHQWxnVHlwZRIGCgJD" + 
+          "QxAAEggKBENDX0UQARINCglMSENHV0NPTlYQAhIPCgtMSENHV0NPTlZfRRAD" + 
+          "EgsKB0xIQ0dXUEYQBBINCglMSENHV1BGX0UQBRINCglMSENSYW5kb20QBhIP" + 
+          "CgtMSENSYW5kb21fRRAHEgoKBlJhbmRvbRAIEgwKCFJhbmRvbV9FEAkSCAoE" + 
+          "Q09OVhAKEgoKBkNPTlZfRRALEgYKAlBGEAwSCAoEUEZfRRANEgoKBlRvcFR3" + 
+          "bxAOEgwKCFRvcFR3b19FEA8SCAoEVG9wThAQEgoKBlRvcE5fRRAREgYKAkVB" + 
+          "EBISCAoERUFfRRATImQKD1NlcnZlclF1ZXVlSXRlbRIbCghDYWxsZXJJUBgB" + 
+          "IAEoCToJMTI3LjAuMC4xEjQKCmN1clJlcXVlc3QYAiABKAsyIC5Qcm90b0J1" + 
+          "ZmZlci5QYXRoUGxhbm5pbmdSZXF1ZXN0QgJIAQ==");
+      pbd::FileDescriptor.InternalDescriptorAssigner assigner = delegate(pbd::FileDescriptor root) {
+        descriptor = root;
+        internal__static_ProtoBuffer_PathPlanningRequest__Descriptor = Descriptor.MessageTypes[0];
+        internal__static_ProtoBuffer_PathPlanningRequest__FieldAccessorTable = 
+            new pb::FieldAccess.FieldAccessorTable<global::ProtoBuffer.PathPlanningRequest, global::ProtoBuffer.PathPlanningRequest.Builder>(internal__static_ProtoBuffer_PathPlanningRequest__Descriptor,
+                new string[] { "UseDistributionMap", "UseTaskDifficultyMap", "UseHiararchy", "UseCoarseToFineSearch", "UseParallelProcessing", "VehicleType", "DetectionType", "DetectionRate", "UseEndPoint", "T", "PStart", "PEnd", "AlgToUse", "BatchRun", "RunTimes", "MaxDifficulty", "DiffRate", "DrawPath", "D", "TopNCount", });
+        internal__static_ProtoBuffer_PathPlanningRequest_MatrixRow__Descriptor = internal__static_ProtoBuffer_PathPlanningRequest__Descriptor.NestedTypes[0];
+        internal__static_ProtoBuffer_PathPlanningRequest_MatrixRow__FieldAccessorTable = 
+            new pb::FieldAccess.FieldAccessorTable<global::ProtoBuffer.PathPlanningRequest.Types.MatrixRow, global::ProtoBuffer.PathPlanningRequest.Types.MatrixRow.Builder>(internal__static_ProtoBuffer_PathPlanningRequest_MatrixRow__Descriptor,
+                new string[] { "Cell", });
+        internal__static_ProtoBuffer_PathPlanningRequest_Matrix__Descriptor = internal__static_ProtoBuffer_PathPlanningRequest__Descriptor.NestedTypes[1];
+        internal__static_ProtoBuffer_PathPlanningRequest_Matrix__FieldAccessorTable = 
+            new pb::FieldAccess.FieldAccessorTable<global::ProtoBuffer.PathPlanningRequest.Types.Matrix, global::ProtoBuffer.PathPlanningRequest.Types.Matrix.Builder>(internal__static_ProtoBuffer_PathPlanningRequest_Matrix__Descriptor,
+                new string[] { "Row", });
+        internal__static_ProtoBuffer_PathPlanningRequest_DistPoint__Descriptor = internal__static_ProtoBuffer_PathPlanningRequest__Descriptor.NestedTypes[2];
+        internal__static_ProtoBuffer_PathPlanningRequest_DistPoint__FieldAccessorTable = 
+            new pb::FieldAccess.FieldAccessorTable<global::ProtoBuffer.PathPlanningRequest.Types.DistPoint, global::ProtoBuffer.PathPlanningRequest.Types.DistPoint.Builder>(internal__static_ProtoBuffer_PathPlanningRequest_DistPoint__Descriptor,
+                new string[] { "Row", "Column", });
+        internal__static_ProtoBuffer_ServerQueueItem__Descriptor = Descriptor.MessageTypes[1];
+        internal__static_ProtoBuffer_ServerQueueItem__FieldAccessorTable = 
+            new pb::FieldAccess.FieldAccessorTable<global::ProtoBuffer.ServerQueueItem, global::ProtoBuffer.ServerQueueItem.Builder>(internal__static_ProtoBuffer_ServerQueueItem__Descriptor,
+                new string[] { "CallerIP", "CurRequest", });
+        return null;
+      };
+      pbd::FileDescriptor.InternalBuildGeneratedFileFrom(descriptorData,
+          new pbd::FileDescriptor[] {
+          }, assigner);
+    }
+    #endregion
+    
   }
   #region Messages
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -108,11 +122,11 @@ namespace ProtoBuffer {
     }
     
     public static pbd::MessageDescriptor Descriptor {
-      get { return global::ProtoBuffer.Proto.SimpleItem.internal__static_ProtoBuffer_PathPlanningRequest__Descriptor; }
+      get { return global::ProtoBuffer.ServerQueueItemPB.internal__static_ProtoBuffer_PathPlanningRequest__Descriptor; }
     }
     
     protected override pb::FieldAccess.FieldAccessorTable<PathPlanningRequest, PathPlanningRequest.Builder> InternalFieldAccessors {
-      get { return global::ProtoBuffer.Proto.SimpleItem.internal__static_ProtoBuffer_PathPlanningRequest__FieldAccessorTable; }
+      get { return global::ProtoBuffer.ServerQueueItemPB.internal__static_ProtoBuffer_PathPlanningRequest__FieldAccessorTable; }
     }
     
     #region Nested types
@@ -163,6 +177,598 @@ namespace ProtoBuffer {
       [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
       [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
       [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ProtoGen", "2.4.1.473")]
+      public sealed partial class MatrixRow : pb::GeneratedMessage<MatrixRow, MatrixRow.Builder> {
+        private MatrixRow() { }
+        private static readonly MatrixRow defaultInstance = new MatrixRow().MakeReadOnly();
+        private static readonly string[] _matrixRowFieldNames = new string[] { "cell" };
+        private static readonly uint[] _matrixRowFieldTags = new uint[] { 13 };
+        public static MatrixRow DefaultInstance {
+          get { return defaultInstance; }
+        }
+        
+        public override MatrixRow DefaultInstanceForType {
+          get { return DefaultInstance; }
+        }
+        
+        protected override MatrixRow ThisMessage {
+          get { return this; }
+        }
+        
+        public static pbd::MessageDescriptor Descriptor {
+          get { return global::ProtoBuffer.ServerQueueItemPB.internal__static_ProtoBuffer_PathPlanningRequest_MatrixRow__Descriptor; }
+        }
+        
+        protected override pb::FieldAccess.FieldAccessorTable<MatrixRow, MatrixRow.Builder> InternalFieldAccessors {
+          get { return global::ProtoBuffer.ServerQueueItemPB.internal__static_ProtoBuffer_PathPlanningRequest_MatrixRow__FieldAccessorTable; }
+        }
+        
+        public const int CellFieldNumber = 1;
+        private pbc::PopsicleList<float> cell_ = new pbc::PopsicleList<float>();
+        public scg::IList<float> CellList {
+          get { return pbc::Lists.AsReadOnly(cell_); }
+        }
+        public int CellCount {
+          get { return cell_.Count; }
+        }
+        public float GetCell(int index) {
+          return cell_[index];
+        }
+        
+        public override bool IsInitialized {
+          get {
+            return true;
+          }
+        }
+        
+        public override void WriteTo(pb::ICodedOutputStream output) {
+          int size = SerializedSize;
+          string[] field_names = _matrixRowFieldNames;
+          if (cell_.Count > 0) {
+            output.WriteFloatArray(1, field_names[0], cell_);
+          }
+          UnknownFields.WriteTo(output);
+        }
+        
+        private int memoizedSerializedSize = -1;
+        public override int SerializedSize {
+          get {
+            int size = memoizedSerializedSize;
+            if (size != -1) return size;
+            
+            size = 0;
+            {
+              int dataSize = 0;
+              dataSize = 4 * cell_.Count;
+              size += dataSize;
+              size += 1 * cell_.Count;
+            }
+            size += UnknownFields.SerializedSize;
+            memoizedSerializedSize = size;
+            return size;
+          }
+        }
+        
+        public static MatrixRow ParseFrom(pb::ByteString data) {
+          return ((Builder) CreateBuilder().MergeFrom(data)).BuildParsed();
+        }
+        public static MatrixRow ParseFrom(pb::ByteString data, pb::ExtensionRegistry extensionRegistry) {
+          return ((Builder) CreateBuilder().MergeFrom(data, extensionRegistry)).BuildParsed();
+        }
+        public static MatrixRow ParseFrom(byte[] data) {
+          return ((Builder) CreateBuilder().MergeFrom(data)).BuildParsed();
+        }
+        public static MatrixRow ParseFrom(byte[] data, pb::ExtensionRegistry extensionRegistry) {
+          return ((Builder) CreateBuilder().MergeFrom(data, extensionRegistry)).BuildParsed();
+        }
+        public static MatrixRow ParseFrom(global::System.IO.Stream input) {
+          return ((Builder) CreateBuilder().MergeFrom(input)).BuildParsed();
+        }
+        public static MatrixRow ParseFrom(global::System.IO.Stream input, pb::ExtensionRegistry extensionRegistry) {
+          return ((Builder) CreateBuilder().MergeFrom(input, extensionRegistry)).BuildParsed();
+        }
+        public static MatrixRow ParseDelimitedFrom(global::System.IO.Stream input) {
+          return CreateBuilder().MergeDelimitedFrom(input).BuildParsed();
+        }
+        public static MatrixRow ParseDelimitedFrom(global::System.IO.Stream input, pb::ExtensionRegistry extensionRegistry) {
+          return CreateBuilder().MergeDelimitedFrom(input, extensionRegistry).BuildParsed();
+        }
+        public static MatrixRow ParseFrom(pb::ICodedInputStream input) {
+          return ((Builder) CreateBuilder().MergeFrom(input)).BuildParsed();
+        }
+        public static MatrixRow ParseFrom(pb::ICodedInputStream input, pb::ExtensionRegistry extensionRegistry) {
+          return ((Builder) CreateBuilder().MergeFrom(input, extensionRegistry)).BuildParsed();
+        }
+        private MatrixRow MakeReadOnly() {
+          cell_.MakeReadOnly();
+          return this;
+        }
+        
+        public static Builder CreateBuilder() { return new Builder(); }
+        public override Builder ToBuilder() { return CreateBuilder(this); }
+        public override Builder CreateBuilderForType() { return new Builder(); }
+        public static Builder CreateBuilder(MatrixRow prototype) {
+          return new Builder(prototype);
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ProtoGen", "2.4.1.473")]
+        public sealed partial class Builder : pb::GeneratedBuilder<MatrixRow, Builder> {
+          protected override Builder ThisBuilder {
+            get { return this; }
+          }
+          public Builder() {
+            result = DefaultInstance;
+            resultIsReadOnly = true;
+          }
+          internal Builder(MatrixRow cloneFrom) {
+            result = cloneFrom;
+            resultIsReadOnly = true;
+          }
+          
+          private bool resultIsReadOnly;
+          private MatrixRow result;
+          
+          private MatrixRow PrepareBuilder() {
+            if (resultIsReadOnly) {
+              MatrixRow original = result;
+              result = new MatrixRow();
+              resultIsReadOnly = false;
+              MergeFrom(original);
+            }
+            return result;
+          }
+          
+          public override bool IsInitialized {
+            get { return result.IsInitialized; }
+          }
+          
+          protected override MatrixRow MessageBeingBuilt {
+            get { return PrepareBuilder(); }
+          }
+          
+          public override Builder Clear() {
+            result = DefaultInstance;
+            resultIsReadOnly = true;
+            return this;
+          }
+          
+          public override Builder Clone() {
+            if (resultIsReadOnly) {
+              return new Builder(result);
+            } else {
+              return new Builder().MergeFrom(result);
+            }
+          }
+          
+          public override pbd::MessageDescriptor DescriptorForType {
+            get { return global::ProtoBuffer.PathPlanningRequest.Types.MatrixRow.Descriptor; }
+          }
+          
+          public override MatrixRow DefaultInstanceForType {
+            get { return global::ProtoBuffer.PathPlanningRequest.Types.MatrixRow.DefaultInstance; }
+          }
+          
+          public override MatrixRow BuildPartial() {
+            if (resultIsReadOnly) {
+              return result;
+            }
+            resultIsReadOnly = true;
+            return result.MakeReadOnly();
+          }
+          
+          public override Builder MergeFrom(pb::IMessage other) {
+            if (other is MatrixRow) {
+              return MergeFrom((MatrixRow) other);
+            } else {
+              base.MergeFrom(other);
+              return this;
+            }
+          }
+          
+          public override Builder MergeFrom(MatrixRow other) {
+            if (other == global::ProtoBuffer.PathPlanningRequest.Types.MatrixRow.DefaultInstance) return this;
+            PrepareBuilder();
+            if (other.cell_.Count != 0) {
+              result.cell_.Add(other.cell_);
+            }
+            this.MergeUnknownFields(other.UnknownFields);
+            return this;
+          }
+          
+          public override Builder MergeFrom(pb::ICodedInputStream input) {
+            return MergeFrom(input, pb::ExtensionRegistry.Empty);
+          }
+          
+          public override Builder MergeFrom(pb::ICodedInputStream input, pb::ExtensionRegistry extensionRegistry) {
+            PrepareBuilder();
+            pb::UnknownFieldSet.Builder unknownFields = null;
+            uint tag;
+            string field_name;
+            while (input.ReadTag(out tag, out field_name)) {
+              if(tag == 0 && field_name != null) {
+                int field_ordinal = global::System.Array.BinarySearch(_matrixRowFieldNames, field_name, global::System.StringComparer.Ordinal);
+                if(field_ordinal >= 0)
+                  tag = _matrixRowFieldTags[field_ordinal];
+                else {
+                  if (unknownFields == null) {
+                    unknownFields = pb::UnknownFieldSet.CreateBuilder(this.UnknownFields);
+                  }
+                  ParseUnknownField(input, unknownFields, extensionRegistry, tag, field_name);
+                  continue;
+                }
+              }
+              switch (tag) {
+                case 0: {
+                  throw pb::InvalidProtocolBufferException.InvalidTag();
+                }
+                default: {
+                  if (pb::WireFormat.IsEndGroupTag(tag)) {
+                    if (unknownFields != null) {
+                      this.UnknownFields = unknownFields.Build();
+                    }
+                    return this;
+                  }
+                  if (unknownFields == null) {
+                    unknownFields = pb::UnknownFieldSet.CreateBuilder(this.UnknownFields);
+                  }
+                  ParseUnknownField(input, unknownFields, extensionRegistry, tag, field_name);
+                  break;
+                }
+                case 10:
+                case 13: {
+                  input.ReadFloatArray(tag, field_name, result.cell_);
+                  break;
+                }
+              }
+            }
+            
+            if (unknownFields != null) {
+              this.UnknownFields = unknownFields.Build();
+            }
+            return this;
+          }
+          
+          
+          public pbc::IPopsicleList<float> CellList {
+            get { return PrepareBuilder().cell_; }
+          }
+          public int CellCount {
+            get { return result.CellCount; }
+          }
+          public float GetCell(int index) {
+            return result.GetCell(index);
+          }
+          public Builder SetCell(int index, float value) {
+            PrepareBuilder();
+            result.cell_[index] = value;
+            return this;
+          }
+          public Builder AddCell(float value) {
+            PrepareBuilder();
+            result.cell_.Add(value);
+            return this;
+          }
+          public Builder AddRangeCell(scg::IEnumerable<float> values) {
+            PrepareBuilder();
+            result.cell_.Add(values);
+            return this;
+          }
+          public Builder ClearCell() {
+            PrepareBuilder();
+            result.cell_.Clear();
+            return this;
+          }
+        }
+        static MatrixRow() {
+          object.ReferenceEquals(global::ProtoBuffer.ServerQueueItemPB.Descriptor, null);
+        }
+      }
+      
+      [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+      [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+      [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ProtoGen", "2.4.1.473")]
+      public sealed partial class Matrix : pb::GeneratedMessage<Matrix, Matrix.Builder> {
+        private Matrix() { }
+        private static readonly Matrix defaultInstance = new Matrix().MakeReadOnly();
+        private static readonly string[] _matrixFieldNames = new string[] { "row" };
+        private static readonly uint[] _matrixFieldTags = new uint[] { 10 };
+        public static Matrix DefaultInstance {
+          get { return defaultInstance; }
+        }
+        
+        public override Matrix DefaultInstanceForType {
+          get { return DefaultInstance; }
+        }
+        
+        protected override Matrix ThisMessage {
+          get { return this; }
+        }
+        
+        public static pbd::MessageDescriptor Descriptor {
+          get { return global::ProtoBuffer.ServerQueueItemPB.internal__static_ProtoBuffer_PathPlanningRequest_Matrix__Descriptor; }
+        }
+        
+        protected override pb::FieldAccess.FieldAccessorTable<Matrix, Matrix.Builder> InternalFieldAccessors {
+          get { return global::ProtoBuffer.ServerQueueItemPB.internal__static_ProtoBuffer_PathPlanningRequest_Matrix__FieldAccessorTable; }
+        }
+        
+        public const int RowFieldNumber = 1;
+        private pbc::PopsicleList<global::ProtoBuffer.PathPlanningRequest.Types.MatrixRow> row_ = new pbc::PopsicleList<global::ProtoBuffer.PathPlanningRequest.Types.MatrixRow>();
+        public scg::IList<global::ProtoBuffer.PathPlanningRequest.Types.MatrixRow> RowList {
+          get { return row_; }
+        }
+        public int RowCount {
+          get { return row_.Count; }
+        }
+        public global::ProtoBuffer.PathPlanningRequest.Types.MatrixRow GetRow(int index) {
+          return row_[index];
+        }
+        
+        public override bool IsInitialized {
+          get {
+            return true;
+          }
+        }
+        
+        public override void WriteTo(pb::ICodedOutputStream output) {
+          int size = SerializedSize;
+          string[] field_names = _matrixFieldNames;
+          if (row_.Count > 0) {
+            output.WriteMessageArray(1, field_names[0], row_);
+          }
+          UnknownFields.WriteTo(output);
+        }
+        
+        private int memoizedSerializedSize = -1;
+        public override int SerializedSize {
+          get {
+            int size = memoizedSerializedSize;
+            if (size != -1) return size;
+            
+            size = 0;
+            foreach (global::ProtoBuffer.PathPlanningRequest.Types.MatrixRow element in RowList) {
+              size += pb::CodedOutputStream.ComputeMessageSize(1, element);
+            }
+            size += UnknownFields.SerializedSize;
+            memoizedSerializedSize = size;
+            return size;
+          }
+        }
+        
+        public static Matrix ParseFrom(pb::ByteString data) {
+          return ((Builder) CreateBuilder().MergeFrom(data)).BuildParsed();
+        }
+        public static Matrix ParseFrom(pb::ByteString data, pb::ExtensionRegistry extensionRegistry) {
+          return ((Builder) CreateBuilder().MergeFrom(data, extensionRegistry)).BuildParsed();
+        }
+        public static Matrix ParseFrom(byte[] data) {
+          return ((Builder) CreateBuilder().MergeFrom(data)).BuildParsed();
+        }
+        public static Matrix ParseFrom(byte[] data, pb::ExtensionRegistry extensionRegistry) {
+          return ((Builder) CreateBuilder().MergeFrom(data, extensionRegistry)).BuildParsed();
+        }
+        public static Matrix ParseFrom(global::System.IO.Stream input) {
+          return ((Builder) CreateBuilder().MergeFrom(input)).BuildParsed();
+        }
+        public static Matrix ParseFrom(global::System.IO.Stream input, pb::ExtensionRegistry extensionRegistry) {
+          return ((Builder) CreateBuilder().MergeFrom(input, extensionRegistry)).BuildParsed();
+        }
+        public static Matrix ParseDelimitedFrom(global::System.IO.Stream input) {
+          return CreateBuilder().MergeDelimitedFrom(input).BuildParsed();
+        }
+        public static Matrix ParseDelimitedFrom(global::System.IO.Stream input, pb::ExtensionRegistry extensionRegistry) {
+          return CreateBuilder().MergeDelimitedFrom(input, extensionRegistry).BuildParsed();
+        }
+        public static Matrix ParseFrom(pb::ICodedInputStream input) {
+          return ((Builder) CreateBuilder().MergeFrom(input)).BuildParsed();
+        }
+        public static Matrix ParseFrom(pb::ICodedInputStream input, pb::ExtensionRegistry extensionRegistry) {
+          return ((Builder) CreateBuilder().MergeFrom(input, extensionRegistry)).BuildParsed();
+        }
+        private Matrix MakeReadOnly() {
+          row_.MakeReadOnly();
+          return this;
+        }
+        
+        public static Builder CreateBuilder() { return new Builder(); }
+        public override Builder ToBuilder() { return CreateBuilder(this); }
+        public override Builder CreateBuilderForType() { return new Builder(); }
+        public static Builder CreateBuilder(Matrix prototype) {
+          return new Builder(prototype);
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ProtoGen", "2.4.1.473")]
+        public sealed partial class Builder : pb::GeneratedBuilder<Matrix, Builder> {
+          protected override Builder ThisBuilder {
+            get { return this; }
+          }
+          public Builder() {
+            result = DefaultInstance;
+            resultIsReadOnly = true;
+          }
+          internal Builder(Matrix cloneFrom) {
+            result = cloneFrom;
+            resultIsReadOnly = true;
+          }
+          
+          private bool resultIsReadOnly;
+          private Matrix result;
+          
+          private Matrix PrepareBuilder() {
+            if (resultIsReadOnly) {
+              Matrix original = result;
+              result = new Matrix();
+              resultIsReadOnly = false;
+              MergeFrom(original);
+            }
+            return result;
+          }
+          
+          public override bool IsInitialized {
+            get { return result.IsInitialized; }
+          }
+          
+          protected override Matrix MessageBeingBuilt {
+            get { return PrepareBuilder(); }
+          }
+          
+          public override Builder Clear() {
+            result = DefaultInstance;
+            resultIsReadOnly = true;
+            return this;
+          }
+          
+          public override Builder Clone() {
+            if (resultIsReadOnly) {
+              return new Builder(result);
+            } else {
+              return new Builder().MergeFrom(result);
+            }
+          }
+          
+          public override pbd::MessageDescriptor DescriptorForType {
+            get { return global::ProtoBuffer.PathPlanningRequest.Types.Matrix.Descriptor; }
+          }
+          
+          public override Matrix DefaultInstanceForType {
+            get { return global::ProtoBuffer.PathPlanningRequest.Types.Matrix.DefaultInstance; }
+          }
+          
+          public override Matrix BuildPartial() {
+            if (resultIsReadOnly) {
+              return result;
+            }
+            resultIsReadOnly = true;
+            return result.MakeReadOnly();
+          }
+          
+          public override Builder MergeFrom(pb::IMessage other) {
+            if (other is Matrix) {
+              return MergeFrom((Matrix) other);
+            } else {
+              base.MergeFrom(other);
+              return this;
+            }
+          }
+          
+          public override Builder MergeFrom(Matrix other) {
+            if (other == global::ProtoBuffer.PathPlanningRequest.Types.Matrix.DefaultInstance) return this;
+            PrepareBuilder();
+            if (other.row_.Count != 0) {
+              result.row_.Add(other.row_);
+            }
+            this.MergeUnknownFields(other.UnknownFields);
+            return this;
+          }
+          
+          public override Builder MergeFrom(pb::ICodedInputStream input) {
+            return MergeFrom(input, pb::ExtensionRegistry.Empty);
+          }
+          
+          public override Builder MergeFrom(pb::ICodedInputStream input, pb::ExtensionRegistry extensionRegistry) {
+            PrepareBuilder();
+            pb::UnknownFieldSet.Builder unknownFields = null;
+            uint tag;
+            string field_name;
+            while (input.ReadTag(out tag, out field_name)) {
+              if(tag == 0 && field_name != null) {
+                int field_ordinal = global::System.Array.BinarySearch(_matrixFieldNames, field_name, global::System.StringComparer.Ordinal);
+                if(field_ordinal >= 0)
+                  tag = _matrixFieldTags[field_ordinal];
+                else {
+                  if (unknownFields == null) {
+                    unknownFields = pb::UnknownFieldSet.CreateBuilder(this.UnknownFields);
+                  }
+                  ParseUnknownField(input, unknownFields, extensionRegistry, tag, field_name);
+                  continue;
+                }
+              }
+              switch (tag) {
+                case 0: {
+                  throw pb::InvalidProtocolBufferException.InvalidTag();
+                }
+                default: {
+                  if (pb::WireFormat.IsEndGroupTag(tag)) {
+                    if (unknownFields != null) {
+                      this.UnknownFields = unknownFields.Build();
+                    }
+                    return this;
+                  }
+                  if (unknownFields == null) {
+                    unknownFields = pb::UnknownFieldSet.CreateBuilder(this.UnknownFields);
+                  }
+                  ParseUnknownField(input, unknownFields, extensionRegistry, tag, field_name);
+                  break;
+                }
+                case 10: {
+                  input.ReadMessageArray(tag, field_name, result.row_, global::ProtoBuffer.PathPlanningRequest.Types.MatrixRow.DefaultInstance, extensionRegistry);
+                  break;
+                }
+              }
+            }
+            
+            if (unknownFields != null) {
+              this.UnknownFields = unknownFields.Build();
+            }
+            return this;
+          }
+          
+          
+          public pbc::IPopsicleList<global::ProtoBuffer.PathPlanningRequest.Types.MatrixRow> RowList {
+            get { return PrepareBuilder().row_; }
+          }
+          public int RowCount {
+            get { return result.RowCount; }
+          }
+          public global::ProtoBuffer.PathPlanningRequest.Types.MatrixRow GetRow(int index) {
+            return result.GetRow(index);
+          }
+          public Builder SetRow(int index, global::ProtoBuffer.PathPlanningRequest.Types.MatrixRow value) {
+            pb::ThrowHelper.ThrowIfNull(value, "value");
+            PrepareBuilder();
+            result.row_[index] = value;
+            return this;
+          }
+          public Builder SetRow(int index, global::ProtoBuffer.PathPlanningRequest.Types.MatrixRow.Builder builderForValue) {
+            pb::ThrowHelper.ThrowIfNull(builderForValue, "builderForValue");
+            PrepareBuilder();
+            result.row_[index] = builderForValue.Build();
+            return this;
+          }
+          public Builder AddRow(global::ProtoBuffer.PathPlanningRequest.Types.MatrixRow value) {
+            pb::ThrowHelper.ThrowIfNull(value, "value");
+            PrepareBuilder();
+            result.row_.Add(value);
+            return this;
+          }
+          public Builder AddRow(global::ProtoBuffer.PathPlanningRequest.Types.MatrixRow.Builder builderForValue) {
+            pb::ThrowHelper.ThrowIfNull(builderForValue, "builderForValue");
+            PrepareBuilder();
+            result.row_.Add(builderForValue.Build());
+            return this;
+          }
+          public Builder AddRangeRow(scg::IEnumerable<global::ProtoBuffer.PathPlanningRequest.Types.MatrixRow> values) {
+            PrepareBuilder();
+            result.row_.Add(values);
+            return this;
+          }
+          public Builder ClearRow() {
+            PrepareBuilder();
+            result.row_.Clear();
+            return this;
+          }
+        }
+        static Matrix() {
+          object.ReferenceEquals(global::ProtoBuffer.ServerQueueItemPB.Descriptor, null);
+        }
+      }
+      
+      [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+      [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+      [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ProtoGen", "2.4.1.473")]
       public sealed partial class DistPoint : pb::GeneratedMessage<DistPoint, DistPoint.Builder> {
         private DistPoint() { }
         private static readonly DistPoint defaultInstance = new DistPoint().MakeReadOnly();
@@ -181,11 +787,11 @@ namespace ProtoBuffer {
         }
         
         public static pbd::MessageDescriptor Descriptor {
-          get { return global::ProtoBuffer.Proto.SimpleItem.internal__static_ProtoBuffer_PathPlanningRequest_DistPoint__Descriptor; }
+          get { return global::ProtoBuffer.ServerQueueItemPB.internal__static_ProtoBuffer_PathPlanningRequest_DistPoint__Descriptor; }
         }
         
         protected override pb::FieldAccess.FieldAccessorTable<DistPoint, DistPoint.Builder> InternalFieldAccessors {
-          get { return global::ProtoBuffer.Proto.SimpleItem.internal__static_ProtoBuffer_PathPlanningRequest_DistPoint__FieldAccessorTable; }
+          get { return global::ProtoBuffer.ServerQueueItemPB.internal__static_ProtoBuffer_PathPlanningRequest_DistPoint__FieldAccessorTable; }
         }
         
         public const int RowFieldNumber = 1;
@@ -210,8 +816,6 @@ namespace ProtoBuffer {
         
         public override bool IsInitialized {
           get {
-            if (!hasRow) return false;
-            if (!hasColumn) return false;
             return true;
           }
         }
@@ -475,7 +1079,7 @@ namespace ProtoBuffer {
           }
         }
         static DistPoint() {
-          object.ReferenceEquals(global::ProtoBuffer.Proto.SimpleItem.Descriptor, null);
+          object.ReferenceEquals(global::ProtoBuffer.ServerQueueItemPB.Descriptor, null);
         }
       }
       
@@ -484,7 +1088,7 @@ namespace ProtoBuffer {
     
     public const int UseDistributionMapFieldNumber = 1;
     private bool hasUseDistributionMap;
-    private bool useDistributionMap_;
+    private bool useDistributionMap_ = true;
     public bool HasUseDistributionMap {
       get { return hasUseDistributionMap; }
     }
@@ -534,7 +1138,7 @@ namespace ProtoBuffer {
     
     public const int VehicleTypeFieldNumber = 6;
     private bool hasVehicleType;
-    private global::ProtoBuffer.PathPlanningRequest.Types.UAVType vehicleType_ = global::ProtoBuffer.PathPlanningRequest.Types.UAVType.FixWing;
+    private global::ProtoBuffer.PathPlanningRequest.Types.UAVType vehicleType_ = global::ProtoBuffer.PathPlanningRequest.Types.UAVType.Copter;
     public bool HasVehicleType {
       get { return hasVehicleType; }
     }
@@ -544,7 +1148,7 @@ namespace ProtoBuffer {
     
     public const int DetectionTypeFieldNumber = 7;
     private bool hasDetectionType;
-    private global::ProtoBuffer.PathPlanningRequest.Types.DType detectionType_ = global::ProtoBuffer.PathPlanningRequest.Types.DType.FixAmount;
+    private global::ProtoBuffer.PathPlanningRequest.Types.DType detectionType_ = global::ProtoBuffer.PathPlanningRequest.Types.DType.FixAmountInPercentage;
     public bool HasDetectionType {
       get { return hasDetectionType; }
     }
@@ -554,7 +1158,7 @@ namespace ProtoBuffer {
     
     public const int DetectionRateFieldNumber = 8;
     private bool hasDetectionRate;
-    private double detectionRate_;
+    private double detectionRate_ = 1D;
     public bool HasDetectionRate {
       get { return hasDetectionRate; }
     }
@@ -574,7 +1178,7 @@ namespace ProtoBuffer {
     
     public const int TFieldNumber = 12;
     private bool hasT;
-    private int t_;
+    private int t_ = 600;
     public bool HasT {
       get { return hasT; }
     }
@@ -604,7 +1208,7 @@ namespace ProtoBuffer {
     
     public const int AlgToUseFieldNumber = 15;
     private bool hasAlgToUse;
-    private global::ProtoBuffer.PathPlanningRequest.Types.AlgType algToUse_ = global::ProtoBuffer.PathPlanningRequest.Types.AlgType.CC;
+    private global::ProtoBuffer.PathPlanningRequest.Types.AlgType algToUse_ = global::ProtoBuffer.PathPlanningRequest.Types.AlgType.LHCGWCONV;
     public bool HasAlgToUse {
       get { return hasAlgToUse; }
     }
@@ -624,7 +1228,7 @@ namespace ProtoBuffer {
     
     public const int RunTimesFieldNumber = 17;
     private bool hasRunTimes;
-    private int runTimes_;
+    private int runTimes_ = 10;
     public bool HasRunTimes {
       get { return hasRunTimes; }
     }
@@ -634,7 +1238,7 @@ namespace ProtoBuffer {
     
     public const int MaxDifficultyFieldNumber = 18;
     private bool hasMaxDifficulty;
-    private int maxDifficulty_;
+    private int maxDifficulty_ = 3;
     public bool HasMaxDifficulty {
       get { return hasMaxDifficulty; }
     }
@@ -676,7 +1280,7 @@ namespace ProtoBuffer {
     
     public const int TopNCountFieldNumber = 22;
     private bool hasTopNCount;
-    private int topNCount_;
+    private int topNCount_ = 3;
     public bool HasTopNCount {
       get { return hasTopNCount; }
     }
@@ -686,27 +1290,6 @@ namespace ProtoBuffer {
     
     public override bool IsInitialized {
       get {
-        if (!hasUseDistributionMap) return false;
-        if (!hasUseTaskDifficultyMap) return false;
-        if (!hasUseHiararchy) return false;
-        if (!hasUseCoarseToFineSearch) return false;
-        if (!hasUseParallelProcessing) return false;
-        if (!hasVehicleType) return false;
-        if (!hasDetectionType) return false;
-        if (!hasDetectionRate) return false;
-        if (!hasUseEndPoint) return false;
-        if (!hasT) return false;
-        if (!hasPStart) return false;
-        if (!hasPEnd) return false;
-        if (!hasAlgToUse) return false;
-        if (!hasBatchRun) return false;
-        if (!hasRunTimes) return false;
-        if (!hasMaxDifficulty) return false;
-        if (!hasDrawPath) return false;
-        if (!hasD) return false;
-        if (!hasTopNCount) return false;
-        if (!PStart.IsInitialized) return false;
-        if (!PEnd.IsInitialized) return false;
         return true;
       }
     }
@@ -1218,7 +1801,7 @@ namespace ProtoBuffer {
       public Builder ClearUseDistributionMap() {
         PrepareBuilder();
         result.hasUseDistributionMap = false;
-        result.useDistributionMap_ = false;
+        result.useDistributionMap_ = true;
         return this;
       }
       
@@ -1318,7 +1901,7 @@ namespace ProtoBuffer {
       public Builder ClearVehicleType() {
         PrepareBuilder();
         result.hasVehicleType = false;
-        result.vehicleType_ = global::ProtoBuffer.PathPlanningRequest.Types.UAVType.FixWing;
+        result.vehicleType_ = global::ProtoBuffer.PathPlanningRequest.Types.UAVType.Copter;
         return this;
       }
       
@@ -1338,7 +1921,7 @@ namespace ProtoBuffer {
       public Builder ClearDetectionType() {
         PrepareBuilder();
         result.hasDetectionType = false;
-        result.detectionType_ = global::ProtoBuffer.PathPlanningRequest.Types.DType.FixAmount;
+        result.detectionType_ = global::ProtoBuffer.PathPlanningRequest.Types.DType.FixAmountInPercentage;
         return this;
       }
       
@@ -1358,7 +1941,7 @@ namespace ProtoBuffer {
       public Builder ClearDetectionRate() {
         PrepareBuilder();
         result.hasDetectionRate = false;
-        result.detectionRate_ = 0D;
+        result.detectionRate_ = 1D;
         return this;
       }
       
@@ -1398,7 +1981,7 @@ namespace ProtoBuffer {
       public Builder ClearT() {
         PrepareBuilder();
         result.hasT = false;
-        result.t_ = 0;
+        result.t_ = 600;
         return this;
       }
       
@@ -1498,7 +2081,7 @@ namespace ProtoBuffer {
       public Builder ClearAlgToUse() {
         PrepareBuilder();
         result.hasAlgToUse = false;
-        result.algToUse_ = global::ProtoBuffer.PathPlanningRequest.Types.AlgType.CC;
+        result.algToUse_ = global::ProtoBuffer.PathPlanningRequest.Types.AlgType.LHCGWCONV;
         return this;
       }
       
@@ -1538,7 +2121,7 @@ namespace ProtoBuffer {
       public Builder ClearRunTimes() {
         PrepareBuilder();
         result.hasRunTimes = false;
-        result.runTimes_ = 0;
+        result.runTimes_ = 10;
         return this;
       }
       
@@ -1558,7 +2141,7 @@ namespace ProtoBuffer {
       public Builder ClearMaxDifficulty() {
         PrepareBuilder();
         result.hasMaxDifficulty = false;
-        result.maxDifficulty_ = 0;
+        result.maxDifficulty_ = 3;
         return this;
       }
       
@@ -1648,46 +2231,46 @@ namespace ProtoBuffer {
       public Builder ClearTopNCount() {
         PrepareBuilder();
         result.hasTopNCount = false;
-        result.topNCount_ = 0;
+        result.topNCount_ = 3;
         return this;
       }
     }
     static PathPlanningRequest() {
-      object.ReferenceEquals(global::ProtoBuffer.Proto.SimpleItem.Descriptor, null);
+      object.ReferenceEquals(global::ProtoBuffer.ServerQueueItemPB.Descriptor, null);
     }
   }
   
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
   [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
   [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ProtoGen", "2.4.1.473")]
-  public sealed partial class SimpleItem : pb::GeneratedMessage<SimpleItem, SimpleItem.Builder> {
-    private SimpleItem() { }
-    private static readonly SimpleItem defaultInstance = new SimpleItem().MakeReadOnly();
-    private static readonly string[] _simpleItemFieldNames = new string[] { "CallerIP", "curRequest" };
-    private static readonly uint[] _simpleItemFieldTags = new uint[] { 10, 18 };
-    public static SimpleItem DefaultInstance {
+  public sealed partial class ServerQueueItem : pb::GeneratedMessage<ServerQueueItem, ServerQueueItem.Builder> {
+    private ServerQueueItem() { }
+    private static readonly ServerQueueItem defaultInstance = new ServerQueueItem().MakeReadOnly();
+    private static readonly string[] _serverQueueItemFieldNames = new string[] { "CallerIP", "curRequest" };
+    private static readonly uint[] _serverQueueItemFieldTags = new uint[] { 10, 18 };
+    public static ServerQueueItem DefaultInstance {
       get { return defaultInstance; }
     }
     
-    public override SimpleItem DefaultInstanceForType {
+    public override ServerQueueItem DefaultInstanceForType {
       get { return DefaultInstance; }
     }
     
-    protected override SimpleItem ThisMessage {
+    protected override ServerQueueItem ThisMessage {
       get { return this; }
     }
     
     public static pbd::MessageDescriptor Descriptor {
-      get { return global::ProtoBuffer.Proto.SimpleItem.internal__static_ProtoBuffer_SimpleItem__Descriptor; }
+      get { return global::ProtoBuffer.ServerQueueItemPB.internal__static_ProtoBuffer_ServerQueueItem__Descriptor; }
     }
     
-    protected override pb::FieldAccess.FieldAccessorTable<SimpleItem, SimpleItem.Builder> InternalFieldAccessors {
-      get { return global::ProtoBuffer.Proto.SimpleItem.internal__static_ProtoBuffer_SimpleItem__FieldAccessorTable; }
+    protected override pb::FieldAccess.FieldAccessorTable<ServerQueueItem, ServerQueueItem.Builder> InternalFieldAccessors {
+      get { return global::ProtoBuffer.ServerQueueItemPB.internal__static_ProtoBuffer_ServerQueueItem__FieldAccessorTable; }
     }
     
     public const int CallerIPFieldNumber = 1;
     private bool hasCallerIP;
-    private string callerIP_ = "";
+    private string callerIP_ = "127.0.0.1";
     public bool HasCallerIP {
       get { return hasCallerIP; }
     }
@@ -1707,16 +2290,13 @@ namespace ProtoBuffer {
     
     public override bool IsInitialized {
       get {
-        if (!hasCallerIP) return false;
-        if (!hasCurRequest) return false;
-        if (!CurRequest.IsInitialized) return false;
         return true;
       }
     }
     
     public override void WriteTo(pb::ICodedOutputStream output) {
       int size = SerializedSize;
-      string[] field_names = _simpleItemFieldNames;
+      string[] field_names = _serverQueueItemFieldNames;
       if (hasCallerIP) {
         output.WriteString(1, field_names[0], CallerIP);
       }
@@ -1745,51 +2325,51 @@ namespace ProtoBuffer {
       }
     }
     
-    public static SimpleItem ParseFrom(pb::ByteString data) {
+    public static ServerQueueItem ParseFrom(pb::ByteString data) {
       return ((Builder) CreateBuilder().MergeFrom(data)).BuildParsed();
     }
-    public static SimpleItem ParseFrom(pb::ByteString data, pb::ExtensionRegistry extensionRegistry) {
+    public static ServerQueueItem ParseFrom(pb::ByteString data, pb::ExtensionRegistry extensionRegistry) {
       return ((Builder) CreateBuilder().MergeFrom(data, extensionRegistry)).BuildParsed();
     }
-    public static SimpleItem ParseFrom(byte[] data) {
+    public static ServerQueueItem ParseFrom(byte[] data) {
       return ((Builder) CreateBuilder().MergeFrom(data)).BuildParsed();
     }
-    public static SimpleItem ParseFrom(byte[] data, pb::ExtensionRegistry extensionRegistry) {
+    public static ServerQueueItem ParseFrom(byte[] data, pb::ExtensionRegistry extensionRegistry) {
       return ((Builder) CreateBuilder().MergeFrom(data, extensionRegistry)).BuildParsed();
     }
-    public static SimpleItem ParseFrom(global::System.IO.Stream input) {
+    public static ServerQueueItem ParseFrom(global::System.IO.Stream input) {
       return ((Builder) CreateBuilder().MergeFrom(input)).BuildParsed();
     }
-    public static SimpleItem ParseFrom(global::System.IO.Stream input, pb::ExtensionRegistry extensionRegistry) {
+    public static ServerQueueItem ParseFrom(global::System.IO.Stream input, pb::ExtensionRegistry extensionRegistry) {
       return ((Builder) CreateBuilder().MergeFrom(input, extensionRegistry)).BuildParsed();
     }
-    public static SimpleItem ParseDelimitedFrom(global::System.IO.Stream input) {
+    public static ServerQueueItem ParseDelimitedFrom(global::System.IO.Stream input) {
       return CreateBuilder().MergeDelimitedFrom(input).BuildParsed();
     }
-    public static SimpleItem ParseDelimitedFrom(global::System.IO.Stream input, pb::ExtensionRegistry extensionRegistry) {
+    public static ServerQueueItem ParseDelimitedFrom(global::System.IO.Stream input, pb::ExtensionRegistry extensionRegistry) {
       return CreateBuilder().MergeDelimitedFrom(input, extensionRegistry).BuildParsed();
     }
-    public static SimpleItem ParseFrom(pb::ICodedInputStream input) {
+    public static ServerQueueItem ParseFrom(pb::ICodedInputStream input) {
       return ((Builder) CreateBuilder().MergeFrom(input)).BuildParsed();
     }
-    public static SimpleItem ParseFrom(pb::ICodedInputStream input, pb::ExtensionRegistry extensionRegistry) {
+    public static ServerQueueItem ParseFrom(pb::ICodedInputStream input, pb::ExtensionRegistry extensionRegistry) {
       return ((Builder) CreateBuilder().MergeFrom(input, extensionRegistry)).BuildParsed();
     }
-    private SimpleItem MakeReadOnly() {
+    private ServerQueueItem MakeReadOnly() {
       return this;
     }
     
     public static Builder CreateBuilder() { return new Builder(); }
     public override Builder ToBuilder() { return CreateBuilder(this); }
     public override Builder CreateBuilderForType() { return new Builder(); }
-    public static Builder CreateBuilder(SimpleItem prototype) {
+    public static Builder CreateBuilder(ServerQueueItem prototype) {
       return new Builder(prototype);
     }
     
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ProtoGen", "2.4.1.473")]
-    public sealed partial class Builder : pb::GeneratedBuilder<SimpleItem, Builder> {
+    public sealed partial class Builder : pb::GeneratedBuilder<ServerQueueItem, Builder> {
       protected override Builder ThisBuilder {
         get { return this; }
       }
@@ -1797,18 +2377,18 @@ namespace ProtoBuffer {
         result = DefaultInstance;
         resultIsReadOnly = true;
       }
-      internal Builder(SimpleItem cloneFrom) {
+      internal Builder(ServerQueueItem cloneFrom) {
         result = cloneFrom;
         resultIsReadOnly = true;
       }
       
       private bool resultIsReadOnly;
-      private SimpleItem result;
+      private ServerQueueItem result;
       
-      private SimpleItem PrepareBuilder() {
+      private ServerQueueItem PrepareBuilder() {
         if (resultIsReadOnly) {
-          SimpleItem original = result;
-          result = new SimpleItem();
+          ServerQueueItem original = result;
+          result = new ServerQueueItem();
           resultIsReadOnly = false;
           MergeFrom(original);
         }
@@ -1819,7 +2399,7 @@ namespace ProtoBuffer {
         get { return result.IsInitialized; }
       }
       
-      protected override SimpleItem MessageBeingBuilt {
+      protected override ServerQueueItem MessageBeingBuilt {
         get { return PrepareBuilder(); }
       }
       
@@ -1838,14 +2418,14 @@ namespace ProtoBuffer {
       }
       
       public override pbd::MessageDescriptor DescriptorForType {
-        get { return global::ProtoBuffer.SimpleItem.Descriptor; }
+        get { return global::ProtoBuffer.ServerQueueItem.Descriptor; }
       }
       
-      public override SimpleItem DefaultInstanceForType {
-        get { return global::ProtoBuffer.SimpleItem.DefaultInstance; }
+      public override ServerQueueItem DefaultInstanceForType {
+        get { return global::ProtoBuffer.ServerQueueItem.DefaultInstance; }
       }
       
-      public override SimpleItem BuildPartial() {
+      public override ServerQueueItem BuildPartial() {
         if (resultIsReadOnly) {
           return result;
         }
@@ -1854,16 +2434,16 @@ namespace ProtoBuffer {
       }
       
       public override Builder MergeFrom(pb::IMessage other) {
-        if (other is SimpleItem) {
-          return MergeFrom((SimpleItem) other);
+        if (other is ServerQueueItem) {
+          return MergeFrom((ServerQueueItem) other);
         } else {
           base.MergeFrom(other);
           return this;
         }
       }
       
-      public override Builder MergeFrom(SimpleItem other) {
-        if (other == global::ProtoBuffer.SimpleItem.DefaultInstance) return this;
+      public override Builder MergeFrom(ServerQueueItem other) {
+        if (other == global::ProtoBuffer.ServerQueueItem.DefaultInstance) return this;
         PrepareBuilder();
         if (other.HasCallerIP) {
           CallerIP = other.CallerIP;
@@ -1886,9 +2466,9 @@ namespace ProtoBuffer {
         string field_name;
         while (input.ReadTag(out tag, out field_name)) {
           if(tag == 0 && field_name != null) {
-            int field_ordinal = global::System.Array.BinarySearch(_simpleItemFieldNames, field_name, global::System.StringComparer.Ordinal);
+            int field_ordinal = global::System.Array.BinarySearch(_serverQueueItemFieldNames, field_name, global::System.StringComparer.Ordinal);
             if(field_ordinal >= 0)
-              tag = _simpleItemFieldTags[field_ordinal];
+              tag = _serverQueueItemFieldTags[field_ordinal];
             else {
               if (unknownFields == null) {
                 unknownFields = pb::UnknownFieldSet.CreateBuilder(this.UnknownFields);
@@ -1954,7 +2534,7 @@ namespace ProtoBuffer {
       public Builder ClearCallerIP() {
         PrepareBuilder();
         result.hasCallerIP = false;
-        result.callerIP_ = "";
+        result.callerIP_ = "127.0.0.1";
         return this;
       }
       
@@ -1998,8 +2578,8 @@ namespace ProtoBuffer {
         return this;
       }
     }
-    static SimpleItem() {
-      object.ReferenceEquals(global::ProtoBuffer.Proto.SimpleItem.Descriptor, null);
+    static ServerQueueItem() {
+      object.ReferenceEquals(global::ProtoBuffer.ServerQueueItemPB.Descriptor, null);
     }
   }
   

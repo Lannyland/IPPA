@@ -1,0 +1,80 @@
+package ProtoBuffer;
+ 
+option optimize_for = SPEED;
+
+message PathPlanningRequest {
+  optional bool UseDistributionMap = 1 [default = true]; 
+  optional bool UseTaskDifficultyMap = 2 [default = false];
+  optional bool UseHiararchy = 3 [default = false];
+  optional bool UseCoarseToFineSearch = 4 [default = false];
+  optional bool UseParallelProcessing = 5 [default = false];
+  optional UAVType VehicleType = 6 [default = Copter];
+  optional DType DetectionType = 7 [default = FixAmountInPercentage];
+  optional double DetectionRate = 8 [default = 1];
+  // required RtwMatrix DistMap = 9;
+  // required RtwMatrix DiffMap = 10;
+  optional bool UseEndPoint = 11 [default = false];
+  optional int32 T = 12 [default = 600];
+  optional DistPoint pStart = 13;
+  optional DistPoint pEnd = 14;
+  optional AlgType AlgToUse = 15 [default = LHCGWCONV];
+  optional bool BatchRun = 16 [default = false];
+  optional int32 RunTimes = 17 [default = 10];
+  optional int32 MaxDifficulty = 18 [default = 3];
+  repeated double DiffRate = 19;
+  optional bool DrawPath = 20 [default = false];
+  optional int32 d = 21 [default = 0];
+  optional int32 TopNCount = 22 [default = 3];
+
+  enum UAVType {
+    FixWing = 0;
+    Copter = 1;
+  }
+
+  enum DType {
+    FixAmount = 0;
+    FixAmountInPercentage = 1;
+    FixPercentage = 2;
+  }
+
+  enum AlgType {
+    CC = 0;
+    CC_E = 1;
+    LHCGWCONV = 2;
+    LHCGWCONV_E = 3;
+    LHCGWPF = 4;
+    LHCGWPF_E = 5;
+    LHCRandom = 6;
+    LHCRandom_E = 7;
+    Random = 8;
+    Random_E = 9;
+    CONV = 10;
+    CONV_E = 11;
+    PF = 12;
+    PF_E = 13;
+    TopTwo = 14;
+    TopTwo_E = 15;
+    TopN = 16;
+    TopN_E = 17;
+    EA = 18;
+    EA_E = 19;
+  }
+  
+  message MatrixRow {
+    repeated float cell = 1;
+  }
+
+  message Matrix {
+    repeated MatrixRow row = 1;
+  }
+
+  message DistPoint {
+    optional int32 row = 1 [default = 0];
+    optional int32 column = 2 [default = 0];
+  }
+}
+
+message ServerQueueItem {
+  optional string CallerIP = 1 [default = "127.0.0.1"];
+  optional PathPlanningRequest curRequest = 2;
+}
