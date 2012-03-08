@@ -87,6 +87,8 @@ namespace IPPA
             ntxtGWCount.Value = ProjectConstants.GWCount;
             ntxtConvCount.Value = ProjectConstants.ConvCount;
             ntxtPFCount.Value = ProjectConstants.PFCount;
+            ntxtTop2Iterations = ProjectConstants.SearchResolution;
+            ntxtTopNCount = ProjectConstants.TopNCount;
 
             lstAlg.Items.Add("CC");
             lstAlg.Items.Add("LHC-GW-CONV");
@@ -500,7 +502,6 @@ namespace IPPA
         private void ntxtGWCount_ValueChanged(object sender, EventArgs e)
         {
             ProjectConstants.GWCount = Convert.ToInt32(ntxtGWCount.Value);
-            ProjectConstants.SearchResolution = Convert.ToInt32(ntxtGWCount.Value);
         }
 
         // Conv Iterations numerical box value is changed
@@ -513,6 +514,18 @@ namespace IPPA
         private void ntxtPFCount_ValueChanged(object sender, EventArgs e)
         {
             ProjectConstants.PFCount = Convert.ToInt32(ntxtPFCount.Value);
+        }
+
+        // Top 2 Iteration box value is changed
+        private void ntxtTop2Iterations_ValueChanged(object sender, EventArgs e)
+        {
+            ProjectConstants.SearchResolution = Convert.ToInt32(ntxtTop2Iterations.Value);
+        }
+
+        // Top N Count box value is changed
+        private void ntxtTopNCount_ValueChanged(object sender, EventArgs e)
+        {
+            ProjectConstants.TopNCount = Convert.ToInt32(ntxtTopNCount.Value);
         }
         
         // View Reachable Area button is pressed

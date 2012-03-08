@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace IPPA
+namespace TCPIPTest
 {
     class ProjectConstants
     {

@@ -87,7 +87,15 @@ namespace IPPA
                     // Data is send in bytes -- so we need to convert a C# string to a Byte[]
                     byte[] bytesFrom = new byte[10025];
                     // Blocks until a client sends a message
-                    clientStream.Read(bytesFrom, 0, (int)clientSocket.ReceiveBufferSize);
+
+                    // Loop to make sure all data is read
+                    do
+                    {
+                        clientStream.Read(bytesFrom, 0, (int)clientSocket.ReceiveBufferSize);
+                    }
+                    while (clientStream.DataAvailable);
+                    
+                    
 
                     //// Plain text
                     //string dataFromClient = System.Text.Encoding.ASCII.GetString(bytesFrom);
@@ -116,9 +124,20 @@ namespace IPPA
                                               + restored.CurRequest.GetDiffRate(1) + ","
                                               + restored.CurRequest.GetDiffRate(2) + ","
                                               + restored.CurRequest.GetDiffRate(3) + "\n");
-                    
+
+                    //TODO Construct PathPlanningRequest object
+                    PathPlanningRequest curRequest = new PathPlanningRequest(); 
+
+                    // Add request to queue
+                    theForm.SubmitToRequestQueue(curRequest);
+                                        
                     // Wait three seconds
                     Thread.Sleep(3000);
+
+                    //TODO Perform path planning
+
+                    // Remove request from queue
+
 
                     // Send server reponse
                     string serverResponse = "Responding!" + "\n";
@@ -137,6 +156,11 @@ namespace IPPA
             clientSocket.Close();
         }
 
+        // Method to stop server
+        public void Stop()
+        {
+            //TODO set flags to stop services
+        }
 
         // Method to add server queue items
         public void AddRequest(ServerQueueItem item)

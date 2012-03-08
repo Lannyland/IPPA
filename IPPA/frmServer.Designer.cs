@@ -39,6 +39,7 @@
             this.rtxtRequestDetails = new System.Windows.Forms.RichTextBox();
             this.btnDelete = new System.Windows.Forms.Button();
             this.lstQueue = new System.Windows.Forms.ListBox();
+            this.btnExecute = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -118,6 +119,7 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.btnExecute);
             this.groupBox3.Controls.Add(this.rtxtRequestDetails);
             this.groupBox3.Controls.Add(this.btnDelete);
             this.groupBox3.Controls.Add(this.lstQueue);
@@ -157,6 +159,16 @@
             this.lstQueue.TabIndex = 1;
             this.lstQueue.Click += new System.EventHandler(this.lstQueue_Click);
             // 
+            // btnExecute
+            // 
+            this.btnExecute.Location = new System.Drawing.Point(596, 107);
+            this.btnExecute.Name = "btnExecute";
+            this.btnExecute.Size = new System.Drawing.Size(134, 106);
+            this.btnExecute.TabIndex = 4;
+            this.btnExecute.Text = "Process Queue";
+            this.btnExecute.UseVisualStyleBackColor = true;
+            this.btnExecute.Click += new System.EventHandler(this.btnExecute_Click);
+            // 
             // frmServer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -190,6 +202,7 @@
         private System.Windows.Forms.RichTextBox rtxtRequestDetails;
         private System.Windows.Forms.Button btnClear;
         private System.Windows.Forms.Button btnLoadTestModule;
+        private System.Windows.Forms.Button btnExecute;
     }
 }
 

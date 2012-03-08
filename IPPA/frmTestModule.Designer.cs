@@ -87,6 +87,10 @@
             this.chkUseDiff = new System.Windows.Forms.CheckBox();
             this.chkHiararchy = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label13 = new System.Windows.Forms.Label();
+            this.ntxtTop2Iterations = new System.Windows.Forms.NumericUpDown();
+            this.label14 = new System.Windows.Forms.Label();
+            this.ntxtTopNCount = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.ntxtEY)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ntxtEX)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ntxtFlightTime)).BeginInit();
@@ -106,6 +110,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.ntxtDetectionRate)).BeginInit();
             this.groupBox6.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ntxtTop2Iterations)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ntxtTopNCount)).BeginInit();
             this.SuspendLayout();
             // 
             // btnLoad1
@@ -190,9 +196,9 @@
             // 
             // btnView
             // 
-            this.btnView.Location = new System.Drawing.Point(474, 82);
+            this.btnView.Location = new System.Drawing.Point(474, 87);
             this.btnView.Name = "btnView";
-            this.btnView.Size = new System.Drawing.Size(143, 23);
+            this.btnView.Size = new System.Drawing.Size(143, 67);
             this.btnView.TabIndex = 11;
             this.btnView.Text = "View Reachable Area";
             this.btnView.UseVisualStyleBackColor = true;
@@ -348,6 +354,10 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.label14);
+            this.groupBox3.Controls.Add(this.ntxtTopNCount);
+            this.groupBox3.Controls.Add(this.label13);
+            this.groupBox3.Controls.Add(this.ntxtTop2Iterations);
             this.groupBox3.Controls.Add(this.ntxtPFCount);
             this.groupBox3.Controls.Add(this.label12);
             this.groupBox3.Controls.Add(this.ntxtConvCount);
@@ -371,7 +381,7 @@
             this.groupBox3.Controls.Add(this.btnView);
             this.groupBox3.Location = new System.Drawing.Point(12, 264);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(626, 120);
+            this.groupBox3.Size = new System.Drawing.Size(626, 163);
             this.groupBox3.TabIndex = 8;
             this.groupBox3.TabStop = false;
             // 
@@ -391,7 +401,7 @@
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(227, 89);
+            this.label12.Location = new System.Drawing.Point(249, 89);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(99, 13);
             this.label12.TabIndex = 24;
@@ -413,11 +423,11 @@
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(227, 66);
+            this.label11.Location = new System.Drawing.Point(249, 66);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(113, 13);
+            this.label11.Size = new System.Drawing.Size(75, 13);
             this.label11.TabIndex = 22;
-            this.label11.Text = "GW Iterations / TopN:";
+            this.label11.Text = "GW Iterations:";
             // 
             // ntxtGWCount
             // 
@@ -451,7 +461,7 @@
             this.groupBox4.Controls.Add(this.btnAdd);
             this.groupBox4.Controls.Add(this.lvQueue);
             this.groupBox4.Controls.Add(this.lstAlg);
-            this.groupBox4.Location = new System.Drawing.Point(12, 390);
+            this.groupBox4.Location = new System.Drawing.Point(12, 433);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(626, 124);
             this.groupBox4.TabIndex = 2;
@@ -540,7 +550,7 @@
             this.groupBox5.Controls.Add(this.btnTest);
             this.groupBox5.Controls.Add(this.btnClear);
             this.groupBox5.Controls.Add(this.rtxtLog);
-            this.groupBox5.Location = new System.Drawing.Point(12, 520);
+            this.groupBox5.Location = new System.Drawing.Point(12, 563);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Size = new System.Drawing.Size(626, 227);
             this.groupBox5.TabIndex = 3;
@@ -762,11 +772,55 @@
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(249, 112);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(84, 13);
+            this.label13.TabIndex = 26;
+            this.label13.Text = "Top 2 Iterations:";
+            // 
+            // ntxtTop2Iterations
+            // 
+            this.ntxtTop2Iterations.Location = new System.Drawing.Point(351, 110);
+            this.ntxtTop2Iterations.Name = "ntxtTop2Iterations";
+            this.ntxtTop2Iterations.Size = new System.Drawing.Size(52, 20);
+            this.ntxtTop2Iterations.TabIndex = 25;
+            this.ntxtTop2Iterations.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.ntxtTop2Iterations.ValueChanged += new System.EventHandler(this.ntxtTop2Iterations_ValueChanged);
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(249, 136);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(68, 13);
+            this.label14.TabIndex = 28;
+            this.label14.Text = "Top N Count";
+            // 
+            // ntxtTopNCount
+            // 
+            this.ntxtTopNCount.Location = new System.Drawing.Point(351, 134);
+            this.ntxtTopNCount.Name = "ntxtTopNCount";
+            this.ntxtTopNCount.Size = new System.Drawing.Size(52, 20);
+            this.ntxtTopNCount.TabIndex = 27;
+            this.ntxtTopNCount.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.ntxtTopNCount.ValueChanged += new System.EventHandler(this.ntxtTopNCount_ValueChanged);
+            // 
             // frmTestModule
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(649, 759);
+            this.ClientSize = new System.Drawing.Size(649, 809);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
@@ -802,6 +856,8 @@
             this.groupBox6.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ntxtTop2Iterations)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ntxtTopNCount)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -867,5 +923,9 @@
         private System.Windows.Forms.CheckBox chkUseDiff;
         private System.Windows.Forms.CheckBox chkHiararchy;
         private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.NumericUpDown ntxtTopNCount;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.NumericUpDown ntxtTop2Iterations;
     }
 }

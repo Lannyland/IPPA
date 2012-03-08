@@ -34,7 +34,6 @@ namespace IPPA
         public frmServer()
         {
             InitializeComponent();
-            myServer = new PathPlanningServer(this);
         }
 
         // Destructor
@@ -77,35 +76,15 @@ namespace IPPA
             {
                 btnServerSwitch.Text = "Stop Server";
                 blnServerRunning = true;
+                myServer = new PathPlanningServer(this);
             }
             else
             {
                 btnServerSwitch.Text = "Start Server";
                 blnServerRunning = false;
-            }
-
-            // Eventually have a monitor thread initiate path planning tasks. 
-            // For now, just call from here directly.
-            while (myServer.GetServerQueue().Count > 0)
-            {
-                // Do the path planning
-                PathPlanningHandler newHandler = new PathPlanningHandler(myServer.GetServerQueue()[0].GetRequest());
-                newHandler.Run();
-                newHandler = null;
-
-                // Log activities
-                Log("Path planning using " + myServer.GetServerQueue()[0].GetRequest().AlgToUse.ToString() +
-                    " algorithm completed successfully.\n\n");
-                Log(myServer.GetServerQueue()[0].GetRequest().GetLog());
-
-                // TODO Send activity log back to TestModuleForm
-
-                // Remove it from server queue
-                myServer.GetServerQueue().RemoveAt(0);
-
-                // Remove it from listbox queue
-                lstQueue.Items.RemoveAt(0);
-                lstRequestQueue.RemoveAt(0);
+                //TODO shutting down all connections
+                myServer.Stop();
+                myServer = null;
             }
         }
 
@@ -145,12 +124,39 @@ namespace IPPA
             //}
         }
 
+        // Method to process path planning request queue
+        private void btnExecute_Click(object sender, EventArgs e)
+        {
+            // Eventually have a monitor thread initiate path planning tasks. 
+            // For now, just call from here directly.
+            while (myServer.GetServerQueue().Count > 0)
+            {
+                // Do the path planning
+                PathPlanningHandler newHandler = new PathPlanningHandler(myServer.GetServerQueue()[0].GetRequest());
+                newHandler.Run();
+                newHandler = null;
+
+                // Log activities
+                Log("Path planning using " + myServer.GetServerQueue()[0].GetRequest().AlgToUse.ToString() +
+                    " algorithm completed successfully.\n\n");
+                Log(myServer.GetServerQueue()[0].GetRequest().GetLog());
+
+                // TODO Send activity log back to TestModuleForm
+
+                // Remove it from server queue
+                myServer.GetServerQueue().RemoveAt(0);
+
+                // Remove it from listbox queue
+                lstQueue.Items.RemoveAt(0);
+                lstRequestQueue.RemoveAt(0);
+            }
+        }
+
         // When the Clear Button is clicked.
         private void btnClear_Click(object sender, EventArgs e)
         {
             rtxtLog.Clear();
         }
-
 
         #endregion
 
@@ -170,11 +176,7 @@ namespace IPPA
             // Add request item to queue
             lstQueue.Items.Add(newRequest.AlgToUse.ToString());
             lstRequestQueue.Add(newRequest);
-            // For now add request from local host
-            // TODO Later implement the real network calls
-            ServerQueueItem newItem = new ServerQueueItem(newRequest, "127.0.0.1");
-            myServer.AddRequest(newItem);
-            
+           
             // Log activity
             Log("New path planning request queued...\n");
             Log("----------------------------------------------");
@@ -207,6 +209,6 @@ namespace IPPA
             return response;
         }
 
-        #endregion
+        #endregion        
     }
 }
