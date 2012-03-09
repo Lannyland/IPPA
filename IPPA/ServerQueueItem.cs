@@ -20,6 +20,7 @@ namespace IPPA
         public ServerQueueItem(PathPlanningRequest _curRequest, string _CallerIP)
         {
             curRequest = _curRequest;
+            CallerIP = _CallerIP;
         }
 
         // Destructor

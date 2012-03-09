@@ -6,7 +6,6 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.IO;
-using tutorial;  //TODO to be removed later
 
 namespace IPPA
 {
@@ -80,6 +79,7 @@ namespace IPPA
             // Obtain a stream object for reading and writing
             NetworkStream clientStream = clientSocket.GetStream();
 
+            // Object via protocol buffer
             while (true)
             {
                 try
@@ -89,31 +89,51 @@ namespace IPPA
                     // Blocks until a client sends a message
 
                     // Loop to make sure all data is read
+                    int counter = 0;
+                    int bufferSize = (int)clientSocket.ReceiveBufferSize;
+                    int size = 0;
+                    byte[] byteFinal = null;
                     do
                     {
-                        clientStream.Read(bytesFrom, 0, (int)clientSocket.ReceiveBufferSize);
+                        int startIndex = bufferSize * counter;
+                        int totalSize = bufferSize * (counter + 1);
+                        clientStream.Read(bytesFrom, 0, bufferSize);
+                        if (counter == 0)
+                        {
+                            // First time also get the data size
+                            size = BitConverter.ToInt32(bytesFrom, 0);
+                            byteFinal = new byte[size + 4];
+                        }
+                        if (size < bufferSize)
+                        {
+                            // One read is enough to read all data
+                            Array.Copy(bytesFrom, 0, byteFinal, 0, size + 4);
+                        }
+                        else
+                        {
+                            // Lots of data and requires multiple reads
+                            if (size >= totalSize)
+                            {
+                                // Still need to read more
+                                Array.Copy(bytesFrom, 0, byteFinal, startIndex, bufferSize);
+                            }
+                            else
+                            {
+                                Array.Copy(bytesFrom, 0, byteFinal, startIndex, size + 4 - startIndex);
+                            }
+                        }
+                        counter++;
                     }
                     while (clientStream.DataAvailable);
-                    
-                    
 
-                    //// Plain text
-                    //string dataFromClient = System.Text.Encoding.ASCII.GetString(bytesFrom);
-                    //dataFromClient = dataFromClient.Substring(0, dataFromClient.IndexOf("$"));
-                    //theForm.Log(dataFromClient + "\n");
-
-                    // Object via protocol buffer
-                    // Only get the useful part of the byte array
-
-                    int size = BitConverter.ToInt32(bytesFrom, 0);
-                    byte[] bytesTrimmed = new byte[size];
-                    Array.Copy(bytesFrom, 4, bytesTrimmed, 0, size);
+                    byte[] byteTrimmed = new byte[size];
+                    Array.Copy(byteFinal, 4, byteTrimmed, 0, size);
 
                     //AddressBook restored = AddressBook.CreateBuilder().MergeFrom(bytesTrimmed).Build();
                     //Person p1 = restored.GetPerson(0);
                     //theForm.Log(p1.Id + " " + p1.Name + " " + p1.PhoneList[0] + " " + p1.Email + "\n");
 
-                    ProtoBuffer.ServerQueueItem restored = ProtoBuffer.ServerQueueItem.CreateBuilder().MergeFrom(bytesTrimmed).Build();
+                    ProtoBuffer.ServerQueueItem restored = ProtoBuffer.ServerQueueItem.CreateBuilder().MergeFrom(byteTrimmed).Build();
                     theForm.Log("UseDistributionMap = " + restored.CurRequest.UseDistributionMap + "\n");
                     theForm.Log("UseTaskDifficultyMap = " + restored.CurRequest.UseTaskDifficultyMap + "\n");
                     theForm.Log("UseHiararchy = " + restored.CurRequest.UseHiararchy + "\n");

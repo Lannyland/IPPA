@@ -38,7 +38,7 @@ namespace ProtoBuffer {
     static ServerQueueItemPB() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           "CiB0dXRvcmlhbC9TZXJ2ZXJRdWV1ZUl0ZW1QQi5wcm90bxILUHJvdG9CdWZm" + 
-          "ZXIi8wkKE1BhdGhQbGFubmluZ1JlcXVlc3QSIAoSVXNlRGlzdHJpYnV0aW9u" + 
+          "ZXIi5woKE1BhdGhQbGFubmluZ1JlcXVlc3QSIAoSVXNlRGlzdHJpYnV0aW9u" + 
           "TWFwGAEgASgIOgR0cnVlEiMKFFVzZVRhc2tEaWZmaWN1bHR5TWFwGAIgASgI" + 
           "OgVmYWxzZRIbCgxVc2VIaWFyYXJjaHkYAyABKAg6BWZhbHNlEiQKFVVzZUNv" + 
           "YXJzZVRvRmluZVNlYXJjaBgEIAEoCDoFZmFsc2USJAoVVXNlUGFyYWxsZWxQ" + 
@@ -46,35 +46,38 @@ namespace ProtoBuffer {
           "LlByb3RvQnVmZmVyLlBhdGhQbGFubmluZ1JlcXVlc3QuVUFWVHlwZToGQ29w" + 
           "dGVyElQKDURldGVjdGlvblR5cGUYByABKA4yJi5Qcm90b0J1ZmZlci5QYXRo" + 
           "UGxhbm5pbmdSZXF1ZXN0LkRUeXBlOhVGaXhBbW91bnRJblBlcmNlbnRhZ2US" + 
-          "GAoNRGV0ZWN0aW9uUmF0ZRgIIAEoAToBMRIaCgtVc2VFbmRQb2ludBgLIAEo" + 
-          "CDoFZmFsc2USDgoBVBgMIAEoBToDNjAwEjoKBnBTdGFydBgNIAEoCzIqLlBy" + 
-          "b3RvQnVmZmVyLlBhdGhQbGFubmluZ1JlcXVlc3QuRGlzdFBvaW50EjgKBHBF" + 
-          "bmQYDiABKAsyKi5Qcm90b0J1ZmZlci5QYXRoUGxhbm5pbmdSZXF1ZXN0LkRp" + 
-          "c3RQb2ludBJFCghBbGdUb1VzZRgPIAEoDjIoLlByb3RvQnVmZmVyLlBhdGhQ" + 
-          "bGFubmluZ1JlcXVlc3QuQWxnVHlwZToJTEhDR1dDT05WEhcKCEJhdGNoUnVu" + 
-          "GBAgASgIOgVmYWxzZRIUCghSdW5UaW1lcxgRIAEoBToCMTASGAoNTWF4RGlm" + 
-          "ZmljdWx0eRgSIAEoBToBMxIQCghEaWZmUmF0ZRgTIAMoARIXCghEcmF3UGF0" + 
-          "aBgUIAEoCDoFZmFsc2USDAoBZBgVIAEoBToBMBIUCglUb3BOQ291bnQYFiAB" + 
-          "KAU6ATMaGQoJTWF0cml4Um93EgwKBGNlbGwYASADKAIaQQoGTWF0cml4EjcK" + 
-          "A3JvdxgBIAMoCzIqLlByb3RvQnVmZmVyLlBhdGhQbGFubmluZ1JlcXVlc3Qu" + 
-          "TWF0cml4Um93Gi4KCURpc3RQb2ludBIOCgNyb3cYASABKAU6ATASEQoGY29s" + 
-          "dW1uGAIgASgFOgEwIiIKB1VBVlR5cGUSCwoHRml4V2luZxAAEgoKBkNvcHRl" + 
-          "chABIkQKBURUeXBlEg0KCUZpeEFtb3VudBAAEhkKFUZpeEFtb3VudEluUGVy" + 
-          "Y2VudGFnZRABEhEKDUZpeFBlcmNlbnRhZ2UQAiL7AQoHQWxnVHlwZRIGCgJD" + 
-          "QxAAEggKBENDX0UQARINCglMSENHV0NPTlYQAhIPCgtMSENHV0NPTlZfRRAD" + 
-          "EgsKB0xIQ0dXUEYQBBINCglMSENHV1BGX0UQBRINCglMSENSYW5kb20QBhIP" + 
-          "CgtMSENSYW5kb21fRRAHEgoKBlJhbmRvbRAIEgwKCFJhbmRvbV9FEAkSCAoE" + 
-          "Q09OVhAKEgoKBkNPTlZfRRALEgYKAlBGEAwSCAoEUEZfRRANEgoKBlRvcFR3" + 
-          "bxAOEgwKCFRvcFR3b19FEA8SCAoEVG9wThAQEgoKBlRvcE5fRRAREgYKAkVB" + 
-          "EBISCAoERUFfRRATImQKD1NlcnZlclF1ZXVlSXRlbRIbCghDYWxsZXJJUBgB" + 
-          "IAEoCToJMTI3LjAuMC4xEjQKCmN1clJlcXVlc3QYAiABKAsyIC5Qcm90b0J1" + 
-          "ZmZlci5QYXRoUGxhbm5pbmdSZXF1ZXN0QgJIAQ==");
+          "GAoNRGV0ZWN0aW9uUmF0ZRgIIAEoAToBMRI4CgdEaXN0TWFwGAkgASgLMicu" + 
+          "UHJvdG9CdWZmZXIuUGF0aFBsYW5uaW5nUmVxdWVzdC5NYXRyaXgSOAoHRGlm" + 
+          "Zk1hcBgKIAEoCzInLlByb3RvQnVmZmVyLlBhdGhQbGFubmluZ1JlcXVlc3Qu" + 
+          "TWF0cml4EhoKC1VzZUVuZFBvaW50GAsgASgIOgVmYWxzZRIOCgFUGAwgASgF" + 
+          "OgM2MDASOgoGcFN0YXJ0GA0gASgLMiouUHJvdG9CdWZmZXIuUGF0aFBsYW5u" + 
+          "aW5nUmVxdWVzdC5EaXN0UG9pbnQSOAoEcEVuZBgOIAEoCzIqLlByb3RvQnVm" + 
+          "ZmVyLlBhdGhQbGFubmluZ1JlcXVlc3QuRGlzdFBvaW50EkUKCEFsZ1RvVXNl" + 
+          "GA8gASgOMiguUHJvdG9CdWZmZXIuUGF0aFBsYW5uaW5nUmVxdWVzdC5BbGdU" + 
+          "eXBlOglMSENHV0NPTlYSFwoIQmF0Y2hSdW4YECABKAg6BWZhbHNlEhQKCFJ1" + 
+          "blRpbWVzGBEgASgFOgIxMBIYCg1NYXhEaWZmaWN1bHR5GBIgASgFOgEzEhAK" + 
+          "CERpZmZSYXRlGBMgAygBEhcKCERyYXdQYXRoGBQgASgIOgVmYWxzZRIMCgFk" + 
+          "GBUgASgFOgEwEhQKCVRvcE5Db3VudBgWIAEoBToBMxoZCglNYXRyaXhSb3cS" + 
+          "DAoEY2VsbBgBIAMoAhpBCgZNYXRyaXgSNwoDcm93GAEgAygLMiouUHJvdG9C" + 
+          "dWZmZXIuUGF0aFBsYW5uaW5nUmVxdWVzdC5NYXRyaXhSb3caLgoJRGlzdFBv" + 
+          "aW50Eg4KA3JvdxgBIAEoBToBMBIRCgZjb2x1bW4YAiABKAU6ATAiIgoHVUFW" + 
+          "VHlwZRILCgdGaXhXaW5nEAASCgoGQ29wdGVyEAEiRAoFRFR5cGUSDQoJRml4" + 
+          "QW1vdW50EAASGQoVRml4QW1vdW50SW5QZXJjZW50YWdlEAESEQoNRml4UGVy" + 
+          "Y2VudGFnZRACIvsBCgdBbGdUeXBlEgYKAkNDEAASCAoEQ0NfRRABEg0KCUxI" + 
+          "Q0dXQ09OVhACEg8KC0xIQ0dXQ09OVl9FEAMSCwoHTEhDR1dQRhAEEg0KCUxI" + 
+          "Q0dXUEZfRRAFEg0KCUxIQ1JhbmRvbRAGEg8KC0xIQ1JhbmRvbV9FEAcSCgoG" + 
+          "UmFuZG9tEAgSDAoIUmFuZG9tX0UQCRIICgRDT05WEAoSCgoGQ09OVl9FEAsS" + 
+          "BgoCUEYQDBIICgRQRl9FEA0SCgoGVG9wVHdvEA4SDAoIVG9wVHdvX0UQDxII" + 
+          "CgRUb3BOEBASCgoGVG9wTl9FEBESBgoCRUEQEhIICgRFQV9FEBMiZAoPU2Vy" + 
+          "dmVyUXVldWVJdGVtEhsKCENhbGxlcklQGAEgASgJOgkxMjcuMC4wLjESNAoK" + 
+          "Y3VyUmVxdWVzdBgCIAEoCzIgLlByb3RvQnVmZmVyLlBhdGhQbGFubmluZ1Jl" + 
+          "cXVlc3RCAkgB");
       pbd::FileDescriptor.InternalDescriptorAssigner assigner = delegate(pbd::FileDescriptor root) {
         descriptor = root;
         internal__static_ProtoBuffer_PathPlanningRequest__Descriptor = Descriptor.MessageTypes[0];
         internal__static_ProtoBuffer_PathPlanningRequest__FieldAccessorTable = 
             new pb::FieldAccess.FieldAccessorTable<global::ProtoBuffer.PathPlanningRequest, global::ProtoBuffer.PathPlanningRequest.Builder>(internal__static_ProtoBuffer_PathPlanningRequest__Descriptor,
-                new string[] { "UseDistributionMap", "UseTaskDifficultyMap", "UseHiararchy", "UseCoarseToFineSearch", "UseParallelProcessing", "VehicleType", "DetectionType", "DetectionRate", "UseEndPoint", "T", "PStart", "PEnd", "AlgToUse", "BatchRun", "RunTimes", "MaxDifficulty", "DiffRate", "DrawPath", "D", "TopNCount", });
+                new string[] { "UseDistributionMap", "UseTaskDifficultyMap", "UseHiararchy", "UseCoarseToFineSearch", "UseParallelProcessing", "VehicleType", "DetectionType", "DetectionRate", "DistMap", "DiffMap", "UseEndPoint", "T", "PStart", "PEnd", "AlgToUse", "BatchRun", "RunTimes", "MaxDifficulty", "DiffRate", "DrawPath", "D", "TopNCount", });
         internal__static_ProtoBuffer_PathPlanningRequest_MatrixRow__Descriptor = internal__static_ProtoBuffer_PathPlanningRequest__Descriptor.NestedTypes[0];
         internal__static_ProtoBuffer_PathPlanningRequest_MatrixRow__FieldAccessorTable = 
             new pb::FieldAccess.FieldAccessorTable<global::ProtoBuffer.PathPlanningRequest.Types.MatrixRow, global::ProtoBuffer.PathPlanningRequest.Types.MatrixRow.Builder>(internal__static_ProtoBuffer_PathPlanningRequest_MatrixRow__Descriptor,
@@ -107,8 +110,8 @@ namespace ProtoBuffer {
   public sealed partial class PathPlanningRequest : pb::GeneratedMessage<PathPlanningRequest, PathPlanningRequest.Builder> {
     private PathPlanningRequest() { }
     private static readonly PathPlanningRequest defaultInstance = new PathPlanningRequest().MakeReadOnly();
-    private static readonly string[] _pathPlanningRequestFieldNames = new string[] { "AlgToUse", "BatchRun", "DetectionRate", "DetectionType", "DiffRate", "DrawPath", "MaxDifficulty", "RunTimes", "T", "TopNCount", "UseCoarseToFineSearch", "UseDistributionMap", "UseEndPoint", "UseHiararchy", "UseParallelProcessing", "UseTaskDifficultyMap", "VehicleType", "d", "pEnd", "pStart" };
-    private static readonly uint[] _pathPlanningRequestFieldTags = new uint[] { 120, 128, 65, 56, 153, 160, 144, 136, 96, 176, 32, 8, 88, 24, 40, 16, 48, 168, 114, 106 };
+    private static readonly string[] _pathPlanningRequestFieldNames = new string[] { "AlgToUse", "BatchRun", "DetectionRate", "DetectionType", "DiffMap", "DiffRate", "DistMap", "DrawPath", "MaxDifficulty", "RunTimes", "T", "TopNCount", "UseCoarseToFineSearch", "UseDistributionMap", "UseEndPoint", "UseHiararchy", "UseParallelProcessing", "UseTaskDifficultyMap", "VehicleType", "d", "pEnd", "pStart" };
+    private static readonly uint[] _pathPlanningRequestFieldTags = new uint[] { 120, 128, 65, 56, 82, 153, 74, 160, 144, 136, 96, 176, 32, 8, 88, 24, 40, 16, 48, 168, 114, 106 };
     public static PathPlanningRequest DefaultInstance {
       get { return defaultInstance; }
     }
@@ -1166,6 +1169,26 @@ namespace ProtoBuffer {
       get { return detectionRate_; }
     }
     
+    public const int DistMapFieldNumber = 9;
+    private bool hasDistMap;
+    private global::ProtoBuffer.PathPlanningRequest.Types.Matrix distMap_;
+    public bool HasDistMap {
+      get { return hasDistMap; }
+    }
+    public global::ProtoBuffer.PathPlanningRequest.Types.Matrix DistMap {
+      get { return distMap_ ?? global::ProtoBuffer.PathPlanningRequest.Types.Matrix.DefaultInstance; }
+    }
+    
+    public const int DiffMapFieldNumber = 10;
+    private bool hasDiffMap;
+    private global::ProtoBuffer.PathPlanningRequest.Types.Matrix diffMap_;
+    public bool HasDiffMap {
+      get { return hasDiffMap; }
+    }
+    public global::ProtoBuffer.PathPlanningRequest.Types.Matrix DiffMap {
+      get { return diffMap_ ?? global::ProtoBuffer.PathPlanningRequest.Types.Matrix.DefaultInstance; }
+    }
+    
     public const int UseEndPointFieldNumber = 11;
     private bool hasUseEndPoint;
     private bool useEndPoint_;
@@ -1298,22 +1321,22 @@ namespace ProtoBuffer {
       int size = SerializedSize;
       string[] field_names = _pathPlanningRequestFieldNames;
       if (hasUseDistributionMap) {
-        output.WriteBool(1, field_names[11], UseDistributionMap);
+        output.WriteBool(1, field_names[13], UseDistributionMap);
       }
       if (hasUseTaskDifficultyMap) {
-        output.WriteBool(2, field_names[15], UseTaskDifficultyMap);
+        output.WriteBool(2, field_names[17], UseTaskDifficultyMap);
       }
       if (hasUseHiararchy) {
-        output.WriteBool(3, field_names[13], UseHiararchy);
+        output.WriteBool(3, field_names[15], UseHiararchy);
       }
       if (hasUseCoarseToFineSearch) {
-        output.WriteBool(4, field_names[10], UseCoarseToFineSearch);
+        output.WriteBool(4, field_names[12], UseCoarseToFineSearch);
       }
       if (hasUseParallelProcessing) {
-        output.WriteBool(5, field_names[14], UseParallelProcessing);
+        output.WriteBool(5, field_names[16], UseParallelProcessing);
       }
       if (hasVehicleType) {
-        output.WriteEnum(6, field_names[16], (int) VehicleType, VehicleType);
+        output.WriteEnum(6, field_names[18], (int) VehicleType, VehicleType);
       }
       if (hasDetectionType) {
         output.WriteEnum(7, field_names[3], (int) DetectionType, DetectionType);
@@ -1321,17 +1344,23 @@ namespace ProtoBuffer {
       if (hasDetectionRate) {
         output.WriteDouble(8, field_names[2], DetectionRate);
       }
+      if (hasDistMap) {
+        output.WriteMessage(9, field_names[6], DistMap);
+      }
+      if (hasDiffMap) {
+        output.WriteMessage(10, field_names[4], DiffMap);
+      }
       if (hasUseEndPoint) {
-        output.WriteBool(11, field_names[12], UseEndPoint);
+        output.WriteBool(11, field_names[14], UseEndPoint);
       }
       if (hasT) {
-        output.WriteInt32(12, field_names[8], T);
+        output.WriteInt32(12, field_names[10], T);
       }
       if (hasPStart) {
-        output.WriteMessage(13, field_names[19], PStart);
+        output.WriteMessage(13, field_names[21], PStart);
       }
       if (hasPEnd) {
-        output.WriteMessage(14, field_names[18], PEnd);
+        output.WriteMessage(14, field_names[20], PEnd);
       }
       if (hasAlgToUse) {
         output.WriteEnum(15, field_names[0], (int) AlgToUse, AlgToUse);
@@ -1340,22 +1369,22 @@ namespace ProtoBuffer {
         output.WriteBool(16, field_names[1], BatchRun);
       }
       if (hasRunTimes) {
-        output.WriteInt32(17, field_names[7], RunTimes);
+        output.WriteInt32(17, field_names[9], RunTimes);
       }
       if (hasMaxDifficulty) {
-        output.WriteInt32(18, field_names[6], MaxDifficulty);
+        output.WriteInt32(18, field_names[8], MaxDifficulty);
       }
       if (diffRate_.Count > 0) {
-        output.WriteDoubleArray(19, field_names[4], diffRate_);
+        output.WriteDoubleArray(19, field_names[5], diffRate_);
       }
       if (hasDrawPath) {
-        output.WriteBool(20, field_names[5], DrawPath);
+        output.WriteBool(20, field_names[7], DrawPath);
       }
       if (hasD) {
-        output.WriteInt32(21, field_names[17], D);
+        output.WriteInt32(21, field_names[19], D);
       }
       if (hasTopNCount) {
-        output.WriteInt32(22, field_names[9], TopNCount);
+        output.WriteInt32(22, field_names[11], TopNCount);
       }
       UnknownFields.WriteTo(output);
     }
@@ -1390,6 +1419,12 @@ namespace ProtoBuffer {
         }
         if (hasDetectionRate) {
           size += pb::CodedOutputStream.ComputeDoubleSize(8, DetectionRate);
+        }
+        if (hasDistMap) {
+          size += pb::CodedOutputStream.ComputeMessageSize(9, DistMap);
+        }
+        if (hasDiffMap) {
+          size += pb::CodedOutputStream.ComputeMessageSize(10, DiffMap);
         }
         if (hasUseEndPoint) {
           size += pb::CodedOutputStream.ComputeBoolSize(11, UseEndPoint);
@@ -1581,6 +1616,12 @@ namespace ProtoBuffer {
         if (other.HasDetectionRate) {
           DetectionRate = other.DetectionRate;
         }
+        if (other.HasDistMap) {
+          MergeDistMap(other.DistMap);
+        }
+        if (other.HasDiffMap) {
+          MergeDiffMap(other.DiffMap);
+        }
         if (other.HasUseEndPoint) {
           UseEndPoint = other.UseEndPoint;
         }
@@ -1706,6 +1747,24 @@ namespace ProtoBuffer {
             }
             case 65: {
               result.hasDetectionRate = input.ReadDouble(ref result.detectionRate_);
+              break;
+            }
+            case 74: {
+              global::ProtoBuffer.PathPlanningRequest.Types.Matrix.Builder subBuilder = global::ProtoBuffer.PathPlanningRequest.Types.Matrix.CreateBuilder();
+              if (result.hasDistMap) {
+                subBuilder.MergeFrom(DistMap);
+              }
+              input.ReadMessage(subBuilder, extensionRegistry);
+              DistMap = subBuilder.BuildPartial();
+              break;
+            }
+            case 82: {
+              global::ProtoBuffer.PathPlanningRequest.Types.Matrix.Builder subBuilder = global::ProtoBuffer.PathPlanningRequest.Types.Matrix.CreateBuilder();
+              if (result.hasDiffMap) {
+                subBuilder.MergeFrom(DiffMap);
+              }
+              input.ReadMessage(subBuilder, extensionRegistry);
+              DiffMap = subBuilder.BuildPartial();
               break;
             }
             case 88: {
@@ -1942,6 +2001,86 @@ namespace ProtoBuffer {
         PrepareBuilder();
         result.hasDetectionRate = false;
         result.detectionRate_ = 1D;
+        return this;
+      }
+      
+      public bool HasDistMap {
+       get { return result.hasDistMap; }
+      }
+      public global::ProtoBuffer.PathPlanningRequest.Types.Matrix DistMap {
+        get { return result.DistMap; }
+        set { SetDistMap(value); }
+      }
+      public Builder SetDistMap(global::ProtoBuffer.PathPlanningRequest.Types.Matrix value) {
+        pb::ThrowHelper.ThrowIfNull(value, "value");
+        PrepareBuilder();
+        result.hasDistMap = true;
+        result.distMap_ = value;
+        return this;
+      }
+      public Builder SetDistMap(global::ProtoBuffer.PathPlanningRequest.Types.Matrix.Builder builderForValue) {
+        pb::ThrowHelper.ThrowIfNull(builderForValue, "builderForValue");
+        PrepareBuilder();
+        result.hasDistMap = true;
+        result.distMap_ = builderForValue.Build();
+        return this;
+      }
+      public Builder MergeDistMap(global::ProtoBuffer.PathPlanningRequest.Types.Matrix value) {
+        pb::ThrowHelper.ThrowIfNull(value, "value");
+        PrepareBuilder();
+        if (result.hasDistMap &&
+            result.distMap_ != global::ProtoBuffer.PathPlanningRequest.Types.Matrix.DefaultInstance) {
+            result.distMap_ = global::ProtoBuffer.PathPlanningRequest.Types.Matrix.CreateBuilder(result.distMap_).MergeFrom(value).BuildPartial();
+        } else {
+          result.distMap_ = value;
+        }
+        result.hasDistMap = true;
+        return this;
+      }
+      public Builder ClearDistMap() {
+        PrepareBuilder();
+        result.hasDistMap = false;
+        result.distMap_ = null;
+        return this;
+      }
+      
+      public bool HasDiffMap {
+       get { return result.hasDiffMap; }
+      }
+      public global::ProtoBuffer.PathPlanningRequest.Types.Matrix DiffMap {
+        get { return result.DiffMap; }
+        set { SetDiffMap(value); }
+      }
+      public Builder SetDiffMap(global::ProtoBuffer.PathPlanningRequest.Types.Matrix value) {
+        pb::ThrowHelper.ThrowIfNull(value, "value");
+        PrepareBuilder();
+        result.hasDiffMap = true;
+        result.diffMap_ = value;
+        return this;
+      }
+      public Builder SetDiffMap(global::ProtoBuffer.PathPlanningRequest.Types.Matrix.Builder builderForValue) {
+        pb::ThrowHelper.ThrowIfNull(builderForValue, "builderForValue");
+        PrepareBuilder();
+        result.hasDiffMap = true;
+        result.diffMap_ = builderForValue.Build();
+        return this;
+      }
+      public Builder MergeDiffMap(global::ProtoBuffer.PathPlanningRequest.Types.Matrix value) {
+        pb::ThrowHelper.ThrowIfNull(value, "value");
+        PrepareBuilder();
+        if (result.hasDiffMap &&
+            result.diffMap_ != global::ProtoBuffer.PathPlanningRequest.Types.Matrix.DefaultInstance) {
+            result.diffMap_ = global::ProtoBuffer.PathPlanningRequest.Types.Matrix.CreateBuilder(result.diffMap_).MergeFrom(value).BuildPartial();
+        } else {
+          result.diffMap_ = value;
+        }
+        result.hasDiffMap = true;
+        return this;
+      }
+      public Builder ClearDiffMap() {
+        PrepareBuilder();
+        result.hasDiffMap = false;
+        result.diffMap_ = null;
         return this;
       }
       

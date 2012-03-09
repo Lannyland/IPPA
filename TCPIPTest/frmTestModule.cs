@@ -7,7 +7,6 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using rtwmatrix;
-using IPPA;
 using System.Net;
 using System.Net.Sockets;
 using System.IO;
@@ -101,9 +100,6 @@ namespace TCPIPTest
             lvQueue.GridLines = false;
             lvQueue.Columns.Add("Task");
             lvQueue.Columns[0].Width = lvQueue.Width - 5;
-
-            chkBatchRun.Checked = false;
-            ntxtRunTimes.Value = 10;
         }
         
         // When the Clear Button is clicked.
@@ -615,11 +611,6 @@ namespace TCPIPTest
                 }
             }
             newRequest.DrawPath = chkShowPath.Checked;
-            if (chkBatchRun.Checked)
-            {
-                newRequest.BatchRun = true;
-                newRequest.RunTimes = Convert.ToInt16(ntxtRunTimes.Value);
-            }
 
             // Find max task-difficulty and compute diff rates only once
             if (chkUseDiff.Checked)
@@ -662,43 +653,36 @@ namespace TCPIPTest
         private byte[] PrepareServerQueueItem(PathPlanningRequest newRequest)
         {
             byte[] bytes;
-            // First DistPoints
-            ProtoBuffer.PathPlanningRequest.Types.DistPoint.Builder newStart = ProtoBuffer.PathPlanningRequest.Types.DistPoint.CreateBuilder();
-            newStart.SetRow(0)
-                    .SetColumn(0);
-            ProtoBuffer.PathPlanningRequest.Types.DistPoint Start = newStart.Build();
-            newStart = null;
-            ProtoBuffer.PathPlanningRequest.Types.DistPoint.Builder newEnd = ProtoBuffer.PathPlanningRequest.Types.DistPoint.CreateBuilder();
-            newEnd.SetRow(59)
-                    .SetColumn(59);
-            ProtoBuffer.PathPlanningRequest.Types.DistPoint End = newEnd.Build();
-            newEnd = null;
-            // Then PathPlanningRequest
-            ProtoBuffer.PathPlanningRequest.Builder newRequest = ProtoBuffer.PathPlanningRequest.CreateBuilder();
-            newRequest.SetUseDistributionMap(true)
-                      .SetUseTaskDifficultyMap(true)
-                      .SetUseHiararchy(false)
-                      .SetUseCoarseToFineSearch(false)
-                      .SetUseParallelProcessing(false)
-                      .SetVehicleType(ProtoBuffer.PathPlanningRequest.Types.UAVType.Copter)
-                      .SetDetectionType(ProtoBuffer.PathPlanningRequest.Types.DType.FixPercentage)
-                      .SetDetectionRate(1)
-                      .SetUseEndPoint(false)
-                      .SetT(150)
-                      .SetPStart(Start)
-                      .SetPEnd(End)
-                      .SetAlgToUse(ProtoBuffer.PathPlanningRequest.Types.AlgType.TopN)
-                      .SetBatchRun(false)
-                      .SetRunTimes(0)
-                      .SetMaxDifficulty(3)
-                      .SetDrawPath(false)
-                      .SetD(0)
-                      .SetTopNCount(5);
-            newRequest.AddDiffRate(0);
-            newRequest.AddDiffRate(0.25);
-            newRequest.AddDiffRate(0.5);
-            newRequest.AddDiffRate(0.75);
-            ProtoBuffer.PathPlanningRequest Request = newRequest.Build();
+
+            ProtoBuffer.PathPlanningRequest.Builder newPBRequest = ProtoBuffer.PathPlanningRequest.CreateBuilder();
+            newPBRequest.SetUseDistributionMap(newRequest.UseDistributionMap)
+                      .SetUseTaskDifficultyMap(newRequest.UseTaskDifficultyMap)
+                      .SetUseHiararchy(newRequest.UseHiararchy)
+                      .SetUseCoarseToFineSearch(newRequest.UseCoarseToFineSearch)
+                      .SetUseParallelProcessing(newRequest.UseParallelProcessing)
+                      .SetVehicleType((ProtoBuffer.PathPlanningRequest.Types.UAVType)newRequest.VehicleType)
+                      .SetDetectionType((ProtoBuffer.PathPlanningRequest.Types.DType)newRequest.DetectionType)
+                      .SetDetectionRate(newRequest.DetectionRate)
+                      .SetDistMap(RtwMatrixToPBMatrix(newRequest.DistMap))
+                      .SetDiffMap(RtwMatrixToPBMatrix(newRequest.DiffMap))
+                      .SetUseEndPoint(newRequest.UseEndPoint)
+                      .SetT(newRequest.T)
+                      .SetPStart(DistPointToPBDistPoint(newRequest.pStart))
+                      .SetPEnd(DistPointToPBDistPoint(newRequest.pEnd))
+                      .SetAlgToUse((ProtoBuffer.PathPlanningRequest.Types.AlgType)newRequest.AlgToUse)
+                      .SetBatchRun(newRequest.BatchRun)
+                      .SetRunTimes(newRequest.RunTimes)
+                      .SetMaxDifficulty(newRequest.MaxDifficulty)
+                      .SetDrawPath(newRequest.DrawPath)
+                      .SetD(newRequest.d)
+                      .SetTopNCount(newRequest.TopN);
+            // Have to deal with DiffRates array separately
+            for (int i = 0; i < newRequest.DiffRates.Length; i++)
+            {
+                newPBRequest.AddDiffRate(newRequest.DiffRates[i]);
+            }
+            //TODO here do the matrix thing
+            ProtoBuffer.PathPlanningRequest Request = newPBRequest.Build();
             newRequest = null;
             // Finally the ServerQueueItem
             ProtoBuffer.ServerQueueItem.Builder newServerQueueItem = new ProtoBuffer.ServerQueueItem.Builder();
@@ -708,8 +692,38 @@ namespace TCPIPTest
             newServerQueueItem = null;
             bytes = ServerQueueItem.ToByteArray();
 
-            ProtoBuffer.ServerQueueItem restored = ProtoBuffer.ServerQueueItem.CreateBuilder().MergeFrom(bytes).Build();
             return bytes;
+        }
+
+        // Method to convert DistPoint to Protocal Buffer version of DistPoint
+        private static ProtoBuffer.PathPlanningRequest.Types.DistPoint DistPointToPBDistPoint(DistPoint p)
+        {
+            ProtoBuffer.PathPlanningRequest.Types.DistPoint.Builder newPBuilder = ProtoBuffer.PathPlanningRequest.Types.DistPoint.CreateBuilder();
+            newPBuilder.SetRow(p.row)
+                    .SetColumn(p.column);
+            ProtoBuffer.PathPlanningRequest.Types.DistPoint newP = newPBuilder.Build();
+            newPBuilder = null;
+            return newP;
+        }
+
+        // Method to convert RtwMatrix to Protocal Buffer version of Matrix
+        private static ProtoBuffer.PathPlanningRequest.Types.Matrix RtwMatrixToPBMatrix(RtwMatrix m)
+        {
+            ProtoBuffer.PathPlanningRequest.Types.Matrix.Builder newMBuilder = ProtoBuffer.PathPlanningRequest.Types.Matrix.CreateBuilder();
+            for (int i = 0; i < m.Rows; i++)
+            {
+                ProtoBuffer.PathPlanningRequest.Types.MatrixRow.Builder rowBuilder = ProtoBuffer.PathPlanningRequest.Types.MatrixRow.CreateBuilder();
+                for (int j = 0; j < m.Columns; j++)
+                {
+                    rowBuilder.AddCell(m[i, j]);
+                }
+                ProtoBuffer.PathPlanningRequest.Types.MatrixRow newRow = rowBuilder.Build();
+                rowBuilder = null;
+                newMBuilder.AddRow(newRow);
+            }
+            ProtoBuffer.PathPlanningRequest.Types.Matrix newM = newMBuilder.Build();
+            newMBuilder = null;
+            return newM;
         }
 
         // Method to add a header to data stream indicating size of data (not including header)

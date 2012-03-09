@@ -87,8 +87,8 @@ namespace IPPA
             ntxtGWCount.Value = ProjectConstants.GWCount;
             ntxtConvCount.Value = ProjectConstants.ConvCount;
             ntxtPFCount.Value = ProjectConstants.PFCount;
-            ntxtTop2Iterations = ProjectConstants.SearchResolution;
-            ntxtTopNCount = ProjectConstants.TopNCount;
+            ntxtTop2Iterations.Value = ProjectConstants.SearchResolution;
+            ntxtTopNCount.Value = ProjectConstants.TopNCount;
 
             lstAlg.Items.Add("CC");
             lstAlg.Items.Add("LHC-GW-CONV");

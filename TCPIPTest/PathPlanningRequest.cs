@@ -5,7 +5,7 @@ using System.Text;
 using rtwmatrix;
 using System.Drawing;
 
-namespace IPPA
+namespace TCPIPTest
 {
     public enum UAVType { FixWing, Copter };
     public enum DType { FixAmount, FixAmountInPercentage, FixPercentage };
