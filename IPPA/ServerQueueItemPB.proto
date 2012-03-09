@@ -11,8 +11,8 @@ message PathPlanningRequest {
   optional UAVType VehicleType = 6 [default = Copter];
   optional DType DetectionType = 7 [default = FixAmountInPercentage];
   optional double DetectionRate = 8 [default = 1];
-  optional RtwMatrix DistMap = 9;
-  optional RtwMatrix DiffMap = 10;
+  optional Matrix DistMap = 9;
+  optional Matrix DiffMap = 10;
   optional bool UseEndPoint = 11 [default = false];
   optional int32 T = 12 [default = 600];
   optional DistPoint pStart = 13;
