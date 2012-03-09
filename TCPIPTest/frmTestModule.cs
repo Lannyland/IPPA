@@ -663,8 +663,6 @@ namespace TCPIPTest
                       .SetVehicleType((ProtoBuffer.PathPlanningRequest.Types.UAVType)newRequest.VehicleType)
                       .SetDetectionType((ProtoBuffer.PathPlanningRequest.Types.DType)newRequest.DetectionType)
                       .SetDetectionRate(newRequest.DetectionRate)
-                      .SetDistMap(RtwMatrixToPBMatrix(newRequest.DistMap))
-                      .SetDiffMap(RtwMatrixToPBMatrix(newRequest.DiffMap))
                       .SetUseEndPoint(newRequest.UseEndPoint)
                       .SetT(newRequest.T)
                       .SetPStart(DistPointToPBDistPoint(newRequest.pStart))
@@ -677,11 +675,36 @@ namespace TCPIPTest
                       .SetD(newRequest.d)
                       .SetTopNCount(newRequest.TopN);
             // Have to deal with DiffRates array separately
-            for (int i = 0; i < newRequest.DiffRates.Length; i++)
+            if (newRequest.DiffRates != null)
             {
-                newPBRequest.AddDiffRate(newRequest.DiffRates[i]);
+                for (int i = 0; i < newRequest.DiffRates.Length; i++)
+                {
+                    newPBRequest.AddDiffRate(newRequest.DiffRates[i]);
+                }
             }
-            //TODO here do the matrix thing
+            //Here do the matrix thing
+            //// Debug Code
+            //// Test with small matrix
+            //// int d = 40;
+            //int d = 100;
+            //int v = 1;
+            //RtwMatrix testM = new RtwMatrix(d, d);
+            //for (int i = 0; i < d; i++)
+            //{
+            //    for (int j = 0; j < d; j++)
+            //    {
+            //        testM[i, j] = v;
+            //    }
+            //}
+            //newPBRequest.SetDistMap(RtwMatrixToPBMatrix(testM));
+            if (newRequest.DistMap != null)
+            {
+                newPBRequest.SetDistMap(RtwMatrixToPBMatrix(newRequest.DistMap));
+            }
+            if (newRequest.DiffMap != null)
+            {
+                newPBRequest.SetDiffMap(RtwMatrixToPBMatrix(newRequest.DiffMap));
+            }
             ProtoBuffer.PathPlanningRequest Request = newPBRequest.Build();
             newRequest = null;
             // Finally the ServerQueueItem
