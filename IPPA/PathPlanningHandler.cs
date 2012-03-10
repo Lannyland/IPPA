@@ -19,7 +19,8 @@ namespace IPPA
         private double AvgRunTime = 0;
         private double StdRunTime = 0;
         private double AvgEfficiency = 0;
-        private double StdEfficiency = 0;            
+        private double StdEfficiency = 0;
+        private List<Point> Path;
 
         #endregion
 
@@ -114,6 +115,7 @@ namespace IPPA
                 AvgRunTime += curTask.GetRunTime();
                 AllEfficiencies.Add(curTask.GetEfficiency());
                 AvgEfficiency += curTask.GetEfficiency();
+                Path = curTask.GetPath();
                 curTask = null;
             }
             AvgRunTime = AvgRunTime / BatchCount;
@@ -222,10 +224,23 @@ namespace IPPA
         {
             return AvgRunTime;
         }
+        public double GetStdRunTime()
+        {
+            return StdRunTime;
+        }
+        public double GetAvgEfficiency()
+        {
+            return AvgEfficiency;
+        }
         public double GetStdEfficiency()
         {
             return StdRunTime;
-        }        
+        }
+        public List<Point> GetPath()
+        {
+            return Path;
+        }
+        
         #endregion
 
         #endregion      

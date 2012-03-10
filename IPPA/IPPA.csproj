@@ -107,6 +107,7 @@
     <Compile Include="RtwMatrix.cs" />
     <Compile Include="ServerQueueItem.cs" />
     <Compile Include="ServerQueueItemPB.cs" />
+    <Compile Include="TCPHandler.cs" />
     <EmbeddedResource Include="frmMap.resx">
       <DependentUpon>frmMap.cs</DependentUpon>
     </EmbeddedResource>

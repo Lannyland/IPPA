@@ -440,27 +440,58 @@ namespace TCPIPTest
             
             // Build Path Request into Object
             // Object via protocol buffer
-            byte[] outStream = PrepareServerQueueItem(newRequest);
+            byte[] outStream = RequestToByteArray(newRequest);
 
             // Add header to indicate data size
-            byte[] outStreamFinal = outStreamFinal = AddDataSizeHeader(outStream);
+            byte[] outStreamFinal = outStreamFinal = ProtoBuffer.TCPHandler.AddDataSizeHeader(outStream);
             
             // Send request
+            try
+            {
+                TcpClient clientSocket = new TcpClient();
+                clientSocket.Connect("127.0.0.1", 8888);
 
-            TcpClient clientSocket = new TcpClient();
-            clientSocket.Connect("127.0.0.1", 8888);
+                NetworkStream serverStream = clientSocket.GetStream();
 
-            NetworkStream serverStream = clientSocket.GetStream();
+                // Send data over socket connection
+                serverStream.Write(outStreamFinal, 0, outStreamFinal.Length);
+                serverStream.Flush();
 
-            // Send data over socket connection
-            serverStream.Write(outStreamFinal, 0, outStreamFinal.Length);
-            serverStream.Flush();
-
-            // Get server response
-            byte[] inStream = new byte[10025];
-            serverStream.Read(inStream, 0, (int)clientSocket.ReceiveBufferSize);
-            string returndata = System.Text.Encoding.ASCII.GetString(inStream);
-            Log(returndata + "   \n" + "   \n");
+                // Get server response
+                byte[] inStream = ProtoBuffer.TCPHandler.RecieveData(clientSocket, serverStream);
+                
+                // Convert byte array to things we want
+                if (inStream.Length == 0)
+                {
+                    System.Windows.Forms.MessageBox.Show("Server exception occurred. No data received!");
+                }
+                else
+                {
+                    Log("Efficiency = " + BitConverter.ToDouble(inStream, 0) + "\n");
+                    Log("Run Time = " + BitConverter.ToDouble(inStream, 8) + "\n");
+                    int[] curP = new int[inStream.Length - 16];
+                    Log("Path = ");
+                    for (int i = 16; i < inStream.Length; i = i + 4)
+                    {
+                        Log(BitConverter.ToInt32(inStream, i).ToString() + " ");
+                        if ((i / 4) % 2 == 1)
+                        {
+                            Log(", ");
+                        }
+                    }
+                }
+            }
+            catch (System.Net.Sockets.SocketException ex)
+            {
+                if (ex.ErrorCode == 10061)
+                {
+                    System.Windows.Forms.MessageBox.Show("Server not available!");
+                }
+                else
+                {
+                    Log(ex.Message);
+                }                
+            }
 
             //TODO Deal with path response
             // First 4 bytes size of data
@@ -650,7 +681,7 @@ namespace TCPIPTest
         }
 
         // Construct byte array for Server Queue Item
-        private byte[] PrepareServerQueueItem(PathPlanningRequest newRequest)
+        private byte[] RequestToByteArray(PathPlanningRequest newRequest)
         {
             byte[] bytes;
 
@@ -748,22 +779,6 @@ namespace TCPIPTest
             newMBuilder = null;
             return newM;
         }
-
-        // Method to add a header to data stream indicating size of data (not including header)
-        private static byte[] AddDataSizeHeader(byte[] outStream)
-        {
-            byte[] outStreamFinal;
-            // Count byte size and conver to byte[4]
-            int size = outStream.Length;
-            byte[] header = BitConverter.GetBytes(size);
-
-            // Include header in stream
-            outStreamFinal = new byte[size + 4];
-            Array.Copy(header, 0, outStreamFinal, 0, header.Length);
-            Array.Copy(outStream, 0, outStreamFinal, 4, size);
-            return outStreamFinal;
-        }
-
 
         // Code to display logs in log rich text box (refresh and scroll to bottom)
         private void Log(string str)

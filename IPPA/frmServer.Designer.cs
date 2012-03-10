@@ -36,10 +36,10 @@
             this.btnLoadTestModule = new System.Windows.Forms.Button();
             this.btnClear = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.btnExecute = new System.Windows.Forms.Button();
             this.rtxtRequestDetails = new System.Windows.Forms.RichTextBox();
             this.btnDelete = new System.Windows.Forms.Button();
             this.lstQueue = new System.Windows.Forms.ListBox();
-            this.btnExecute = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -130,6 +130,16 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Path Planning Request Queues";
             // 
+            // btnExecute
+            // 
+            this.btnExecute.Location = new System.Drawing.Point(596, 107);
+            this.btnExecute.Name = "btnExecute";
+            this.btnExecute.Size = new System.Drawing.Size(134, 106);
+            this.btnExecute.TabIndex = 4;
+            this.btnExecute.Text = "Process Queue";
+            this.btnExecute.UseVisualStyleBackColor = true;
+            this.btnExecute.Click += new System.EventHandler(this.btnExecute_Click);
+            // 
             // rtxtRequestDetails
             // 
             this.rtxtRequestDetails.Location = new System.Drawing.Point(214, 19);
@@ -159,16 +169,6 @@
             this.lstQueue.TabIndex = 1;
             this.lstQueue.Click += new System.EventHandler(this.lstQueue_Click);
             // 
-            // btnExecute
-            // 
-            this.btnExecute.Location = new System.Drawing.Point(596, 107);
-            this.btnExecute.Name = "btnExecute";
-            this.btnExecute.Size = new System.Drawing.Size(134, 106);
-            this.btnExecute.TabIndex = 4;
-            this.btnExecute.Text = "Process Queue";
-            this.btnExecute.UseVisualStyleBackColor = true;
-            this.btnExecute.Click += new System.EventHandler(this.btnExecute_Click);
-            // 
             // frmServer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -180,6 +180,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.Name = "frmServer";
             this.Text = "IPPA Control Panel";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmServer_FormClosing);
             this.Load += new System.EventHandler(this.frmServer_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();

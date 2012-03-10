@@ -10,6 +10,11 @@ using System.Runtime.InteropServices;
 
 namespace IPPA
 {
+    // Public delegates
+    public delegate void DelegateLog(string str);
+    public delegate void DelegateSubmitToRequestQueue(PathPlanningRequest curRequest);
+    public delegate void DelegateRemoveFromRequestQueue(int i);
+
     public partial class frmServer : Form
     {
         #region Members
@@ -22,10 +27,15 @@ namespace IPPA
         const int SB_BOTTOM = 7;
 
         // Private members
-        private bool blnServerRunning = false;
+        public bool blnServerRunning = false;
         private List<PathPlanningRequest> lstRequestQueue = new List<PathPlanningRequest>();
         private PathPlanningServer myServer;
                 
+        // Public members
+        public DelegateLog dLogCallBack;
+        public DelegateSubmitToRequestQueue dSubmitToRequestQueueCallBack;
+        public DelegateRemoveFromRequestQueue dRemoveFromRequestQueueCallBack;
+
         #endregion
 
         #region Constructor, Destructor
@@ -34,6 +44,10 @@ namespace IPPA
         public frmServer()
         {
             InitializeComponent();
+            // initialize delegates
+            dLogCallBack = new DelegateLog(this.Log);
+            dSubmitToRequestQueueCallBack = new DelegateSubmitToRequestQueue(this.SubmitToRequestQueue);
+            dRemoveFromRequestQueueCallBack = new DelegateRemoveFromRequestQueue(this.RemoveFromRequestQueue);
         }
 
         // Destructor
@@ -42,7 +56,6 @@ namespace IPPA
             // Cleaning up
             lstRequestQueue.Clear();
             lstRequestQueue = null;
-            myServer = null;
         }
 
         #endregion
@@ -60,6 +73,17 @@ namespace IPPA
                              "and the flight duration (in seconds), together with the " +
                              "UAV type (fix-wing or copter) and detection type (" +
                              "fixed amount, fixed amount in percentage, or fixed percentage).";
+            myServer = new PathPlanningServer(this);
+        }
+
+        // When form is closing
+        private void frmServer_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (myServer != null)
+            {
+                myServer.Stop();
+                myServer = null;
+            }
         }
 
         // When Load Test Module button is pressed
@@ -75,12 +99,14 @@ namespace IPPA
             if (!blnServerRunning)
             {
                 btnServerSwitch.Text = "Stop Server";
+                btnServerSwitch.BackColor = Color.Red;
                 blnServerRunning = true;
                 myServer = new PathPlanningServer(this);
             }
             else
             {
                 btnServerSwitch.Text = "Start Server";
+                btnServerSwitch.BackColor = Color.White;
                 blnServerRunning = false;
                 //TODO shutting down all connections
                 myServer.Stop();
@@ -173,6 +199,10 @@ namespace IPPA
         // Function to add item to queue
         public void SubmitToRequestQueue(PathPlanningRequest newRequest)
         {
+            // Add to server queue
+            ServerQueueItem newItem = new ServerQueueItem(newRequest, "127.0.0.1");
+            myServer.AddRequest(newItem);
+
             // Add request item to queue
             lstQueue.Items.Add(newRequest.AlgToUse.ToString());
             lstRequestQueue.Add(newRequest);
@@ -182,6 +212,13 @@ namespace IPPA
             Log("----------------------------------------------");
             Log("----------------------------------------------\n");
             Log(GetRequestDetail(lstRequestQueue.Count-1)+"\n\n");
+        }
+
+        // Function to remove top item from queue
+        public void RemoveFromRequestQueue(int i)
+        {
+            lstQueue.Items.RemoveAt(i);
+            lstRequestQueue.RemoveAt(i);
         }
 
         // Display path planning request details
