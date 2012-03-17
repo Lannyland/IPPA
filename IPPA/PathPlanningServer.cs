@@ -88,7 +88,7 @@ namespace IPPA
             }
             catch (Exception e)
             {
-                Console.WriteLine("Caught Exception: {0}", e.ToString());
+                System.Windows.Forms.MessageBox.Show(e.Message);
             }
 
             this.serverSocket.Stop();
