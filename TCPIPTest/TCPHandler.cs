@@ -52,42 +52,52 @@ namespace ProtoBuffer
             int bufferSize = (int)clientSocket.ReceiveBufferSize;
             int size = 0;
             byte[] byteFinal = null;
-            do
+
+            try
             {
-                int startIndex = bufferSize * counter;
-                int totalSize = bufferSize * (counter + 1);
-                clientStream.Read(bytesFrom, 0, bufferSize);
-                if (counter == 0)
+                do
                 {
-                    // First time also get the data size
-                    size = BitConverter.ToInt32(bytesFrom, 0);
-                    byteFinal = new byte[size + 4];
-                }
-                if (size < bufferSize)
-                {
-                    // One read is enough to read all data
-                    Array.Copy(bytesFrom, 0, byteFinal, 0, size + 4);
-                }
-                else
-                {
-                    // Lots of data and requires multiple reads
-                    if (size >= totalSize)
+                    int startIndex = bufferSize * counter;
+                    int totalSize = bufferSize * (counter + 1);
+                    clientStream.Read(bytesFrom, 0, bufferSize);
+                    if (counter == 0)
                     {
-                        // Still need to read more
-                        Array.Copy(bytesFrom, 0, byteFinal, startIndex, bufferSize);
+                        // First time also get the data size
+                        size = BitConverter.ToInt32(bytesFrom, 0);
+                        byteFinal = new byte[size + 4];
+                    }
+                    if (size < bufferSize)
+                    {
+                        // One read is enough to read all data
+                        Array.Copy(bytesFrom, 0, byteFinal, 0, size + 4);
                     }
                     else
                     {
-                        Array.Copy(bytesFrom, 0, byteFinal, startIndex, size + 4 - startIndex);
+                        // Lots of data and requires multiple reads
+                        if (size >= totalSize)
+                        {
+                            // Still need to read more
+                            Array.Copy(bytesFrom, 0, byteFinal, startIndex, bufferSize);
+                        }
+                        else
+                        {
+                            Array.Copy(bytesFrom, 0, byteFinal, startIndex, size + 4 - startIndex);
+                        }
                     }
+                    counter++;
                 }
-                counter++;
-            }
-            while (clientStream.DataAvailable);
+                while (clientStream.DataAvailable);
 
-            byte[] byteTrimmed = new byte[size];
-            Array.Copy(byteFinal, 4, byteTrimmed, 0, size);
-            return byteTrimmed;
+                byte[] byteTrimmed = new byte[size];
+                Array.Copy(byteFinal, 4, byteTrimmed, 0, size);
+
+                return byteTrimmed;
+            }
+            catch (Exception ex)
+            {
+                System.Windows.Forms.MessageBox.Show(ex.Message);
+                return null;
+            }
         }
         
         #endregion
