@@ -23,7 +23,7 @@ namespace IPPA
         // Public variables
         public bool UseDistributionMap = true;
         public bool UseTaskDifficultyMap = false;
-        public bool UseHiararchy = false;
+        public bool UseHierarchy = false;
         public bool UseCoarseToFineSearch = false;
         public bool UseParallelProcessing = false;
         public UAVType VehicleType = UAVType.FixWing;
@@ -138,9 +138,42 @@ namespace IPPA
         // Clone self with shallow copy except pStart and pEnd.
         public PathPlanningRequest Clone()
         {
-            PathPlanningRequest clonedRequest = MemberwiseClone() as PathPlanningRequest;
+            PathPlanningRequest clonedRequest = this.MemberwiseClone() as PathPlanningRequest;
             clonedRequest.pStart = new DistPoint(pStart.row, pStart.column);
             clonedRequest.pEnd = new DistPoint(pEnd.row, pEnd.column);
+            return clonedRequest;
+        }
+
+        // Clone self with deep copy
+        public PathPlanningRequest DeepClone()
+        {
+            PathPlanningRequest clonedRequest = new PathPlanningRequest();
+            clonedRequest.UseTaskDifficultyMap = this.UseTaskDifficultyMap;
+            clonedRequest.UseHierarchy = this.UseHierarchy;
+            clonedRequest.UseCoarseToFineSearch = this.UseCoarseToFineSearch;
+            clonedRequest.UseParallelProcessing = this.UseParallelProcessing;
+            clonedRequest.VehicleType = this.VehicleType;
+            clonedRequest.DetectionType = this.DetectionType;
+            clonedRequest.DetectionRate = this.DetectionRate;
+            clonedRequest.DistMap = this.DistMap.Clone();
+            clonedRequest.DiffMap = this.DiffMap.Clone();
+            clonedRequest.UseEndPoint = this.UseEndPoint;
+            clonedRequest.T = this.T;
+            clonedRequest.pStart = new DistPoint(pStart.row, pStart.column);
+            clonedRequest.pEnd = new DistPoint(pEnd.row, pEnd.column);
+            clonedRequest.AlgToUse = this.AlgToUse;
+            clonedRequest.BatchRun = this.BatchRun;
+            clonedRequest.RunTimes = this.RunTimes;
+            clonedRequest.MaxDifficulty = this.MaxDifficulty;
+            if (this.DiffRates != null)
+            {
+                double[] DiffRatesCopy = new double[DiffRates.Length];
+                Array.Copy(DiffRates, 0, DiffRatesCopy, 0, DiffRates.Length);
+                clonedRequest.DiffRates = DiffRatesCopy;
+            }
+            clonedRequest.DrawPath = this.DrawPath;
+            clonedRequest.d = this.d;
+            clonedRequest.TopN = this.TopN;
             return clonedRequest;
         }
 

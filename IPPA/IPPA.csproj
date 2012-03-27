@@ -98,6 +98,7 @@
     </Compile>
     <Compile Include="PathPlanningHandler.cs" />
     <Compile Include="PathPlanningRequest.cs" />
+    <Compile Include="PathPlanningResponse.cs" />
     <Compile Include="PathPlanningServer.cs" />
     <Compile Include="PathPlanningTask.cs" />
     <Compile Include="Permutation.cs" />

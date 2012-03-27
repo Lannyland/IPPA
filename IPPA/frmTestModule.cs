@@ -311,7 +311,7 @@ namespace IPPA
                 
                 newRequest.UseDistributionMap = chkUseDist.Checked;
                 newRequest.UseTaskDifficultyMap = chkUseDiff.Checked;
-                newRequest.UseHiararchy = chkHiararchy.Checked;
+                newRequest.UseHierarchy = chkHierarchy.Checked;
                 newRequest.UseCoarseToFineSearch = chkCoaseToFine.Checked;
                 newRequest.UseParallelProcessing = chkParallel.Checked;
                 if (rbtnFixWing.Checked)

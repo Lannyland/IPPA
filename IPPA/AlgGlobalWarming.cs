@@ -5,6 +5,8 @@ using System.Text;
 using rtwmatrix;
 using System.Drawing;
 using System.Collections;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace IPPA
 {
@@ -21,6 +23,11 @@ namespace IPPA
         private int CTFGWCoraseLevel;
         private int CTFGWLevelCount;
         private int PFCount;
+
+        // Variabes used for threads
+        private PathPlanningResponse[] arrResponses = null;
+        private List<AlgPathPlanning> lstThreads = new List<AlgPathPlanning>();
+
         #endregion
 
         #region Constructor, Destructor
@@ -59,7 +66,7 @@ namespace IPPA
             }
 
             // If using hiararchical search
-            if (curRequest.UseHiararchy)
+            if (curRequest.UseHierarchy)
             {
                 if (ModeCount <= 1)
                 {
@@ -104,7 +111,7 @@ namespace IPPA
             // Make copy of map
             RtwMatrix mGW = mDist.Clone();
             // Search once
-            PlanPathAtCurrentGW(mGW);
+            PlanPathAtCurrentGW(mGW, 0);
             // Cleaning up                        
             mGW = null;
         }
@@ -133,7 +140,7 @@ namespace IPPA
                 }
 
                 // After ocean rises
-                if (PlanPathAtCurrentGW(mGW))
+                if (PlanPathAtCurrentGW(mGW, i))
                 {
                     // Already found the best path, no need to continue.
                     i = GWCount;
@@ -159,6 +166,7 @@ namespace IPPA
             // Find max value
             float[] minmax = mGW.MinMaxValue();
             float globalMax = minmax[1];
+            
             // Start from one side (no ocean rise)
             float curMiddle = globalMax;
 
@@ -172,7 +180,7 @@ namespace IPPA
                 float[] CDFs = new float[CTFGWCoraseLevel * 2 - 1];
 
                 // Compute middle
-                if (PlanPathAtCurrentGW(mGW))
+                if (PlanPathAtCurrentGW(mGW, 0))
                 {
                     // Already found the best path, no need to continue.
                     return;
@@ -236,7 +244,7 @@ namespace IPPA
             for (int i = 0; i < CTFGWCoraseLevel - 1; i++)
             {
                 OceanRises(mGW, sign * rise);
-                if (PlanPathAtCurrentGW(mGW))
+                if (PlanPathAtCurrentGW(mGW, 0))
                 {
                     // Already found the best path, no need to continue.
                     return;
@@ -254,13 +262,46 @@ namespace IPPA
         // Search multiple GW simutaneously
         private void GWParallelSearch()
         {
-            throw new NotImplementedException();
+            // Make copy of map
+            RtwMatrix mGW = mDist.Clone();
+
+            // Find max value
+            float[] minmax = mGW.MinMaxValue();
+            float max = minmax[1];
+            float rise = max / GWCount;
+
+            // Loop many times
+            for (int i = 0; i < GWCount; i++)
+            {
+                //Console.Write("i=" + i + " ");
+                // Don't rise ocean for first search
+                // Log("Orean rise " + i.ToString() + "\n");
+                if (i > 0)
+                {
+                    // Ocean rises
+                    OceanRises(mGW, rise);
+                }
+
+                // After ocean rises
+                PlanPathAtCurrentGW(mGW, i);
+            }
+
+            // Cleaning up                        
+            mGW = null;
+
+            // Print out CDF Graph
+            // PrintCDFGraph();
+
+            // Spawn threads to plan path
+            SpawnThreads();
         }
 
         // Search GW intelligently and simutaneously
         private void GWCoarseToFineAndParallelSearch()
         {
-            throw new NotImplementedException();
+            // Make copy of map
+            RtwMatrix mGW = mDist.Clone();
+
         }
 
         // Ocean rises by rise (height of island tip decreases if rise is positive)
@@ -280,7 +321,7 @@ namespace IPPA
         }
 
         // At current GW do LHC
-        private bool PlanPathAtCurrentGW(RtwMatrix mGW)
+        private bool PlanPathAtCurrentGW(RtwMatrix mGW, int index)
         {
             // Console.WriteLine("Doing PlanPathAtCurrentGW once!");
             if (curRequest.AlgToUse == AlgType.LHCGWCONV || curRequest.AlgToUse == AlgType.LHCGWCONV_E)
@@ -289,20 +330,35 @@ namespace IPPA
                 int dim = Math.Max(mDist.Rows, mDist.Columns);
                 for (int j = 5; j < dim; j += (int)(dim / ConvCount))
                 {
-                    //Console.Write("j=" + j + "\n");
-                    AlgLHCGWCONV myAlg = new AlgLHCGWCONV(curRequest, mGW, mDiff, Efficiency_UB, j);
-                    myAlg.PlanPath();
-
-                    // Remember if true CDF is better
-                    RememberBestPath(myAlg);
-
-                    // Cleaning up                        
-                    myAlg = null;
-
-                    // If we already have the best path, then no need to continue
-                    if (Math.Abs(Efficiency_UB - CDF) < 0.001)
+                    // Console.Write("j=" + j + "\n");
+                    AlgLHCGWCONV myAlg = null;
+                    if (curRequest.UseParallelProcessing)
                     {
-                        return true;
+                        PathPlanningRequest curRequestCopy = curRequest.DeepClone();
+                        RtwMatrix mGWCopy = mGW.Clone();
+                        RtwMatrix mDiffCopy = mDiff.Clone();
+                        myAlg = new AlgLHCGWCONV(curRequestCopy, mGWCopy, mDiffCopy, Efficiency_UB, j);
+                        // Debug code
+                        myAlg.conv = j;
+                        myAlg.index = index;
+                        lstThreads.Add(myAlg);
+                    }
+                    else
+                    {
+                        myAlg = new AlgLHCGWCONV(curRequest, mGW, mDiff, Efficiency_UB, j);
+                        myAlg.PlanPath();
+
+                        // Remember if true CDF is better
+                        RememberBestPath(myAlg);
+
+                        // Cleaning up                        
+                        myAlg = null;
+
+                        // If we already have the best path, then no need to continue
+                        if (Math.Abs(Efficiency_UB - CDF) < 0.001)
+                        {
+                            return true;
+                        }
                     }
                 }
                 //// Print one GW per line (3 conv each line)
@@ -317,19 +373,34 @@ namespace IPPA
                 {
                     //Console.Write("j=" + j + "\n");
                     Sigma += Convert.ToInt16(dim / 3);
-                    AlgLHCGWCONV myAlg = new AlgLHCGWCONV(curRequest, mGW, mDiff, Efficiency_UB, Sigma);
-                    myAlg.PlanPath();
-
-                    // Remember if true CDF is better
-                    RememberBestPath(myAlg);
-
-                    // Cleaning up                        
-                    myAlg = null;
-
-                    // If we already have the best path, then no need to continue
-                    if (Math.Abs(Efficiency_UB - CDF) < 0.001)
+                    AlgLHCGWCONV myAlg = null;
+                    if (curRequest.UseParallelProcessing)
                     {
-                        return true;
+                        PathPlanningRequest curRequestCopy = curRequest.DeepClone();
+                        RtwMatrix mGWCopy = mGW.Clone();
+                        RtwMatrix mDiffCopy = mDiff.Clone();
+                        myAlg = new AlgLHCGWCONV(curRequestCopy, mGWCopy, mDiffCopy, Efficiency_UB, Sigma);
+                        // Debug code
+                        myAlg.conv = j;
+                        myAlg.index = index;
+                        lstThreads.Add(myAlg);
+                    }
+                    else
+                    {
+                        myAlg = new AlgLHCGWCONV(curRequest, mGW, mDiff, Efficiency_UB, Sigma);
+                        myAlg.PlanPath();
+
+                        // Remember if true CDF is better
+                        RememberBestPath(myAlg);
+
+                        // Cleaning up                        
+                        myAlg = null;
+
+                        // If we already have the best path, then no need to continue
+                        if (Math.Abs(Efficiency_UB - CDF) < 0.001)
+                        {
+                            return true;
+                        }
                     }
                 }
                 // Print one GW per line (3 conv each line)
@@ -342,19 +413,34 @@ namespace IPPA
                 for (int j = 3; j < dim; j += (int)(dim / ConvCount))
                 {
                     //Console.Write("j=" + j + "\n");
-                    AlgCONV myAlg = new AlgCONV(curRequest, mGW, mDiff, Efficiency_UB, j);
-                    myAlg.PlanPath();
-
-                    // Remember if true CDF is better
-                    RememberBestPath(myAlg);
-
-                    // Cleaning up                        
-                    myAlg = null;
-
-                    // If we already have the best path, then no need to continue
-                    if (Math.Abs(Efficiency_UB - CDF) < 0.001)
+                    AlgCONV myAlg = null;
+                    if (curRequest.UseParallelProcessing)
                     {
-                        return true;
+                        PathPlanningRequest curRequestCopy = curRequest.DeepClone();
+                        RtwMatrix mGWCopy = mGW.Clone();
+                        RtwMatrix mDiffCopy = mDiff.Clone();
+                        myAlg = new AlgCONV(curRequestCopy, mGWCopy, mDiffCopy, Efficiency_UB, j);
+                        // Debug code
+                        myAlg.conv = j;
+                        myAlg.index = index;
+                        lstThreads.Add(myAlg);
+                    }
+                    else
+                    {
+                        myAlg = new AlgCONV(curRequest, mGW, mDiff, Efficiency_UB, j);
+                        myAlg.PlanPath();
+
+                        // Remember if true CDF is better
+                        RememberBestPath(myAlg);
+
+                        // Cleaning up                        
+                        myAlg = null;
+
+                        // If we already have the best path, then no need to continue
+                        if (Math.Abs(Efficiency_UB - CDF) < 0.001)
+                        {
+                            return true;
+                        }
                     }
                 }
                 //// Print one GW per line (3 conv each line)
@@ -368,7 +454,12 @@ namespace IPPA
         {
             // I am recalculating BestCDF because the Global Warming effect lowered the probabilities
             float RealCDF = GetTrueCDF(myAlg.GetPath());
+
+            //// Debug
+            //Console.WriteLine(RealCDF + ", " + myAlg.GetRunTime() + ", " + myAlg.GetEfficiency());
+
             arrlCurCDFs.Add(RealCDF);
+
             //// Log RealCDF for each GW run
             //curRequest.SetLog(RealCDF.ToString() + ", ");
 
@@ -377,6 +468,63 @@ namespace IPPA
                 CDF = RealCDF;
                 Path = myAlg.GetPath();
             }
+        }
+
+        // Spawn multi threads to do parallel path planning
+        private void SpawnThreads()
+        {
+            // Create task array
+            Task[] tasks = new Task[lstThreads.Count];
+            // Allocate array space for results
+            arrResponses = new PathPlanningResponse[lstThreads.Count];
+
+            for (int i = 0; i < lstThreads.Count; i++)
+            {
+                int cur_i = i;
+                tasks[i] = Task.Factory.StartNew(() => StoreResults(cur_i));
+            }
+            Task.WaitAll(tasks);
+            // Now that all threads/tasks are done, find the best one
+            FindBestPath();
+        }
+
+        // Store path planning results to array
+        private void StoreResults(int index)
+        {
+            // Plan path
+            lstThreads[index].PlanPath();
+            // I am recalculating BestCDF because the Global Warming effect lowered the probabilities
+            float RealCDF = GetTrueCDF(lstThreads[index].GetPath());
+            // Storing results
+            arrResponses[index] = new PathPlanningResponse(
+                                    Convert.ToDouble(RealCDF),
+                                    lstThreads[index].GetRunTime(),
+                                    lstThreads[index].GetEfficiency(),
+                                    lstThreads[index].GetPath());
+        }
+
+        // Find best path in parallel version
+        private void FindBestPath()
+        {
+            int bestIndex = 0;
+            double bestCDF = 0;
+            // Find one with best CDF
+            for (int i = 0; i < arrResponses.Length; i++)
+            {
+                if (arrResponses[i] != null)
+                {
+                    if (bestCDF < arrResponses[i].CDF)
+                    {
+                        bestCDF = arrResponses[i].CDF;
+                        bestIndex = i;
+                    }
+                }
+            }
+            // Set best one as path planning response
+            CDF = arrResponses[bestIndex].CDF;
+            // Efficiency = arrResponses[bestIndex].Efficiency;
+            Path = arrResponses[bestIndex].Path;
+            //TODO Instead of setting directly, return them for Coarse to fine search
         }
 
         // Getters and Setters

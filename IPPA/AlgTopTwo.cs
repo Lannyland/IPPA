@@ -247,7 +247,7 @@ namespace IPPA
                     PlanPathSeg4();
                 }
                 // Shift time assignment from one centroid to another centroid
-                if (curRequest.UseHiararchy)
+                if (curRequest.UseHierarchy)
                 {
                     #region reference code
                     //TODO Hiararchical Search

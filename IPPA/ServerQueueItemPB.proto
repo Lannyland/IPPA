@@ -5,7 +5,7 @@ option optimize_for = SPEED;
 message PathPlanningRequest {
   optional bool UseDistributionMap = 1 [default = true]; 
   optional bool UseTaskDifficultyMap = 2 [default = false];
-  optional bool UseHiararchy = 3 [default = false];
+  optional bool UseHierarchy = 3 [default = false];
   optional bool UseCoarseToFineSearch = 4 [default = false];
   optional bool UseParallelProcessing = 5 [default = false];
   optional UAVType VehicleType = 6 [default = Copter];

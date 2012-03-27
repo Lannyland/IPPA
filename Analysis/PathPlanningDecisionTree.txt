@@ -1,0 +1,8 @@
+Notes about hierarchical search:
+
+1. If there's no mode (Uniform)
+- Don't do Global Warming. Does no good.
+
+2. If there's 1 mode (Unimodal, Path, Path with splits)
+- Don't do Global Warming, Does no good.
+

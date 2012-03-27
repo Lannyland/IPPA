@@ -202,7 +202,7 @@ namespace IPPA
         private bool HiararchicalSearch()
         {
             // If using hiararchical search
-            if (curRequest.UseHiararchy)
+            if (curRequest.UseHierarchy)
             {
                 AlgPathPlanning curAlg = null;
 

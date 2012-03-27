@@ -193,7 +193,7 @@ namespace IPPA
             // Easy stuff first
             curRequest.UseDistributionMap = PBRequest.UseDistributionMap;
             curRequest.UseTaskDifficultyMap = PBRequest.UseTaskDifficultyMap;
-            curRequest.UseHiararchy = PBRequest.UseHiararchy;
+            curRequest.UseHierarchy = PBRequest.UseHierarchy;
             curRequest.UseCoarseToFineSearch = PBRequest.UseCoarseToFineSearch;
             curRequest.UseParallelProcessing = PBRequest.UseParallelProcessing;
             curRequest.VehicleType = (UAVType)PBRequest.VehicleType;

@@ -77,7 +77,7 @@ namespace ProtoBuffer {
         internal__static_ProtoBuffer_PathPlanningRequest__Descriptor = Descriptor.MessageTypes[0];
         internal__static_ProtoBuffer_PathPlanningRequest__FieldAccessorTable = 
             new pb::FieldAccess.FieldAccessorTable<global::ProtoBuffer.PathPlanningRequest, global::ProtoBuffer.PathPlanningRequest.Builder>(internal__static_ProtoBuffer_PathPlanningRequest__Descriptor,
-                new string[] { "UseDistributionMap", "UseTaskDifficultyMap", "UseHiararchy", "UseCoarseToFineSearch", "UseParallelProcessing", "VehicleType", "DetectionType", "DetectionRate", "DistMap", "DiffMap", "UseEndPoint", "T", "PStart", "PEnd", "AlgToUse", "BatchRun", "RunTimes", "MaxDifficulty", "DiffRate", "DrawPath", "D", "TopNCount", });
+                new string[] { "UseDistributionMap", "UseTaskDifficultyMap", "UseHierarchy", "UseCoarseToFineSearch", "UseParallelProcessing", "VehicleType", "DetectionType", "DetectionRate", "DistMap", "DiffMap", "UseEndPoint", "T", "PStart", "PEnd", "AlgToUse", "BatchRun", "RunTimes", "MaxDifficulty", "DiffRate", "DrawPath", "D", "TopNCount", });
         internal__static_ProtoBuffer_PathPlanningRequest_MatrixRow__Descriptor = internal__static_ProtoBuffer_PathPlanningRequest__Descriptor.NestedTypes[0];
         internal__static_ProtoBuffer_PathPlanningRequest_MatrixRow__FieldAccessorTable = 
             new pb::FieldAccess.FieldAccessorTable<global::ProtoBuffer.PathPlanningRequest.Types.MatrixRow, global::ProtoBuffer.PathPlanningRequest.Types.MatrixRow.Builder>(internal__static_ProtoBuffer_PathPlanningRequest_MatrixRow__Descriptor,
@@ -110,7 +110,7 @@ namespace ProtoBuffer {
   public sealed partial class PathPlanningRequest : pb::GeneratedMessage<PathPlanningRequest, PathPlanningRequest.Builder> {
     private PathPlanningRequest() { }
     private static readonly PathPlanningRequest defaultInstance = new PathPlanningRequest().MakeReadOnly();
-    private static readonly string[] _pathPlanningRequestFieldNames = new string[] { "AlgToUse", "BatchRun", "DetectionRate", "DetectionType", "DiffMap", "DiffRate", "DistMap", "DrawPath", "MaxDifficulty", "RunTimes", "T", "TopNCount", "UseCoarseToFineSearch", "UseDistributionMap", "UseEndPoint", "UseHiararchy", "UseParallelProcessing", "UseTaskDifficultyMap", "VehicleType", "d", "pEnd", "pStart" };
+    private static readonly string[] _pathPlanningRequestFieldNames = new string[] { "AlgToUse", "BatchRun", "DetectionRate", "DetectionType", "DiffMap", "DiffRate", "DistMap", "DrawPath", "MaxDifficulty", "RunTimes", "T", "TopNCount", "UseCoarseToFineSearch", "UseDistributionMap", "UseEndPoint", "UseHierarchy", "UseParallelProcessing", "UseTaskDifficultyMap", "VehicleType", "d", "pEnd", "pStart" };
     private static readonly uint[] _pathPlanningRequestFieldTags = new uint[] { 120, 128, 65, 56, 82, 153, 74, 160, 144, 136, 96, 176, 32, 8, 88, 24, 40, 16, 48, 168, 114, 106 };
     public static PathPlanningRequest DefaultInstance {
       get { return defaultInstance; }
@@ -1109,14 +1109,14 @@ namespace ProtoBuffer {
       get { return useTaskDifficultyMap_; }
     }
     
-    public const int UseHiararchyFieldNumber = 3;
-    private bool hasUseHiararchy;
-    private bool useHiararchy_;
-    public bool HasUseHiararchy {
-      get { return hasUseHiararchy; }
+    public const int UseHierarchyFieldNumber = 3;
+    private bool hasUseHierarchy;
+    private bool useHierarchy_;
+    public bool HasUseHierarchy {
+      get { return hasUseHierarchy; }
     }
-    public bool UseHiararchy {
-      get { return useHiararchy_; }
+    public bool UseHierarchy {
+      get { return useHierarchy_; }
     }
     
     public const int UseCoarseToFineSearchFieldNumber = 4;
@@ -1326,8 +1326,8 @@ namespace ProtoBuffer {
       if (hasUseTaskDifficultyMap) {
         output.WriteBool(2, field_names[17], UseTaskDifficultyMap);
       }
-      if (hasUseHiararchy) {
-        output.WriteBool(3, field_names[15], UseHiararchy);
+      if (hasUseHierarchy) {
+        output.WriteBool(3, field_names[15], UseHierarchy);
       }
       if (hasUseCoarseToFineSearch) {
         output.WriteBool(4, field_names[12], UseCoarseToFineSearch);
@@ -1402,8 +1402,8 @@ namespace ProtoBuffer {
         if (hasUseTaskDifficultyMap) {
           size += pb::CodedOutputStream.ComputeBoolSize(2, UseTaskDifficultyMap);
         }
-        if (hasUseHiararchy) {
-          size += pb::CodedOutputStream.ComputeBoolSize(3, UseHiararchy);
+        if (hasUseHierarchy) {
+          size += pb::CodedOutputStream.ComputeBoolSize(3, UseHierarchy);
         }
         if (hasUseCoarseToFineSearch) {
           size += pb::CodedOutputStream.ComputeBoolSize(4, UseCoarseToFineSearch);
@@ -1598,8 +1598,8 @@ namespace ProtoBuffer {
         if (other.HasUseTaskDifficultyMap) {
           UseTaskDifficultyMap = other.UseTaskDifficultyMap;
         }
-        if (other.HasUseHiararchy) {
-          UseHiararchy = other.UseHiararchy;
+        if (other.HasUseHierarchy) {
+          UseHierarchy = other.UseHierarchy;
         }
         if (other.HasUseCoarseToFineSearch) {
           UseCoarseToFineSearch = other.UseCoarseToFineSearch;
@@ -1710,7 +1710,7 @@ namespace ProtoBuffer {
               break;
             }
             case 24: {
-              result.hasUseHiararchy = input.ReadBool(ref result.useHiararchy_);
+              result.hasUseHierarchy = input.ReadBool(ref result.useHierarchy_);
               break;
             }
             case 32: {
@@ -1884,23 +1884,23 @@ namespace ProtoBuffer {
         return this;
       }
       
-      public bool HasUseHiararchy {
-        get { return result.hasUseHiararchy; }
+      public bool HasUseHierarchy {
+        get { return result.hasUseHierarchy; }
       }
-      public bool UseHiararchy {
-        get { return result.UseHiararchy; }
-        set { SetUseHiararchy(value); }
+      public bool UseHierarchy {
+        get { return result.UseHierarchy; }
+        set { SetUseHierarchy(value); }
       }
-      public Builder SetUseHiararchy(bool value) {
+      public Builder SetUseHierarchy(bool value) {
         PrepareBuilder();
-        result.hasUseHiararchy = true;
-        result.useHiararchy_ = value;
+        result.hasUseHierarchy = true;
+        result.useHierarchy_ = value;
         return this;
       }
-      public Builder ClearUseHiararchy() {
+      public Builder ClearUseHierarchy() {
         PrepareBuilder();
-        result.hasUseHiararchy = false;
-        result.useHiararchy_ = false;
+        result.hasUseHierarchy = false;
+        result.useHierarchy_ = false;
         return this;
       }
       
