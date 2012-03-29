@@ -38,7 +38,6 @@ namespace IPPA
         // Public variables
         public Point BeforeStart = new Point(-1, -1);
         // Debug multithreaded variables
-        public int index = 0;
         public int conv = 0;
 
         #endregion

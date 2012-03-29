@@ -132,12 +132,13 @@
             // 
             // btnExecute
             // 
+            this.btnExecute.BackColor = System.Drawing.SystemColors.Highlight;
             this.btnExecute.Location = new System.Drawing.Point(596, 107);
             this.btnExecute.Name = "btnExecute";
             this.btnExecute.Size = new System.Drawing.Size(134, 106);
             this.btnExecute.TabIndex = 4;
             this.btnExecute.Text = "Process Queue";
-            this.btnExecute.UseVisualStyleBackColor = true;
+            this.btnExecute.UseVisualStyleBackColor = false;
             this.btnExecute.Click += new System.EventHandler(this.btnExecute_Click);
             // 
             // rtxtRequestDetails

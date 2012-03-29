@@ -17,7 +17,7 @@ namespace IPPA
 
         // Private variables
         private int ModeCount = 0;
-        private List<float> arrlCurCDFs = new List<float>();
+        private List<double> arrlCurCDFs = new List<double>();
         private int GWCount;
         private int ConvCount;
         private int CTFGWCoraseLevel;
@@ -27,6 +27,7 @@ namespace IPPA
         // Variabes used for threads
         private PathPlanningResponse[] arrResponses = null;
         private List<AlgPathPlanning> lstThreads = new List<AlgPathPlanning>();
+        private int bestThreadIndex = 0;
 
         #endregion
 
@@ -172,24 +173,33 @@ namespace IPPA
 
             // Actual search
             float rise = curMiddle / CTFGWCoraseLevel;
+            double lastBestCDF = 0;
             for (int i = 0; i < CTFGWLevelCount; i++)
             {
                 float curLeft = curMiddle + sideSearch * rise;
                 float curRight = curMiddle - sideSearch * rise;
                 // Array of CDFs for all searches (left, middle, and right)
-                float[] CDFs = new float[CTFGWCoraseLevel * 2 - 1];
+                double[] CDFs = new double[CTFGWCoraseLevel * 2 - 1];
 
-                // Compute middle
-                if (PlanPathAtCurrentGW(mGW, 0))
+                if (i == 0)
                 {
-                    // Already found the best path, no need to continue.
-                    return;
+                    // Compute middle
+                    if (PlanPathAtCurrentGW(mGW, 0))
+                    {
+                        // Already found the best path, no need to continue.
+                        return;
+                    }
+                    else
+                    {
+                        arrlCurCDFs.Sort();
+                        CDFs[sideSearch] = arrlCurCDFs[arrlCurCDFs.Count - 1];
+                        arrlCurCDFs.Clear();
+                    }
                 }
                 else
                 {
-                    arrlCurCDFs.Sort();
-                    CDFs[sideSearch] = arrlCurCDFs[arrlCurCDFs.Count-1];
-                    arrlCurCDFs.Clear();
+                    // No need to compute middle again. Already done from previous step.
+                    CDFs[sideSearch] = lastBestCDF;
                 }
 
                 // Now do left side (ocean falls)
@@ -220,6 +230,7 @@ namespace IPPA
                 {
                     // Find best CDF 
                     int indexBest = Array.IndexOf(CDFs, CDFs.Max());
+                    lastBestCDF = CDFs[indexBest];
                     // Get the mGW for that best one
                     int indexDiff = indexBest - sideSearch;
                     OceanRises(mGW, indexDiff * rise);
@@ -233,7 +244,7 @@ namespace IPPA
             mGW = null;
         }
 
-        private void OneSideGWSearch(bool OceanUp, RtwMatrix mGW, float rise, float[] CDFs)
+        private void OneSideGWSearch(bool OceanUp, RtwMatrix mGW, float rise, double[] CDFs)
         {
             int sign = -1;
             if (OceanUp)
@@ -302,6 +313,105 @@ namespace IPPA
             // Make copy of map
             RtwMatrix mGW = mDist.Clone();
 
+            // How many to search on each side?
+            int sideSearch = CTFGWCoraseLevel - 1;
+
+            // Find max value
+            float[] minmax = mGW.MinMaxValue();
+            float globalMax = minmax[1];
+
+            // Start from one side (no ocean rise)
+            float curMiddle = globalMax;
+
+            // Actual search
+            float rise = curMiddle / CTFGWCoraseLevel;
+            List<Point> MiddlePath = new List<Point>();
+            for (int i = 0; i < CTFGWLevelCount; i++)
+            {
+                // Clear all threads first to start fresh
+                lstThreads.Clear();
+                // Clear all responses too
+                arrResponses = null;
+
+                // Now do the coarse to fine search
+                float curLeft = curMiddle + sideSearch * rise;
+                float curRight = curMiddle - sideSearch * rise;
+                // Array of CDFs for all searches (left, middle, and right)
+                double[] CDFs = new double[CTFGWCoraseLevel * 2 - 1];
+
+                // Compute middle
+                if (i == 0)
+                {
+                    PlanPathAtCurrentGW(mGW, sideSearch);
+                }
+                else
+                {
+                    // No need to compute middle again. Already done from previous step.
+                    CDFs[sideSearch] = CDF;
+                    MiddlePath = Path;
+                }
+
+                // Now do left side (ocean falls)
+                if (curLeft <= globalMax)
+                {
+                    RtwMatrix mGWLeft = mGW.Clone();
+                    OneSideGWSearchParallel(false, mGWLeft, rise);
+                    mGWLeft = null;
+                }
+
+                // Now do right side (ocean rises)
+                if (curRight > 0)
+                {
+                    RtwMatrix mGWRight = mGW.Clone();
+                    OneSideGWSearchParallel(true, mGWRight, rise);
+                    mGWRight = null;
+                }
+
+                // Now do this round of multi-thread path planning
+                SpawnThreads();
+
+                // Debug: log
+                for (int k = 0; k < CDFs.Length; k++)
+                {
+                    curRequest.SetLog(CDFs[k].ToString() + ", ");
+                }
+                curRequest.SetLog("\n");
+
+                // Since we never compute the middle again, what if middle is better than the other 6x3?
+                if (CDFs[sideSearch] >= CDF)
+                {
+                    CDF = CDFs[sideSearch];
+                    Path = MiddlePath;
+                    bestThreadIndex = sideSearch;
+                }
+
+                // No need to do this again in the last level
+                if (i < CTFGWLevelCount - 1)
+                {
+                    int indexDiff = bestThreadIndex - sideSearch;
+                    OceanRises(mGW, indexDiff * rise);
+                    curMiddle = curMiddle - indexDiff * rise;
+                    rise = rise / CTFGWCoraseLevel;
+                }
+            }
+
+            // Cleaning up                        
+            mGW = null;
+        }
+
+        private void OneSideGWSearchParallel(bool OceanUp, RtwMatrix mGW, float rise)
+        {
+            int sign = -1;
+            if (OceanUp)
+            {
+                sign = 1;
+            }
+
+            for (int i = 0; i < CTFGWCoraseLevel - 1; i++)
+            {
+                OceanRises(mGW, sign * rise);
+                PlanPathAtCurrentGW(mGW, CTFGWCoraseLevel - 1 + sign + sign * i);
+            }
         }
 
         // Ocean rises by rise (height of island tip decreases if rise is positive)
@@ -453,7 +563,7 @@ namespace IPPA
         private void RememberBestPath(AlgLHC myAlg)
         {
             // I am recalculating BestCDF because the Global Warming effect lowered the probabilities
-            float RealCDF = GetTrueCDF(myAlg.GetPath());
+            double RealCDF = GetTrueCDF(myAlg.GetPath());
 
             //// Debug
             //Console.WriteLine(RealCDF + ", " + myAlg.GetRunTime() + ", " + myAlg.GetEfficiency());
@@ -494,10 +604,11 @@ namespace IPPA
             // Plan path
             lstThreads[index].PlanPath();
             // I am recalculating BestCDF because the Global Warming effect lowered the probabilities
-            float RealCDF = GetTrueCDF(lstThreads[index].GetPath());
+            double RealCDF = GetTrueCDF(lstThreads[index].GetPath());
             // Storing results
             arrResponses[index] = new PathPlanningResponse(
-                                    Convert.ToDouble(RealCDF),
+                                    lstThreads[index].index,
+                                    RealCDF,
                                     lstThreads[index].GetRunTime(),
                                     lstThreads[index].GetEfficiency(),
                                     lstThreads[index].GetPath());
@@ -522,9 +633,8 @@ namespace IPPA
             }
             // Set best one as path planning response
             CDF = arrResponses[bestIndex].CDF;
-            // Efficiency = arrResponses[bestIndex].Efficiency;
             Path = arrResponses[bestIndex].Path;
-            //TODO Instead of setting directly, return them for Coarse to fine search
+            bestThreadIndex = arrResponses[bestIndex].index;
         }
 
         // Getters and Setters

@@ -26,7 +26,10 @@ namespace IPPA
         protected List<Point> Path = new List<Point>();
         protected bool Status = true;
         protected List<float> CDFGraph = new List<float>();
-       
+
+        // Debug multithreaded variables
+        public int index = 0;
+
         #endregion
 
         #region Constructor, Destructor
@@ -445,6 +448,14 @@ namespace IPPA
         public RtwMatrix GetmCurDist()
         {
             return mCurDist;
+        }
+        #endregion
+
+        #region Setters
+        public void SetmDist(RtwMatrix m)
+        {
+            mDist = m;
+            mCurDist = mDist.Clone();
         }
         #endregion
 

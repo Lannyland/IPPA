@@ -12,6 +12,7 @@ namespace IPPA
         #region Members
 
         // Public variables
+        public int index = 0;
         public double CDF;
         public double RunTime = 0;
         public double Efficiency = 0;
@@ -26,8 +27,9 @@ namespace IPPA
         {
         }
 
-        public PathPlanningResponse(double _CDF, double _RunTime, double _Efficiency, List<Point> _Path)
+        public PathPlanningResponse(int _index, double _CDF, double _RunTime, double _Efficiency, List<Point> _Path)
         {
+            index = _index;
             CDF = _CDF;
             RunTime = _RunTime;
             Efficiency = _Efficiency;

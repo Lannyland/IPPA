@@ -59,7 +59,7 @@ namespace IPPA
         // TopTwo parameters
         public static int SearchResolution = 40;    // How many searches
         public static int CTFTTCoraseLevel = 4;     // How many searches to perform at each coarse-to-fine level
-        public static int CTFTTLevelCount = 3;      // How many coarse-to-fine levels to search for
+        public static int CTFTTLevelCount = 6;      // How many coarse-to-fine levels to search for
 
         // TopN parameters
         public static int TopNCount = 3;            // Default N
