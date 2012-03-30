@@ -6,3 +6,11 @@ Notes about hierarchical search:
 2. If there's 1 mode (Unimodal, Path, Path with splits)
 - Don't do Global Warming, Does no good.
 
+3. If there are 2 modes (real, not simple)
+- No need to do 3 conv levels for both LHCGWCONV and Top2
+
+4. If there are 3 to 5 modes
+- Use TopN 
+- Possibly use Hierarchical Search
+
+5. More than 5 modes (lots of modes)

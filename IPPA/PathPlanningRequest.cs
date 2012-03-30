@@ -11,7 +11,7 @@ namespace IPPA
     public enum DType { FixAmount, FixAmountInPercentage, FixPercentage };
     public enum AlgType { CC, CC_E, LHCGWCONV, LHCGWCONV_E, LHCGWPF, LHCGWPF_E, LHCRandom, LHCRandom_E, 
                             Random, Random_E, CONV, CONV_E, PF, PF_E, TopTwo, TopTwo_E, 
-                            TopN, TopN_E, EA, EA_E };
+                            TopN, TopN_E, EA, EA_E, RealTime, RealTime_E};
 
     public class PathPlanningRequest
     {

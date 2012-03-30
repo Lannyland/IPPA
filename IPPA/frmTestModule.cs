@@ -100,6 +100,7 @@ namespace IPPA
             lstAlg.Items.Add("TopTwo");
             lstAlg.Items.Add("TopN");
             lstAlg.Items.Add("EA-Path");
+            lstAlg.Items.Add("RealTime");
 
             lvQueue.Clear();
             lvQueue.View = View.Details;
@@ -377,6 +378,9 @@ namespace IPPA
                         case "EA":
                             newRequest.AlgToUse = AlgType.EA_E;
                             break;
+                        case "RealTime":
+                            newRequest.AlgToUse = AlgType.RealTime_E;
+                            break;
                     }
                 }
                 else
@@ -412,6 +416,9 @@ namespace IPPA
                             break;
                         case "EA":
                             newRequest.AlgToUse = AlgType.EA;
+                            break;
+                        case "RealTime":
+                            newRequest.AlgToUse = AlgType.RealTime;
                             break;
                     }
                 }

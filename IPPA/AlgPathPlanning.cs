@@ -449,6 +449,10 @@ namespace IPPA
         {
             return mCurDist;
         }
+        public PathPlanningRequest GetCurRequest()
+        {
+            return curRequest;
+        }
         #endregion
 
         #region Setters

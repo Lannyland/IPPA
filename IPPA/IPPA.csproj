@@ -65,6 +65,7 @@
     <Compile Include="AlgPathPlanning.cs" />
     <Compile Include="AlgPF.cs" />
     <Compile Include="AlgRandom.cs" />
+    <Compile Include="AlgRealTime.cs" />
     <Compile Include="AlgSearchReverse.cs" />
     <Compile Include="AlgTopN.cs" />
     <Compile Include="AlgTopTwo.cs" />

@@ -12,6 +12,7 @@ namespace IPPA
 
         // Private variables
         private int ModeCount = 0;
+        private RtwMatrix mMode;
 
         // Public variables
 
@@ -20,11 +21,12 @@ namespace IPPA
         #region Constructor, Destructor
 
         // Constructor
-        public AlgSearchReverse(PathPlanningRequest _curRequest, int _ModeCount, 
+        public AlgSearchReverse(PathPlanningRequest _curRequest, int _ModeCount, RtwMatrix _mMode, 
             RtwMatrix _mDistReachable, RtwMatrix _mDiffReachable, double _Efficiency_UB)
             : base (_curRequest, _mDistReachable, _mDiffReachable, _Efficiency_UB)
         {
             ModeCount = _ModeCount;
+            mMode = _mMode;
         }
 
         // Destructor

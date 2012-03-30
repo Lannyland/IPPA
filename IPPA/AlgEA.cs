@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Drawing;
 using rtwmatrix;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace IPPA
 {
@@ -31,6 +33,7 @@ namespace IPPA
 
         // Private variables
         private int ModeCount = 0;
+        private RtwMatrix mModes;
         private List<EAPath> CurGeneration = new List<EAPath>();
         private List<EAPath> NewGeneration = new List<EAPath>();
         int PRemain = 0;
@@ -44,17 +47,19 @@ namespace IPPA
         #region Constructor, Destructor
 
         // Constructor
-        public AlgEA(PathPlanningRequest _curRequest, int _ModeCount, 
+        public AlgEA(PathPlanningRequest _curRequest, int _ModeCount, RtwMatrix _mModes,
             RtwMatrix _mDistReachable, RtwMatrix _mDiffReachable, double _Efficiency_UB)
             : base (_curRequest, _mDistReachable, _mDiffReachable, _Efficiency_UB)
         {
             ModeCount = _ModeCount;
+            mModes = _mModes;
         }
 
         // Destructor
         ~AlgEA()
         {
             // Cleaning up
+            mModes = null;
         }
 
         #endregion
@@ -69,12 +74,19 @@ namespace IPPA
                 return;
             }
 
+            DateTime startTime2 = DateTime.Now;
             // Generate initial population
             CurGeneration = CreatePopulation();
+            DateTime stopTime2 = DateTime.Now;
+            TimeSpan duration2 = stopTime2 - startTime2;
+            double RunTime2 = duration2.TotalSeconds;
+            curRequest.SetLog("CreatePopulation took " + RunTime2 + " seconds.\n");
+
+
             // Sort based on CDF. Best at the end.
             CurGeneration.Sort();
-            // Debug
-            CheckPathValidity(CurGeneration, "After CreatePopulation()");
+            //// Debug
+            //CheckPathValidity(CurGeneration, "After CreatePopulation()");
 
             // Remaining population size (e.g. 100-3=97)
             PRemain = ProjectConstants.EA_Population - ProjectConstants.EA_BestToKeep;
@@ -90,6 +102,7 @@ namespace IPPA
             List<double> RememberCDF = new List<double>();
             RememberCDF.Add(CurGeneration[CurGeneration.Count - 1].CDF);
 
+            startTime2 = DateTime.Now;
             // Iterate until converge or until certain number of iterations
             int count = 1;
             double epsilon = 1;
@@ -106,19 +119,19 @@ namespace IPPA
                 // 0. Keep the best three to mid generation 
                 // (First three in new generation are the best three from last generation)
                 NewGeneration = CurGeneration.GetRange(PRemain, ProjectConstants.EA_BestToKeep);
-                // Debug
-                CheckPathValidity(NewGeneration, "After Newgeneration keep best");
+                //// Debug
+                //CheckPathValidity(NewGeneration, "After Newgeneration keep best");
 
 
                 // 1. Select based on replace rate
                 SelectPopulation();
-                // Debug
-                CheckPathValidity(NewGeneration, "After SelectPopulation()");
+                //// Debug
+                //CheckPathValidity(NewGeneration, "After SelectPopulation()");
 
                 // 2. Crossover based on crossover rate
                 Crossover();
-                // Debug
-                CheckPathValidity(NewGeneration, "After Crossover()");
+                //// Debug
+                //CheckPathValidity(NewGeneration, "After Crossover()");
 
                 // 3. Add best to keep to end of list and don't mutate those
                 for (int i = 0; i < ProjectConstants.EA_BestToKeep; i++)
@@ -129,25 +142,25 @@ namespace IPPA
                     eap.Path.AddRange(NewGeneration[i].Path);
                     NewGeneration.Add(eap);
                 }
-                // Debug
-                CheckPathValidity(NewGeneration, "After add best 3 to end");
+                //// Debug
+                //CheckPathValidity(NewGeneration, "After add best 3 to end");
 
                 // 4. Mutate based on mutate rate
                 Mutate();
-                // Debug
-                CheckPathValidity(NewGeneration, "After Mutate()");
+                //// Debug
+                //CheckPathValidity(NewGeneration, "After Mutate()");
 
                 // 5. Evaluate
                 EvaluateFitness();
                 NewGeneration.Sort();
-                // Debug
-                CheckPathValidity(NewGeneration, "After EvaluateFitness()");
+                //// Debug
+                //CheckPathValidity(NewGeneration, "After EvaluateFitness()");
 
                 // 6. Update                    
                 CurGeneration.Clear();
                 CurGeneration.AddRange(NewGeneration.GetRange(NewGeneration.Count - ProjectConstants.EA_Population, ProjectConstants.EA_Population));
-                // Debug
-                CheckPathValidity(CurGeneration, "After generating new CurGeneration");
+                //// Debug
+                //CheckPathValidity(CurGeneration, "After generating new CurGeneration");
 
                 // 7. Remember best and record improvement
                 RememberCDF.Add(CurGeneration[ProjectConstants.EA_Population - 1].CDF);
@@ -155,8 +168,8 @@ namespace IPPA
                 CDF = CurGeneration[ProjectConstants.EA_Population - 1].CDF;
                 Path = new List<Point>();
                 Path.AddRange(CurGeneration[ProjectConstants.EA_Population - 1].Path);
-                // Debug
-                CheckPathValidity(NewGeneration, "After remember best and record improvement");
+                //// Debug
+                //CheckPathValidity(NewGeneration, "After remember best and record improvement");
 
                 if (Improvement.Count < ProjectConstants.EA_Minimum_Run)
                 {
@@ -171,8 +184,8 @@ namespace IPPA
                     }
                     epsilon = epsilon / ProjectConstants.EA_Epsilon_Run;
                 }
-                // Debug
-                CheckPathValidity(NewGeneration, "After computing epsilon");
+                //// Debug
+                //CheckPathValidity(NewGeneration, "After computing epsilon");
 
                 // 7. Increase counter
                 count++;
@@ -184,6 +197,12 @@ namespace IPPA
 
             // Report how many iterations
             curRequest.SetLog("Algorithm ran " + count.ToString() + " iterations.\n");
+
+            // Record EA time
+            stopTime2 = DateTime.Now;
+            duration2 = stopTime2 - startTime2;
+            RunTime2 = duration2.TotalSeconds;
+            curRequest.SetLog("EA took " + RunTime2 + " seconds.\n");                
 
             // Print out improvement log
             curRequest.SetLog("Improvement: \n");
@@ -257,32 +276,77 @@ namespace IPPA
 
             // Use other algorithms to generate initial population
             newRequest.AlgToUse = AlgType.CC;
-            if(GenerateSeeds(AllPaths, newRequest, myAlg, ProjectConstants.Count_CC))
+            if(GenerateSeeds(AllPaths, newRequest, myAlg, Math.Min(ProjectConstants.Count_CC, 1)))
             {
                 return AllPaths;
             }
+            // Simply create n copies to save time.
+            CreateEAPathCopies(AllPaths, ProjectConstants.Count_CC - 1);
+
             newRequest.AlgToUse = AlgType.LHCGWCONV;
-            if(GenerateSeeds(AllPaths, newRequest, myAlg, ProjectConstants.Count_LHCGWCONV))
+            if (GenerateSeeds(AllPaths, newRequest, myAlg, Math.Min(ProjectConstants.Count_LHCGWCONV, 1)))
             {
                 return AllPaths;
             }
+            // Simply create n copies to save time.
+            CreateEAPathCopies(AllPaths, ProjectConstants.Count_LHCGWCONV - 1);
+
+            
             newRequest.AlgToUse = AlgType.LHCGWPF;
-            if(GenerateSeeds(AllPaths, newRequest, myAlg, ProjectConstants.Count_LHCGWPF))
+            if (GenerateSeeds(AllPaths, newRequest, myAlg, Math.Min(ProjectConstants.Count_LHCGWPF, 1)))
             {
                 return AllPaths;
             }
+            // Simply create n copies to save time.
+            CreateEAPathCopies(AllPaths, ProjectConstants.Count_LHCGWPF - 1);
+
             newRequest.AlgToUse = AlgType.LHCRandom;
             if(GenerateSeeds(AllPaths, newRequest, myAlg, ProjectConstants.Count_LHCRandom))
             {
                 return AllPaths;
             }
+
+            newRequest.AlgToUse = AlgType.TopTwo;
+            if (GenerateSeeds(AllPaths, newRequest, myAlg, Math.Min(ProjectConstants.Count_TopTwo, 1)))
+            {
+                return AllPaths;
+            }
+            // Simply create n copies to save time.
+            CreateEAPathCopies(AllPaths, ProjectConstants.Count_TopTwo - 1);
+
+
+            newRequest.AlgToUse = AlgType.TopN;
+            if (GenerateSeeds(AllPaths, newRequest, myAlg, Math.Min(ProjectConstants.Count_TopN, 1)))
+            {
+                return AllPaths;
+            }
+            // Simply create n copies to save time.
+            CreateEAPathCopies(AllPaths, ProjectConstants.Count_TopN - 1);
+
+            
+            // Fill the rest of the population with random
             newRequest.AlgToUse = AlgType.Random;
             if (GenerateSeeds(AllPaths, newRequest, myAlg, ProjectConstants.EA_Population - AllPaths.Count()))
             {
                 return AllPaths;
             }
 
+
             return AllPaths;
+        }
+
+        // Simply create n copies to save time.
+        private static void CreateEAPathCopies(List<EAPath> AllPaths, int n)
+        {
+            for (int i = 0; i < n; i++)
+            {
+                // Create new EAPath
+                EAPath eap = new EAPath();
+                eap.CDF = AllPaths[AllPaths.Count - 1].CDF;
+                eap.Path.AddRange(AllPaths[AllPaths.Count - 1].Path);
+                // Add EAPath to population
+                AllPaths.Add(eap);
+            }
         }
 
         // Function to actually generate seeds of various algorithms
@@ -307,10 +371,23 @@ namespace IPPA
                     case AlgType.Random:
                         myAlg = new AlgRandom(newRequest, mDist, mDiff, Efficiency_UB);
                         break;
+                    case AlgType.TopTwo:
+                        myAlg = new AlgTopTwo(newRequest, ModeCount, mModes, mDist, mDiff, Efficiency_UB);
+                        break;
+                    case AlgType.TopN:
+                        myAlg = new AlgTopTwo(newRequest, ModeCount, mModes, mDist, mDiff, Efficiency_UB);
+                        break;
                     default:
                         break;
                 }
+
+                DateTime startTime2 = DateTime.Now;
                 myAlg.PlanPath();
+                DateTime stopTime2 = DateTime.Now;
+                TimeSpan duration2 = stopTime2 - startTime2;
+                double RunTime2 = duration2.TotalSeconds;
+                curRequest.SetLog("Algorithm " + newRequest.AlgToUse + " took " + RunTime2 + " seconds.\n");                
+                
                 EAPath eap = new EAPath();
                 eap.CDF = myAlg.GetCDF();
                 eap.Path.AddRange(myAlg.GetPath());

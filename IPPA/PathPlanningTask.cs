@@ -68,7 +68,7 @@ namespace IPPA
                     curAlg.PlanPath();
                     break;
                 case AlgType.CC_E:
-                    curAlg = new AlgSearchReverse(curRequest, ModeCount, mDistReachable, mDiffReachable, Efficiency_UB);
+                    curAlg = new AlgSearchReverse(curRequest, ModeCount, mModes, mDistReachable, mDiffReachable, Efficiency_UB);
                     curAlg.PlanPath();
                     break;
                 case AlgType.LHCGWCONV:
@@ -76,7 +76,7 @@ namespace IPPA
                     curAlg.PlanPath();
                     break;
                 case AlgType.LHCGWCONV_E:
-                    curAlg = new AlgSearchReverse(curRequest, ModeCount, mDistReachable, mDiffReachable, Efficiency_UB);
+                    curAlg = new AlgSearchReverse(curRequest, ModeCount, mModes, mDistReachable, mDiffReachable, Efficiency_UB);
                     curAlg.PlanPath();
                     break;
                 case AlgType.LHCGWPF:
@@ -84,7 +84,7 @@ namespace IPPA
                     curAlg.PlanPath();
                     break;
                 case AlgType.LHCGWPF_E:
-                    curAlg = new AlgSearchReverse(curRequest, ModeCount, mDistReachable, mDiffReachable, Efficiency_UB);
+                    curAlg = new AlgSearchReverse(curRequest, ModeCount, mModes, mDistReachable, mDiffReachable, Efficiency_UB);
                     curAlg.PlanPath();
                     break;
                 case AlgType.LHCRandom:
@@ -92,7 +92,7 @@ namespace IPPA
                     curAlg.PlanPath();
                     break;
                 case AlgType.LHCRandom_E:
-                    curAlg = new AlgSearchReverse(curRequest, ModeCount, mDistReachable, mDiffReachable, Efficiency_UB);
+                    curAlg = new AlgSearchReverse(curRequest, ModeCount, mModes, mDistReachable, mDiffReachable, Efficiency_UB);
                     curAlg.PlanPath();
                     break;
                 case AlgType.Random:
@@ -100,7 +100,7 @@ namespace IPPA
                     curAlg.PlanPath();
                     break;
                 case AlgType.Random_E:
-                    curAlg = new AlgSearchReverse(curRequest, ModeCount, mDistReachable, mDiffReachable, Efficiency_UB);
+                    curAlg = new AlgSearchReverse(curRequest, ModeCount, mModes, mDistReachable, mDiffReachable, Efficiency_UB);
                     curAlg.PlanPath();
                     break;
                 case AlgType.CONV:
@@ -108,7 +108,7 @@ namespace IPPA
                     curAlg.PlanPath();
                     break;
                 case AlgType.CONV_E:
-                    curAlg = new AlgSearchReverse(curRequest, ModeCount, mDistReachable, mDiffReachable, Efficiency_UB);
+                    curAlg = new AlgSearchReverse(curRequest, ModeCount, mModes, mDistReachable, mDiffReachable, Efficiency_UB);
                     curAlg.PlanPath();
                     break;
                 case AlgType.PF:
@@ -116,7 +116,7 @@ namespace IPPA
                     curAlg.PlanPath();
                     break;
                 case AlgType.PF_E:
-                    curAlg = new AlgSearchReverse(curRequest, ModeCount, mDistReachable, mDiffReachable, Efficiency_UB);
+                    curAlg = new AlgSearchReverse(curRequest, ModeCount, mModes, mDistReachable, mDiffReachable, Efficiency_UB);
                     curAlg.PlanPath();
                     break;
                 case AlgType.TopTwo:
@@ -136,11 +136,19 @@ namespace IPPA
                     curAlg.PlanPath();
                     break;
                 case AlgType.EA:
-                    curAlg = new AlgEA(curRequest, ModeCount, mDistReachable, mDiffReachable, Efficiency_UB);
+                    curAlg = new AlgEA(curRequest, ModeCount, mModes, mDistReachable, mDiffReachable, Efficiency_UB);
                     curAlg.PlanPath();
                     break;
                 case AlgType.EA_E:
-                    curAlg = new AlgSearchReverse(curRequest, ModeCount, mDistReachable, mDiffReachable, Efficiency_UB);
+                    curAlg = new AlgSearchReverse(curRequest, ModeCount, mModes, mDistReachable, mDiffReachable, Efficiency_UB);
+                    curAlg.PlanPath();
+                    break;
+                case AlgType.RealTime:
+                    curAlg = new AlgRealTime(curRequest, ModeCount, mModes, mDistReachable, mDiffReachable, Efficiency_UB);
+                    curAlg.PlanPath();
+                    break;
+                case AlgType.RealTime_E:
+                    curAlg = new AlgRealTime(curRequest, ModeCount, mModes, mDistReachable, mDiffReachable, Efficiency_UB);
                     curAlg.PlanPath();
                     break;
             }

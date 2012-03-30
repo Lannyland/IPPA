@@ -32,28 +32,30 @@ namespace IPPA
 
         // EA parameters
         public static int Count_CC = 5;
-        public static int Count_LHCGWCONV = 4;
-        public static int Count_LHCGWPF = 1;
+        public static int Count_LHCGWCONV = 5;
+        public static int Count_LHCGWPF = 0;
         public static int Count_LHCRandom = 10;
+        public static int Count_TopTwo = 5;
+        public static int Count_TopN = 0;
 
         public static int EA_Population = 100;
         public static float EA_ReplacementRate = 0.3f;
         public static float EA_MutationRate = 0.50f;
         public static int EA_BestToKeep = 3;
         public static int EA_Crossover_MidSize = 5;
-        public static int EA_Minimum_Run = 500;
-        public static int EA_Maximum_Run = 3000;
-        public static int EA_Epsilon_Run = 200;
+        public static int EA_Minimum_Run = 300;
+        public static int EA_Maximum_Run = 1000;
+        public static int EA_Epsilon_Run = 100;
 
         // EA_E parameters
         public static int EA_E_Population = 100;
         public static float EA_E_ReplacementRate = 0.3f;
-        public static float EA_E_MutationRate = 0.90f;
+        public static float EA_E_MutationRate = 0.50f;
         public static int EA_E_BestToKeep = 3;
         public static int EA_E_Crossover_MidSize = 5;
-        public static int EA_E_Minimum_Run = 500;
+        public static int EA_E_Minimum_Run = 300;
         public static int EA_E_Maximum_Run = 1000;
-        public static int EA_E_Epsilon_Run = 200;
+        public static int EA_E_Epsilon_Run = 100;
         public static int EA_E_Mutate_MidSize = 5;
 
         // TopTwo parameters
