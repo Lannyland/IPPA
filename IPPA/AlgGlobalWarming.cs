@@ -448,6 +448,7 @@ namespace IPPA
                         RtwMatrix mGWCopy = mGW.Clone();
                         RtwMatrix mDiffCopy = mDiff.Clone();
                         myAlg = new AlgLHCGWCONV(curRequestCopy, mGWCopy, mDiffCopy, Efficiency_UB, j);
+                        myAlg.SetBeforeStart(BeforeStart);
                         // Debug code
                         myAlg.conv = j;
                         myAlg.index = index;
@@ -456,6 +457,7 @@ namespace IPPA
                     else
                     {
                         myAlg = new AlgLHCGWCONV(curRequest, mGW, mDiff, Efficiency_UB, j);
+                        myAlg.SetBeforeStart(BeforeStart);
                         myAlg.PlanPath();
 
                         // Remember if true CDF is better
@@ -490,6 +492,7 @@ namespace IPPA
                         RtwMatrix mGWCopy = mGW.Clone();
                         RtwMatrix mDiffCopy = mDiff.Clone();
                         myAlg = new AlgLHCGWCONV(curRequestCopy, mGWCopy, mDiffCopy, Efficiency_UB, Sigma);
+                        myAlg.SetBeforeStart(BeforeStart);
                         // Debug code
                         myAlg.conv = j;
                         myAlg.index = index;
@@ -498,6 +501,7 @@ namespace IPPA
                     else
                     {
                         myAlg = new AlgLHCGWCONV(curRequest, mGW, mDiff, Efficiency_UB, Sigma);
+                        myAlg.SetBeforeStart(BeforeStart);
                         myAlg.PlanPath();
 
                         // Remember if true CDF is better
@@ -530,6 +534,7 @@ namespace IPPA
                         RtwMatrix mGWCopy = mGW.Clone();
                         RtwMatrix mDiffCopy = mDiff.Clone();
                         myAlg = new AlgCONV(curRequestCopy, mGWCopy, mDiffCopy, Efficiency_UB, j);
+                        myAlg.SetBeforeStart(BeforeStart);
                         // Debug code
                         myAlg.conv = j;
                         myAlg.index = index;
@@ -538,6 +543,7 @@ namespace IPPA
                     else
                     {
                         myAlg = new AlgCONV(curRequest, mGW, mDiff, Efficiency_UB, j);
+                        myAlg.SetBeforeStart(BeforeStart);
                         myAlg.PlanPath();
 
                         // Remember if true CDF is better

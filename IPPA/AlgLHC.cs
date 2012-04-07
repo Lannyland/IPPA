@@ -36,7 +36,6 @@ namespace IPPA
         private Random r = new Random((int)DateTime.Now.Ticks);
 
         // Public variables
-        public Point BeforeStart = new Point(-1, -1);
         // Debug multithreaded variables
         public int conv = 0;
 

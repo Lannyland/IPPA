@@ -480,7 +480,7 @@ namespace IPPA
             AlgLHCGWCONV myAlg = new AlgLHCGWCONV(newRequest, mCurDist, mDiff, Efficiency_UB, 3);
             if (Path.Count > 1)
             {
-                myAlg.BeforeStart = Path[Path.Count - 2];
+                myAlg.SetBeforeStart(Path[Path.Count - 2]);
             }
             myAlg.PlanPath();
 

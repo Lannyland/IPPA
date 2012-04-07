@@ -19,9 +19,11 @@ SigmaXSigmaY = zeros(N, 1);
 % Perform mixed Gaussian fitting
 options = statset('MaxIter', 200);
 obj = gmdistribution.fit(samples,N,'Options',options);
-obj.Iters
-figure;
-ezsurf(@(x,y)pdf(obj,[x y]),[0 60],[0 60])
+% obj.Iters
+% figure;
+% ezsurf(@(x,y)pdf(obj,[x y]),[0 60],[0 60])
+obj.mu
+obj.Sigma
 
 % Prepare output parameters
 for i=1:N
@@ -29,4 +31,6 @@ for i=1:N
     MUs(i,:) = obj.mu(i,:);
     SigmaXSigmaY(i) = sqrt(D(1,1))*sqrt(D(2,2));
     modes(i) = mvnpdf(obj.mu(i,:),obj.mu(i,:),obj.Sigma(:,:,i));
+    D
 end;
+modes

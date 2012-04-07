@@ -8,6 +8,8 @@ using System.Text;
 using System.Windows.Forms;
 using rtwmatrix;
 using System.Runtime.InteropServices;
+using MathNet.Numerics;
+using MathNet.Numerics.LinearAlgebra.Double;
 
 namespace IPPA
 {
@@ -450,7 +452,7 @@ namespace IPPA
                 }
                 if (newRequest.AlgToUse == AlgType.TopN || newRequest.AlgToUse == AlgType.TopN_E)
                 {                    
-                    newRequest.TopN = Convert.ToInt32(ntxtGWCount.Value);
+                    newRequest.TopN = Convert.ToInt32(ntxtTopNCount.Value);
                 }
 
                 if (!newRequest.SanityCheck())
@@ -690,56 +692,66 @@ namespace IPPA
             #endregion
 
             #region Test MATLAB
-            ////////////////////
-            // Input Parameters
-            ////////////////////
+            //////////////////////
+            //// Input Parameters
+            //////////////////////
 
-            // create an array ar for the real part of "a"
-            System.Array ar = new double[2];
-            ar.SetValue(11, 0);
-            ar.SetValue(12, 1);
+            //// create an array ar for the real part of "a"
+            //System.Array ar = new double[2];
+            //ar.SetValue(11, 0);
+            //ar.SetValue(12, 1);
 
-            // create an array ai for the imaginary part of "a"
-            System.Array ai = new double[2];
-            ai.SetValue(1, 0);
-            ai.SetValue(2, 1);
+            //// create an array ai for the imaginary part of "a"
+            //System.Array ai = new double[2];
+            //ai.SetValue(1, 0);
+            //ai.SetValue(2, 1);
 
-            // create an array br for the real part of "b"
-            System.Array br = new double[2];
-            br.SetValue(21, 0);
-            br.SetValue(22, 1);
+            //// create an array br for the real part of "b"
+            //System.Array br = new double[2];
+            //br.SetValue(21, 0);
+            //br.SetValue(22, 1);
 
-            // create an array bi for the imaginary part of "b"
-            System.Array bi = new double[2];
-            bi.SetValue(3, 0);
-            bi.SetValue(4, 1);
+            //// create an array bi for the imaginary part of "b"
+            //System.Array bi = new double[2];
+            //bi.SetValue(3, 0);
+            //bi.SetValue(4, 1);
 
-            /////////////////////
-            // Output Parameters
-            /////////////////////
+            ///////////////////////
+            //// Output Parameters
+            ///////////////////////
 
-            // initialize variables for return value from ML
-            System.Array cr = new double[2];
-            System.Array ci = new double[2];
-            System.Array dr = new double[2];
-            System.Array di = new double[2];
+            //// initialize variables for return value from ML
+            //System.Array cr = new double[2];
+            //System.Array ci = new double[2];
+            //System.Array dr = new double[2];
+            //System.Array di = new double[2];
 
 
-            ////////////////////////
-            // Call MATLAB function
-            ////////////////////////
-            // call appropriate function/method based on Mode
-            // use MATLAB engine
-            UseEngine(ar, ai, br, bi, ref cr, ref ci, ref dr, ref di);
+            //////////////////////////
+            //// Call MATLAB function
+            //////////////////////////
+            //// call appropriate function/method based on Mode
+            //// use MATLAB engine
+            //UseEngine(ar, ai, br, bi, ref cr, ref ci, ref dr, ref di);
 
-            Log("ar = " + ar.GetValue(0).ToString() + " " + ar.GetValue(1).ToString() + "\n");
-            Log("ai = " + ai.GetValue(0).ToString() + " " + ai.GetValue(1).ToString() + "\n");
-            Log("br = " + br.GetValue(0).ToString() + " " + br.GetValue(1).ToString() + "\n");
-            Log("bi = " + bi.GetValue(0).ToString() + " " + bi.GetValue(1).ToString() + "\n");
-            Log("cr = " + cr.GetValue(0).ToString() + " " + cr.GetValue(1).ToString() + "\n");
-            Log("ci = " + ci.GetValue(0).ToString() + " " + ci.GetValue(1).ToString() + "\n");
-            Log("dr = " + dr.GetValue(0).ToString() + " " + dr.GetValue(1).ToString() + "\n");
-            Log("di = " + di.GetValue(0).ToString() + " " + di.GetValue(1).ToString() + "\n");
+            //Log("ar = " + ar.GetValue(0).ToString() + " " + ar.GetValue(1).ToString() + "\n");
+            //Log("ai = " + ai.GetValue(0).ToString() + " " + ai.GetValue(1).ToString() + "\n");
+            //Log("br = " + br.GetValue(0).ToString() + " " + br.GetValue(1).ToString() + "\n");
+            //Log("bi = " + bi.GetValue(0).ToString() + " " + bi.GetValue(1).ToString() + "\n");
+            //Log("cr = " + cr.GetValue(0).ToString() + " " + cr.GetValue(1).ToString() + "\n");
+            //Log("ci = " + ci.GetValue(0).ToString() + " " + ci.GetValue(1).ToString() + "\n");
+            //Log("dr = " + dr.GetValue(0).ToString() + " " + dr.GetValue(1).ToString() + "\n");
+            //Log("di = " + di.GetValue(0).ToString() + " " + di.GetValue(1).ToString() + "\n");
+            #endregion
+
+            #region Test MATH.NET EVD
+
+            DenseMatrix m = new DenseMatrix(new[,] { { 81.1887, -18.4630 }, { -18.4630, 115.9033 } });
+            System.Numerics.Complex[] d = m.Evd().EigenValues().ToArray();
+            double a = d[0].Real;
+            double b = d[1].Real;
+            Log(a + " " + b);
+
             #endregion
         }
 

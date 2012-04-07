@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Drawing;
 using rtwmatrix;
+using Accord.MachineLearning;
+using MathNet.Numerics.LinearAlgebra.Double;
 
 namespace IPPA
 {
@@ -177,7 +179,13 @@ namespace IPPA
         // Method to rate mode goodness and then sort (use first mode as base)
         private void ComputeModeGoodnessRatio()
         {
-            //TODO implement this
+            // Use no more than Max_N (which is 5 I believe)
+            int n = lstCentroids.Count;     // find as many Gaussians as modes. Later find topN Gaussians as Hiariarchical Search
+            // Don't do too many Gaussians because it will take a long time and perform poorly
+            if (n > ProjectConstants.Max_N)
+            {
+                n = ProjectConstants.Max_N;
+            }
 
             // Multiple dist map and diff map if necessary
             //DateTime startTime = DateTime.Now;
@@ -187,6 +195,7 @@ namespace IPPA
             //double RunTime = duration.TotalSeconds;
             //System.Windows.Forms.MessageBox.Show("ComputeRealMap Run time " + RunTime + " seconds!");
 
+            #region Using MATLAB for GMM
             // Generate samples from map to get read to perform mixed Gaussian fitting
             //startTime = DateTime.Now;
             double[,] arrSamplesR;
@@ -202,19 +211,14 @@ namespace IPPA
 
             //startTime = DateTime.Now;
             // Allocate memory for output matrices
-            int n = lstCentroids.Count;     // find as many Gaussians as modes. Later find topN Gaussians as Hiariarchical Search
-            // Don't do too many Gaussians because it will take a long time and perform poorly
-            if (n > ProjectConstants.Max_N)
-            {
-                n = ProjectConstants.Max_N;
-            }
             Array arrModes = new double[n];
             Array arrMUs = new double[n, 2];
             Array arrSigmaXSigmaY = new double[n];
             Array junkModes = new double[n];
             Array junkMUs = new double[n, 2];
             Array junkSigmaXSigmaY = new double[n];
-
+            
+            // Using MATLAB to do GMM
             GaussianFitting(n, arrSamplesR, arrSamplesI, ref arrModes, ref arrMUs, ref arrSigmaXSigmaY, ref junkModes, ref junkMUs, ref junkSigmaXSigmaY);
             //stopTime = DateTime.Now;
             //duration = stopTime - startTime;
@@ -232,6 +236,45 @@ namespace IPPA
             //    Console.Write(arrSigmaXSigmaY.GetValue(i) + "  ");
             //}
             //Console.Write("\n");
+
+            #endregion
+
+            #region Using C# for GMM
+
+            // Prepare samples into the format needed
+            double[][] arrSamples;
+            PrepareSamplesAccord(out arrSamples);
+
+            // Using Accord.net library to do GMM
+            GaussianMixtureModel gmm = new GaussianMixtureModel(n);
+            gmm.Compute(arrSamples, 0.1);
+            curRequest.SetLog("Accord GMM results\n");
+            for (int i=0; i<gmm.Gaussians.Count; i++)
+            {
+                Accord.Statistics.Distributions.Multivariate.NormalDistribution norm = gmm.Gaussians[i].GetDistribution();
+                curRequest.SetLog("Mean: " + gmm.Gaussians[i].Mean[0] + "," + gmm.Gaussians[i].Mean[1] + "\n");
+                curRequest.SetLog("Covariance: " + gmm.Gaussians[i].Covariance[0, 0] + " " + gmm.Gaussians[i].Covariance[0, 1] + " "
+                                    + gmm.Gaussians[i].Covariance[1, 0] + " " + gmm.Gaussians[i].Covariance[1, 1] + "\n");
+                curRequest.SetLog("Proportion: " + gmm.Gaussians[i].Proportion + "\n");
+                double[] test = new double[] { gmm.Gaussians[i].Mean[0], gmm.Gaussians[i].Mean[1] };
+                curRequest.SetLog("Height: " + norm.ProbabilityDensityFunction(test).ToString() + "\n");
+            }
+
+            curRequest.SetLog("\nMATLAB GMM results\n");
+            for (int i = 0; i < n; i++)
+            {
+                curRequest.SetLog("Mean: " + arrMUs.GetValue(i, 0) + "," + arrMUs.GetValue(i, 1) + "\n");
+            }
+
+
+            DenseMatrix m = new DenseMatrix(new[,] { { 81.1887, -18.4630 }, { -18.4630, 115.9033 } });
+            System.Numerics.Complex[] d = m.Evd().EigenValues().ToArray();
+            double a = d[0].Real;
+            double b = d[1].Real;
+            Console.WriteLine(a + " " + b);
+
+            #endregion
+
 
             //startTime = DateTime.Now;
             // Match centroids to Gaussians
@@ -312,6 +355,33 @@ namespace IPPA
                 arrSamplesR[i, 1] = sample[1];
                 arrSamplesI[i, 0] = 0;
                 arrSamplesI[i, 1] = 0;
+            }
+        }
+
+        // Turning probability maps back into sample points
+        private void PrepareSamplesAccord(out double[][] arrSamples)
+        {
+            // Build Samples
+            List<double[]> lstSamples = new List<double[]>();
+            for (int i = 0; i < mRealMap.Rows; i++)
+            {
+                for (int j = 0; j < mRealMap.Columns; j++)
+                {
+                    for (int k = 0; k < Convert.ToInt16(System.Math.Round(mRealMap[i, j])); k++)
+                    {
+                        double[] sample = new double[2];
+                        sample[0] = i;
+                        sample[1] = j;
+                        lstSamples.Add(sample);
+                    }
+                }
+            }
+
+            arrSamples = new double[lstSamples.Count][];
+            for (int i = 0; i < lstSamples.Count; i++)
+            {
+                double[] sample = lstSamples[i];
+                arrSamples[i] = sample;
             }
         }
 
@@ -430,6 +500,9 @@ namespace IPPA
             double d_ratio = ComputeDistRatio(lstGaussians, i);
             // Compute scale
             double scale = mRealMap[lstGaussians[i].Mode.Y, lstGaussians[i].Mode.X] / Convert.ToDouble(arrModes.GetValue(i));
+            //Debug
+            curRequest.SetLog("Scale: " + scale + "\n");
+            
             double goodness = d_ratio * scale / Convert.ToDouble(arrSigmaXSigmaY.GetValue(i));
 
             //// Debug code

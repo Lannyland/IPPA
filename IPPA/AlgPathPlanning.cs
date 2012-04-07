@@ -26,6 +26,7 @@ namespace IPPA
         protected List<Point> Path = new List<Point>();
         protected bool Status = true;
         protected List<float> CDFGraph = new List<float>();
+        protected Point BeforeStart = new Point(-1, -1);
 
         // Debug multithreaded variables
         public int index = 0;
@@ -460,6 +461,10 @@ namespace IPPA
         {
             mDist = m;
             mCurDist = mDist.Clone();
+        }
+        public void SetBeforeStart(Point p)
+        {
+            BeforeStart = p;
         }
         #endregion
 

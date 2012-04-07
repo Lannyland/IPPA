@@ -664,7 +664,7 @@ namespace TCPIPTest
             }
             if (newRequest.AlgToUse == AlgType.TopN || newRequest.AlgToUse == AlgType.TopN_E)
             {
-                newRequest.TopN = Convert.ToInt32(ntxtGWCount.Value);
+                newRequest.TopN = Convert.ToInt32(ntxtTopNCount.Value);
             }
 
             if (!newRequest.SanityCheck())
