@@ -8,7 +8,6 @@ using System.Text;
 using System.Windows.Forms;
 using rtwmatrix;
 using System.Runtime.InteropServices;
-using MathNet.Numerics;
 using MathNet.Numerics.LinearAlgebra.Double;
 
 namespace IPPA
@@ -650,7 +649,7 @@ namespace IPPA
             //}
             //else
             //{
-            //    myCount = new CountDistModes(CurDiffMap);
+            //    myCount = new CountDistModes(CurDistMap);
             //}
 
             //Log(myCount.GetCount().ToString() + "\n");
@@ -746,11 +745,27 @@ namespace IPPA
 
             #region Test MATH.NET EVD
 
-            DenseMatrix m = new DenseMatrix(new[,] { { 81.1887, -18.4630 }, { -18.4630, 115.9033 } });
-            System.Numerics.Complex[] d = m.Evd().EigenValues().ToArray();
-            double a = d[0].Real;
-            double b = d[1].Real;
-            Log(a + " " + b);
+            //DenseMatrix m = new DenseMatrix(new[,] { { 81.1887, -18.4630 }, { -18.4630, 115.9033 } });
+            //System.Numerics.Complex[] d = m.Evd().EigenValues().ToArray();
+            //double a = d[0].Real;
+            //double b = d[1].Real;
+            //Log(a + " " + b);
+
+            #endregion
+
+            #region Test Arrays
+
+            int n = 3;
+            Array arrModes = new double[n];
+            Array arrMUs = new double[n, 2];
+            Array arrSigmaXSigmaY = new double[n];
+
+            for (int i = 0; i < n; i++)
+            {
+                // Means
+                arrMUs.SetValue(21, i, 0);
+                arrMUs.SetValue(22, i, 1);
+            }
 
             #endregion
         }

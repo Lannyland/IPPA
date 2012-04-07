@@ -196,20 +196,10 @@ namespace IPPA
             //System.Windows.Forms.MessageBox.Show("ComputeRealMap Run time " + RunTime + " seconds!");
 
             #region Using MATLAB for GMM
-            // Generate samples from map to get read to perform mixed Gaussian fitting
+
             //startTime = DateTime.Now;
             double[,] arrSamplesR;
             double[,] arrSamplesI;
-            PrepareSamples(out arrSamplesR, out arrSamplesI);
-            //stopTime = DateTime.Now;
-            //duration = stopTime - startTime;
-            //RunTime = duration.TotalSeconds;
-            //System.Windows.Forms.MessageBox.Show("PrepareSamples Run time " + RunTime + " seconds!");
-
-
-            // Perform mixed Gaussian fitting and get parameters
-
-            //startTime = DateTime.Now;
             // Allocate memory for output matrices
             Array arrModes = new double[n];
             Array arrMUs = new double[n, 2];
@@ -217,25 +207,27 @@ namespace IPPA
             Array junkModes = new double[n];
             Array junkMUs = new double[n, 2];
             Array junkSigmaXSigmaY = new double[n];
-            
-            // Using MATLAB to do GMM
-            GaussianFitting(n, arrSamplesR, arrSamplesI, ref arrModes, ref arrMUs, ref arrSigmaXSigmaY, ref junkModes, ref junkMUs, ref junkSigmaXSigmaY);
-            //stopTime = DateTime.Now;
-            //duration = stopTime - startTime;
-            //RunTime = duration.TotalSeconds;
-            //System.Windows.Forms.MessageBox.Show("GaussianFitting Run time " + RunTime + " seconds!");
 
-            //// Debug code
-            //for (int i = 0; i < arrMUs.Length / 2; i++)
-            //{
-            //    Console.Write(arrMUs.GetValue(i, 0) + "," + arrMUs.GetValue(i, 1) + "  ");
-            //}
-            //Console.Write("\n");
-            //for (int i = 0; i < arrSigmaXSigmaY.Length; i++)
-            //{
-            //    Console.Write(arrSigmaXSigmaY.GetValue(i) + "  ");
-            //}
-            //Console.Write("\n");
+            if (!curRequest.UseHierarchy)
+            {
+                // Generate samples from map to get ready to perform mixed Gaussian fitting
+                PrepareSamples(out arrSamplesR, out arrSamplesI);
+                //stopTime = DateTime.Now;
+                //duration = stopTime - startTime;
+                //RunTime = duration.TotalSeconds;
+                //System.Windows.Forms.MessageBox.Show("PrepareSamples Run time " + RunTime + " seconds!");
+
+                // Perform mixed Gaussian fitting and get parameters
+                //startTime = DateTime.Now;            
+                // Using MATLAB to do GMM
+                GaussianFitting(n, arrSamplesR, arrSamplesI, ref arrModes, ref arrMUs, ref arrSigmaXSigmaY, ref junkModes, ref junkMUs, ref junkSigmaXSigmaY);
+                //stopTime = DateTime.Now;
+                //duration = stopTime - startTime;
+                //RunTime = duration.TotalSeconds;
+                //System.Windows.Forms.MessageBox.Show("GaussianFitting Run time " + RunTime + " seconds!");
+                //Debug
+                curRequest.SetLog("\nMATLAB GMM results\n");
+            }
 
             #endregion
 
@@ -243,38 +235,52 @@ namespace IPPA
 
             // Prepare samples into the format needed
             double[][] arrSamples;
-            PrepareSamplesAccord(out arrSamples);
 
-            // Using Accord.net library to do GMM
-            GaussianMixtureModel gmm = new GaussianMixtureModel(n);
-            gmm.Compute(arrSamples, 0.1);
-            curRequest.SetLog("Accord GMM results\n");
-            for (int i=0; i<gmm.Gaussians.Count; i++)
+            if (curRequest.UseHierarchy)
             {
-                Accord.Statistics.Distributions.Multivariate.NormalDistribution norm = gmm.Gaussians[i].GetDistribution();
-                curRequest.SetLog("Mean: " + gmm.Gaussians[i].Mean[0] + "," + gmm.Gaussians[i].Mean[1] + "\n");
-                curRequest.SetLog("Covariance: " + gmm.Gaussians[i].Covariance[0, 0] + " " + gmm.Gaussians[i].Covariance[0, 1] + " "
-                                    + gmm.Gaussians[i].Covariance[1, 0] + " " + gmm.Gaussians[i].Covariance[1, 1] + "\n");
-                curRequest.SetLog("Proportion: " + gmm.Gaussians[i].Proportion + "\n");
-                double[] test = new double[] { gmm.Gaussians[i].Mean[0], gmm.Gaussians[i].Mean[1] };
-                curRequest.SetLog("Height: " + norm.ProbabilityDensityFunction(test).ToString() + "\n");
+                // Generate samples from map to get ready to perform mixed Gaussian fitting
+                PrepareSamplesAccord(out arrSamples);
+
+                // Using Accord.net library to do GMM
+                GaussianMixtureModel gmm = new GaussianMixtureModel(n);
+                gmm.Compute(arrSamples, 10);
+
+                // Getting arrays ready                
+                for (int i = 0; i < n; i++)
+                {
+                    // Means
+                    arrMUs.SetValue(gmm.Gaussians[i].Mean[0], i, 0);
+                    arrMUs.SetValue(gmm.Gaussians[i].Mean[1], i, 1);
+                    // Area
+                    DenseMatrix m = new DenseMatrix(gmm.Gaussians[i].Covariance);
+                    System.Numerics.Complex[] d = m.Evd().EigenValues().ToArray();
+                    double SigmaXSigmaY = Math.Sqrt(d[0].Real)*Math.Sqrt(d[1].Real);
+                    arrSigmaXSigmaY.SetValue(SigmaXSigmaY, i);
+                    // Modes
+                    arrModes.SetValue(gmm.Gaussians[i].GetDistribution().ProbabilityDensityFunction(gmm.Gaussians[i].Mean), i);
+                }
+                //Debug
+                curRequest.SetLog("\nAccord GMM results\n");
             }
-
-            curRequest.SetLog("\nMATLAB GMM results\n");
-            for (int i = 0; i < n; i++)
-            {
-                curRequest.SetLog("Mean: " + arrMUs.GetValue(i, 0) + "," + arrMUs.GetValue(i, 1) + "\n");
-            }
-
-
-            DenseMatrix m = new DenseMatrix(new[,] { { 81.1887, -18.4630 }, { -18.4630, 115.9033 } });
-            System.Numerics.Complex[] d = m.Evd().EigenValues().ToArray();
-            double a = d[0].Real;
-            double b = d[1].Real;
-            Console.WriteLine(a + " " + b);
 
             #endregion
 
+            //Debug code
+            for (int i = 0; i < arrMUs.Length / 2; i++)
+            {
+                curRequest.SetLog(arrMUs.GetValue(i, 0) + "," + arrMUs.GetValue(i, 1) + "  ");
+            }
+            curRequest.SetLog("\n");
+            for (int i = 0; i < arrSigmaXSigmaY.Length; i++)
+            {
+                curRequest.SetLog(arrSigmaXSigmaY.GetValue(i) + "  ");
+            }
+            curRequest.SetLog("\n");
+            for (int i=0; i< arrModes.Length; i++)
+            {
+                curRequest.SetLog(arrModes.GetValue(i) + " ");
+            }
+            curRequest.SetLog("\n");
 
             //startTime = DateTime.Now;
             // Match centroids to Gaussians
@@ -296,6 +302,11 @@ namespace IPPA
             // Find top N modes
             lstGaussians.Sort();
             lstGaussians.Reverse();
+            //Debug
+            for (int i = 0; i < n; i++)
+            {
+                curRequest.SetLog("Mode (x,y): " + lstGaussians[i].Mode.X + "," + lstGaussians[i].Mode.Y + " MGR:" + lstGaussians[i].GoodnessRating + "\n");
+            }            
             lstGaussians.RemoveRange(N, lstGaussians.Count - N);
 
             // Rebuild lstCentroids
@@ -337,7 +348,7 @@ namespace IPPA
             {
                 for (int j = 0; j < mRealMap.Columns; j++)
                 {
-                    for (int k = 0; k < Convert.ToInt16(System.Math.Round(mRealMap[i, j])); k++)
+                    for (int k = 0; k < Convert.ToInt16(System.Math.Round(mRealMap[i, j])) / 30; k++)
                     {
                         double[] sample = new double[2];
                         sample[0] = i;
@@ -367,7 +378,7 @@ namespace IPPA
             {
                 for (int j = 0; j < mRealMap.Columns; j++)
                 {
-                    for (int k = 0; k < Convert.ToInt16(System.Math.Round(mRealMap[i, j])); k++)
+                    for (int k = 0; k < Convert.ToInt16(System.Math.Round(mRealMap[i, j])) / 30; k++)
                     {
                         double[] sample = new double[2];
                         sample[0] = i;
@@ -523,7 +534,8 @@ namespace IPPA
             {
                 d_mi += MISCLib.ManhattanDistance(lstGaussians[i].Mode, new Point(curRequest.pEnd.column, curRequest.pEnd.row)); // Distance to End
             }
-            return (curRequest.T - d_mi) / d_mi;
+            return Math.Log((curRequest.T / (d_mi + 1)), 10);
+            // return curRequest.T / (d_mi + 1);
         }
 
         // Getters

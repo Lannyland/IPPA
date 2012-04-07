@@ -62,42 +62,22 @@ namespace IPPA
                 AlgPathPlanning myAlg = new AlgCC(newRequest, mDist, mDiff, Efficiency_UB);
                 lstThreads.Add(myAlg);
 
-                //// TopTwo works best when there are two modes (n>=2)
-                //if (ModeCount >= 2)
-                //{
-                //    newRequest = curRequest.DeepClone();
-                //    newRequest.AlgToUse = AlgType.TopTwo;
-                //    myAlg = new AlgTopTwo(newRequest, ModeCount, mModes, mDist, mDiff, Efficiency_UB);
-                //    lstThreads.Add(myAlg);
-                //}
-                
-                //// Use TopN if there are more than two modes
-                //if (ModeCount >= 3)
-                //{
-                //    newRequest = curRequest.DeepClone();
-                //    newRequest.AlgToUse = AlgType.TopN;
-                //    if (ModeCount <= 5)
-                //    {
-                //        newRequest.TopN = ModeCount;
-                //    }
-                //    // This is really hierarchical search
-                //    for (int i = 3; i < ModeCount + 1; i++)
-                //    {
-                //        PathPlanningRequest newR = newRequest.DeepClone();
-                //        newR.TopN = i;
-                //        myAlg = new AlgTopN(newR, ModeCount, mModes, mDist, mDiff, Efficiency_UB);
-                //        lstThreads.Add(myAlg);
-                //    }
-                //}
+                // Also always use LHCGWCONV
+                newRequest = curRequest.DeepClone();
+                newRequest.AlgToUse = AlgType.LHCGWCONV;
+                RtwMatrix mDistCopy1 = mDist.Clone();
+                RtwMatrix mDiffCopy1 = mDiff.Clone();
+                myAlg = new AlgGlobalWarming(newRequest, ModeCount, mDistCopy1, mDiffCopy1, Efficiency_UB);
+                lstThreads.Add(myAlg);
 
                 // TopTwo works best when there are two modes (n>=2)
                 if (ModeCount == 2)
                 {
                     newRequest = curRequest.DeepClone();
                     newRequest.AlgToUse = AlgType.TopTwo;
-                    RtwMatrix mDistCopy = mDist.Clone();
-                    RtwMatrix mDiffCopy = mDiff.Clone();
-                    myAlg = new AlgTopTwo(newRequest, ModeCount, mModes, mDistCopy, mDiffCopy, Efficiency_UB);
+                    RtwMatrix mDistCopy2 = mDist.Clone();
+                    RtwMatrix mDiffCopy2 = mDiff.Clone();
+                    myAlg = new AlgTopTwo(newRequest, ModeCount, mModes, mDistCopy2, mDiffCopy2, Efficiency_UB);
                     lstThreads.Add(myAlg);
                 }
 
@@ -106,22 +86,23 @@ namespace IPPA
                 {
                     newRequest = curRequest.DeepClone();
                     newRequest.AlgToUse = AlgType.TopN;
-                    if (ModeCount <= 5)
+                    if (ModeCount <= ProjectConstants.Max_N)
                     {
                         newRequest.TopN = ModeCount;
                     }
                     // This is really hierarchical search
-                    for (int i = ModeCount; i < ModeCount + 1; i++)
+                    for (int i = 3; i < ProjectConstants.Max_N + 1; i++)
                     {
                         PathPlanningRequest newR = newRequest.DeepClone();
                         newR.TopN = i;
-                        RtwMatrix mDistCopy = mDist.Clone();
-                        RtwMatrix mDiffCopy = mDiff.Clone();
-                        myAlg = new AlgTopN(newR, ModeCount, mModes, mDistCopy, mDiffCopy, Efficiency_UB);
+                        RtwMatrix mDistCopy2 = mDist.Clone();
+                        RtwMatrix mDiffCopy2 = mDiff.Clone();
+                        myAlg = new AlgTopN(newR, ModeCount, mModes, mDistCopy2, mDiffCopy2, Efficiency_UB);
                         lstThreads.Add(myAlg);
                     }
                 }
 
+                curRequest.SetLog("Running a total of " + lstThreads.Count + " path planning tasks.\n");
                 SpawnThreads();
             }
             else
