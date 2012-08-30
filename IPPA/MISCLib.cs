@@ -50,8 +50,8 @@ namespace IPPA
                 return null;
             }
 
-            int width = 60 * scale;
-            int height = 60 * scale;
+            int width = ProjectConstants.DefaultWidth * scale;
+            int height = ProjectConstants.DefaultHeight * scale;
             //
             // Create drawing objects
             //

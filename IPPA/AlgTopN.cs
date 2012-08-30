@@ -49,6 +49,24 @@ namespace IPPA
             }
             N = curRequest.TopN;
         }
+        public AlgTopN(MapModes _curModes, PathPlanningRequest _curRequest, int _ModeCount, RtwMatrix _mModes, RtwMatrix _mDistReachable,
+            RtwMatrix _mDiffReachable, double _Efficiency_UB)
+            : base(_curRequest, _mDistReachable, _mDiffReachable, _Efficiency_UB)
+        {
+            //DateTime startTime = DateTime.Now;
+            myModes = _curModes;
+            //DateTime stopTime = DateTime.Now;
+            //TimeSpan duration = stopTime - startTime;
+            //double RunTime = duration.TotalSeconds;
+            //System.Windows.Forms.MessageBox.Show("Run time " + RunTime + " seconds!");
+
+            Start = new Point(curRequest.pStart.column, curRequest.pStart.row);
+            if (curRequest.UseEndPoint)
+            {
+                End = new Point(curRequest.pEnd.column, curRequest.pEnd.row);
+            }
+            N = curRequest.TopN;
+        }
 
         // Destructor
         ~AlgTopN()
@@ -476,7 +494,10 @@ namespace IPPA
             
             // First identify all starting nodes and add to paths
             MidSegments[0].Add(newStart);
-            MidSegments[1].Add(newEnd);
+            if (curRequest.UseEndPoint)
+            {
+                MidSegments[1].Add(newEnd);
+            }
             // Loop through all centroids (excluding newStart and NewEnd)
             for (int i = 0; i < allCentroids.Count; i++)
             {
@@ -663,7 +684,12 @@ namespace IPPA
                     map.setPointColor(bestPoint, mCurDist[bestPoint.Y, bestPoint.X]);
                     map.Refresh();
                 }
-            }   
+            }
+            int ttt = 0;
+            if (FinalPerm == null)
+            {
+                ttt++;
+            }
         }
 
         // Clone AllLooseEndsPairs

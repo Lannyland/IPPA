@@ -89,7 +89,9 @@
     <Compile Include="AlgRealTime.cs" />
     <Compile Include="AlgSearchReverse.cs" />
     <Compile Include="AlgTopN.cs" />
+    <Compile Include="AlgTopNH.cs" />
     <Compile Include="AlgTopTwo.cs" />
+    <Compile Include="AlgTopTwoH.cs" />
     <Compile Include="ComputeEfficiencyUB.cs" />
     <Compile Include="AlgLHCRandom.cs" />
     <Compile Include="AlgPFLooper.cs" />
@@ -133,12 +135,15 @@
     <Compile Include="TCPHandler.cs" />
     <EmbeddedResource Include="frmMap.resx">
       <DependentUpon>frmMap.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="frmTestModule.resx">
       <DependentUpon>frmTestModule.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="frmServer.resx">
       <DependentUpon>frmServer.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

@@ -325,7 +325,7 @@ namespace IPPA
         }
 
         // Function to calculate true cummulative probability using original map
-        protected float GetTrueCDF(List<Point> curPath)
+        public float GetTrueCDF(List<Point> curPath)
         {
             float curCDF = 0;
 
@@ -411,7 +411,7 @@ namespace IPPA
         }
 
         // Print to console CDF progress for graphing purposes
-        protected void PrintCDFGraph(List<Point> curPath, RtwMatrix curDist)
+        public void PrintCDFGraph(List<Point> curPath, RtwMatrix curDist)
         {
             float curCDF = 0;
 
@@ -465,6 +465,10 @@ namespace IPPA
         public void SetBeforeStart(Point p)
         {
             BeforeStart = p;
+        }
+        public void SetPath(List<Point> _Path)
+        {
+            Path = _Path;
         }
         #endregion
 

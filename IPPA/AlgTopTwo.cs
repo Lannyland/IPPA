@@ -76,6 +76,22 @@ namespace IPPA
             CTFTTLevelCount = ProjectConstants.CTFTTLevelCount;
             mDistAfterSeg1Seg4 = mDist;
         }
+        public AlgTopTwo(MapModes _curModes, PathPlanningRequest _curRequest, int _ModeCount, RtwMatrix _mModes, RtwMatrix _mDistReachable,
+            RtwMatrix _mDiffReachable, double _Efficiency_UB)
+            : base(_curRequest, _mDistReachable, _mDiffReachable, _Efficiency_UB)
+        {
+            // Start timer
+            //DateTime startTime = DateTime.Now;
+            myModes = _curModes;
+            //DateTime stopTime = DateTime.Now;
+            //TimeSpan duration = stopTime - startTime;
+            //double RunTime = duration.TotalSeconds;
+            //System.Windows.Forms.MessageBox.Show("Run time " + RunTime + " seconds!");
+
+            CTFTTCoraseLevel = ProjectConstants.CTFTTCoraseLevel;
+            CTFTTLevelCount = ProjectConstants.CTFTTLevelCount;
+            mDistAfterSeg1Seg4 = mDist;
+        }
 
         // Destructor
         ~AlgTopTwo()
@@ -427,12 +443,12 @@ namespace IPPA
                     OneSideSearch(false, curMiddle, StepSize, CDFs, t2Min, t3Max);
                 }
 
-                // Debug: log
-                for (int k = 0; k < CDFs.Length; k++)
-                {
-                    curRequest.SetLog(CDFs[k].ToString() + ", ");
-                }
-                curRequest.SetLog("\n");
+                //// Debug: log
+                //for (int k = 0; k < CDFs.Length; k++)
+                //{
+                //    curRequest.SetLog(CDFs[k].ToString() + ", ");
+                //}
+                //curRequest.SetLog("\n");
 
                 // No need to do this again in the last level
                 if (i < CTFTTLevelCount - 1)
@@ -544,12 +560,12 @@ namespace IPPA
                 // Now do this round of multi-thread path planning
                 SpawnThreads();
 
-                // Debug: log
-                for (int k = 0; k < CDFs.Length; k++)
-                {
-                    curRequest.SetLog(CDFs[k].ToString() + ", ");
-                }
-                curRequest.SetLog("\n");
+                //// Debug: log
+                //for (int k = 0; k < CDFs.Length; k++)
+                //{
+                //    curRequest.SetLog(CDFs[k].ToString() + ", ");
+                //}
+                //curRequest.SetLog("\n");
 
                 // Since we never compute the middle again, what if middle is better than the other 6x3?
                 if (CDFs[sideSearch] >= curCDF)

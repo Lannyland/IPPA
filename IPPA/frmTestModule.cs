@@ -62,14 +62,15 @@ namespace IPPA
         private void frmTestModule_Load(object sender, EventArgs e)
         {
             chkUseDist.Checked = true;
-            chkUseDiff.Checked = false;
-            chkCoaseToFine.Checked = false;
-            chkParallel.Checked = false;
-            rbtnFixWing.Checked = true;
-            rbtnCopter.Checked = false;
+            chkUseDiff.Checked = true;
+            chkHierarchy.Checked = true;
+            chkCoaseToFine.Checked = true;
+            chkParallel.Checked = true;
+            rbtnFixWing.Checked = false;
+            rbtnCopter.Checked = true;
             rbtnFixedAmount.Checked = false;
-            rbtnFixedAmountPercent.Checked = true;
-            rbtnFixedPercent.Checked = false;
+            rbtnFixedAmountPercent.Checked = false;
+            rbtnFixedPercent.Checked = true;
             ntxtDetectionRate.Value = 1;
 
             txtFileName1.Text = ProjectConstants.DefaultDistMap;
@@ -100,6 +101,8 @@ namespace IPPA
             lstAlg.Items.Add("PF");
             lstAlg.Items.Add("TopTwo");
             lstAlg.Items.Add("TopN");
+            lstAlg.Items.Add("TopTwoH");
+            lstAlg.Items.Add("TopNH");
             lstAlg.Items.Add("EA-Path");
             lstAlg.Items.Add("RealTime");
 
@@ -163,6 +166,14 @@ namespace IPPA
             SetDestPoint(false, End);
             frmDistMap.DrawingStartEndPoints();
             frmDistMap.Show();
+
+            // Set dimensions for controls
+            ProjectConstants.DefaultHeight = CurDistMap.Rows;
+            ProjectConstants.DefaultWidth = CurDistMap.Columns;
+            ntxtSX.Maximum = ProjectConstants.DefaultWidth;
+            ntxtSY.Maximum = ProjectConstants.DefaultHeight;
+            ntxtEX.Maximum = ProjectConstants.DefaultWidth;
+            ntxtEY.Maximum = ProjectConstants.DefaultHeight;
         }
 
         // When the Browse button for task-difficulty map is clicked.
@@ -208,6 +219,13 @@ namespace IPPA
             frmDiffMap.DrawingStartEndPoints();
             frmDiffMap.Show();
 
+            // Set dimensions for controls
+            ProjectConstants.DefaultHeight = CurDistMap.Rows;
+            ProjectConstants.DefaultWidth = CurDistMap.Columns;
+            ntxtSX.Maximum = ProjectConstants.DefaultWidth;
+            ntxtSY.Maximum = ProjectConstants.DefaultHeight;
+            ntxtEX.Maximum = ProjectConstants.DefaultWidth;
+            ntxtEY.Maximum = ProjectConstants.DefaultHeight;
         }
 
         // Add button is pressed
@@ -376,6 +394,12 @@ namespace IPPA
                         case "TopN":
                             newRequest.AlgToUse = AlgType.TopN_E;
                             break;
+                        case "TopTwoH":
+                            newRequest.AlgToUse = AlgType.TopTwoH_E;
+                            break;
+                        case "TopNH":
+                            newRequest.AlgToUse = AlgType.TopNH_E;
+                            break;
                         case "EA":
                             newRequest.AlgToUse = AlgType.EA_E;
                             break;
@@ -414,6 +438,12 @@ namespace IPPA
                             break;
                         case "TopN":
                             newRequest.AlgToUse = AlgType.TopN;
+                            break;
+                        case "TopTwoH":
+                            newRequest.AlgToUse = AlgType.TopTwoH;
+                            break;
+                        case "TopNH":
+                            newRequest.AlgToUse = AlgType.TopNH;
                             break;
                         case "EA":
                             newRequest.AlgToUse = AlgType.EA;
@@ -755,17 +785,216 @@ namespace IPPA
 
             #region Test Arrays
 
-            int n = 3;
-            Array arrModes = new double[n];
-            Array arrMUs = new double[n, 2];
-            Array arrSigmaXSigmaY = new double[n];
+            //int n = 3;
+            //Array arrModes = new double[n];
+            //Array arrMUs = new double[n, 2];
+            //Array arrSigmaXSigmaY = new double[n];
 
-            for (int i = 0; i < n; i++)
+            //for (int i = 0; i < n; i++)
+            //{
+            //    // Means
+            //    arrMUs.SetValue(21, i, 0);
+            //    arrMUs.SetValue(22, i, 1);
+            //}
+
+            #endregion
+
+            #region Compute Efficiency with existing path
+            
+            #region Sanity Check
+            // Make sure maps are loaded
+            if (chkUseDist.Checked && CurDistMap == null)
             {
-                // Means
-                arrMUs.SetValue(21, i, 0);
-                arrMUs.SetValue(22, i, 1);
+                System.Windows.Forms.MessageBox.Show("Please load a probability distribution map first!");
+                return;
             }
+            if (chkUseDiff.Checked && CurDiffMap == null)
+            {
+                System.Windows.Forms.MessageBox.Show("Please load a task-difficulty map first!");
+                return;
+            }
+
+            // Make sure distribution map and task-difficulty map have same size
+            if (chkUseDiff.Checked && chkUseDist.Checked)
+            {
+                if (CurDistMap.Rows != CurDiffMap.Rows || CurDistMap.Columns != CurDiffMap.Columns)
+                {
+                    System.Windows.Forms.MessageBox.Show("Please make sure the distribution map and the " +
+                    "task-difficulty map must be the same size!");
+                    return;
+                }
+            }
+
+            // Use default distribution map or task-difficulty map if only one is checked
+            if (chkUseDiff.Checked && !chkUseDist.Checked)
+            {
+                CurDistMap = new RtwMatrix(CurDiffMap.Rows, CurDiffMap.Columns);
+            }
+            if (!chkUseDiff.Checked && chkUseDist.Checked)
+            {
+                CurDiffMap = new RtwMatrix(CurDistMap.Rows, CurDistMap.Columns);
+            }
+
+            #endregion
+            
+            // Create request object
+            PathPlanningRequest newRequest = new PathPlanningRequest();
+
+            #region Setting Request Object Properties
+
+            newRequest.UseDistributionMap = chkUseDist.Checked;
+            newRequest.UseTaskDifficultyMap = chkUseDiff.Checked;
+            newRequest.UseHierarchy = chkHierarchy.Checked;
+            newRequest.UseCoarseToFineSearch = chkCoaseToFine.Checked;
+            newRequest.UseParallelProcessing = chkParallel.Checked;
+            if (rbtnFixWing.Checked)
+            {
+                newRequest.VehicleType = UAVType.FixWing;
+            }
+            if (rbtnCopter.Checked)
+            {
+                newRequest.VehicleType = UAVType.Copter;
+            }
+            if (rbtnFixedAmount.Checked)
+            {
+                newRequest.DetectionType = DType.FixAmount;
+            }
+            if (rbtnFixedAmountPercent.Checked)
+            {
+                newRequest.DetectionType = DType.FixAmountInPercentage;
+            }
+            if (rbtnFixedPercent.Checked)
+            {
+                newRequest.DetectionType = DType.FixPercentage;
+            }
+            newRequest.DetectionRate = Convert.ToDouble(ntxtDetectionRate.Value);
+            newRequest.DistMap = CurDistMap;
+            newRequest.DiffMap = CurDiffMap;
+            newRequest.UseEndPoint = chkUseEndPoint.Checked;
+            newRequest.T = trbFlightTime.Value;
+            newRequest.pStart.column = Convert.ToInt16(ntxtSX.Value);
+            newRequest.pStart.row = Convert.ToInt16(ntxtSY.Value);
+            newRequest.pEnd.column = Convert.ToInt16(ntxtEX.Value);
+            newRequest.pEnd.row = Convert.ToInt16(ntxtEY.Value);
+            newRequest.AlgToUse = AlgType.LHCGWCONV;
+            newRequest.DrawPath = chkShowPath.Checked;
+
+            #endregion
+
+            #region Find max task-difficulty and compute diff rates only once
+
+            if (chkUseDiff.Checked)
+            {
+                newRequest.MaxDifficulty = Convert.ToInt32(CurDiffMap.MinMaxValue()[1]);
+                // Set task-difficulty rates
+                double[] DiffRates = new double[newRequest.MaxDifficulty + 1];
+                double rate = 1.0 / (newRequest.MaxDifficulty + 1);
+                for (int i = 0; i < newRequest.MaxDifficulty + 1; i++)
+                {
+                    DiffRates[i] = 1 - i * rate;
+                }
+                newRequest.DiffRates = DiffRates;
+            }
+
+            if (!newRequest.SanityCheck())
+            {
+                System.Windows.Forms.MessageBox.Show(newRequest.GetLog());
+                return;
+            }
+
+            #endregion
+
+            // Read in existing path using hard-coded file path
+            string BAPathFileName = @"H:\Research\20 New IPPAs for Partial Detection Conference Paper\Selected Cases Maps\BAPath.csv";            
+            RtwMatrix BAPath = MISCLib.ReadInMap(BAPathFileName);
+
+            #region First do reachable area (Dist and Diff)
+
+            RtwMatrix mDistReachable;
+            RtwMatrix mDiffReachable;
+
+            if (newRequest.T < newRequest.DistMap.Rows + newRequest.DistMap.Columns)
+            {
+                mDistReachable = newRequest.DistMap.Clone();
+                mDiffReachable = newRequest.DiffMap.Clone();
+                if (!ComputeReachableArea(newRequest, mDistReachable, mDiffReachable))
+                {
+                    // Cannot plan path.
+                    return;
+                }
+            }
+            else
+            {
+                mDistReachable = newRequest.DistMap.Clone();
+                mDiffReachable = newRequest.DiffMap.Clone();
+            }
+
+            #endregion
+
+            // Then do efficiency lower bound
+            ComputeEfficiencyUB myELB = new ComputeEfficiencyUB(newRequest, mDistReachable, mDiffReachable);
+            double Efficiency_UB = myELB.GetEfficiency_UB();
+            List<Point> TeleportPath = myELB.GetTeleportPath();
+            myELB = null;
+
+            // Creating path planning object
+            AlgPathPlanning curAlg = new AlgGlobalWarming(newRequest, 1, mDistReachable, mDiffReachable, Efficiency_UB);
+
+            // Call method to compute existing path CDF
+            List<Point> Path = new List<Point>();
+            for(int i=0; i<BAPath.Rows; i++)
+            {
+                Point p = new Point(Convert.ToInt16(BAPath[i,0]), Convert.ToInt16(BAPath[i,1]));
+                Path.Add(p);
+            }
+            
+            float CDF = curAlg.GetTrueCDF(Path);
+
+            // Compute efficiency
+            double Efficiency = CDF / Efficiency_UB;
+
+            // Compute CDF for graph
+            Console.WriteLine("Print Teleport Path CDF Graph:");
+            curAlg.PrintCDFGraph(TeleportPath, newRequest.DistMap);
+            Console.WriteLine("Print BAPath CDF Graph:");
+            curAlg.PrintCDFGraph(Path, newRequest.DistMap);
+            curAlg.SetPath(Path);
+            
+            // Show results
+            Log("----------------------------------------------\n");
+            Log("Efficiency: " + Efficiency.ToString() + "\n");
+            Log("----------------------------------------------");
+            Log("----------------------------------------------\n");
+
+
+            #region Show path
+
+            if (newRequest.DrawPath)
+            {
+                // Draw path with map remains
+                Bitmap CurBMP3 = new Bitmap(mDistReachable.Columns, mDistReachable.Rows);
+                ImgLib.MatrixToImage(ref mDistReachable, ref CurBMP3);
+                frmMap map3 = new frmMap();
+                map3.Text = "UAV trajectory and coverage";
+                map3.setImage(CurBMP3);
+                map3.Show();
+                map3.resetImage();
+                List<float> remains = curAlg.ShowCoverage();
+                Color c = Color.FromArgb(255, 0, 0);
+                for (int i = 0; i < Path.Count; i++)
+                {
+                    Point p = Path[i];
+                    map3.setPointColor(p, c);
+                    map3.Refresh();
+                    map3.setPointColor(p, remains[i]);
+                    map3.Refresh();
+                }
+
+                // Drawing real path
+                MISCLib.ShowImage(MISCLib.DrawPath(Path), "Real Path");
+            }
+
+            #endregion
 
             #endregion
         }
@@ -879,6 +1108,80 @@ namespace IPPA
                             + resultsR.GetValue(1, 0).ToString() + " "
                             + resultsR.GetValue(1, 1).ToString());
         }
+        
+        // Compute the reachable area and might as well compute distance to closest non-zero node
+        private bool ComputeReachableArea(PathPlanningRequest curRequest, RtwMatrix mDistReachable, RtwMatrix mDiffReachable)
+        {
+            // Code is cleaner to just deal two cases seperately.
+            if (!curRequest.UseEndPoint)
+            {
+                Point Start = new Point(curRequest.pStart.column, curRequest.pStart.row);
+                int d = curRequest.T;
+                for (int y = 0; y < mDistReachable.Rows; y++)
+                {
+                    for (int x = 0; x < mDistReachable.Columns; x++)
+                    {
+                        int dist = MISCLib.ManhattanDistance(x, y, Start.X, Start.Y);
+                        if (dist >= curRequest.T)
+                        {
+                            // Wipe cell in both maps clean
+                            mDistReachable[y, x] = 0;
+                            mDiffReachable[y, x] = 0;
+                        }
+                        if (dist < d && mDistReachable[y, x] != 0)
+                        {
+                            d = dist;
+                        }
+                    }
+                }
+                curRequest.d = d;
+            }
+            else
+            {
+                Point Start = new Point(curRequest.pStart.column, curRequest.pStart.row);
+                Point End = new Point(curRequest.pEnd.column, curRequest.pEnd.row);
+                int d = curRequest.T;
+                int dist = MISCLib.ManhattanDistance(Start.X, Start.Y, End.X, End.Y);
+
+                if (dist > curRequest.T)
+                {
+                    // Impossible to get from A to B in allowed flight time
+                    System.Windows.Forms.MessageBox.Show("Impossible! Extend flight time!");
+                    return false;
+                }
+
+                if (curRequest.T % 2 != dist % 2)
+                {
+                    // Impossible to get from A to B in the exact allowed flight time
+                    System.Windows.Forms.MessageBox.Show("Impossible to reach end point at time T! Add 1 or minus 1!");
+                    return false;
+                }
+
+                for (int y = 0; y < mDistReachable.Rows; y++)
+                {
+                    for (int x = 0; x < mDistReachable.Columns; x++)
+                    {
+                        int dist_AC = MISCLib.ManhattanDistance(x, y, Start.X, Start.Y);
+                        int dist_BC = MISCLib.ManhattanDistance(x, y, End.X, End.Y);
+                        if ((dist_AC + dist_BC) > curRequest.T)
+                        {
+                            // Wipe cell in both maps clean
+                            mDistReachable[y, x] = 0;
+                            mDiffReachable[y, x] = 0;
+                        }
+                        dist = MISCLib.ManhattanDistance(x, y, Start.X, Start.Y);
+                        if (dist < d && mDistReachable[y, x] != 0)
+                        {
+                            d = dist;
+                        }
+                    }
+                }
+                curRequest.d = d;
+
+            }            
+            return true;
+        }
+        
         
         #endregion
 

@@ -8,13 +8,15 @@ namespace IPPA
     {
         // General parameters
         public static int DefaultDimension = 60;
+        public static int DefaultWidth = 60;
+        public static int DefaultHeight = 60;
         public static int MinFlightTime = 10;
         public static int MaxFlightTime = 3600;
         public static int DefaultFlightTime = 1200;
         public static string MapsDir = @"C:\Lanny\MAMI\IPPA\Maps";
         // public static string DefaultDistMap = @"C:\Lanny\MAMI\IPPA\Maps\DistMaps\Simple_BimodalFar.csv";
-        public static string DefaultDistMap = @"C:\Lanny\MAMI\IPPA\Maps\DistMaps\Real_Complex2.csv";
-        public static string DefaultDiffMap = @"C:\Lanny\MAMI\IPPA\Maps\DiffMaps\Diff_Simple_BimodalFar1.csv";
+        public static string DefaultDistMap = @"C:\Lanny\MAMI\IPPA\Maps\DistMaps\TestDistMap.csv";
+        public static string DefaultDiffMap = @"C:\Lanny\MAMI\IPPA\Maps\DiffMaps\TestDiffMap.csv";
         
         // Down sample scale in CountDistModes class
         public static int DownSampleScale = 1;
@@ -67,5 +69,7 @@ namespace IPPA
         public static int TopNCount = 3;            // Default N
         public static int Kernel_Size = 5;          // What size kenel for convolution       
         public static int Max_N = 5;                // Maximum number of Gaussians to fit 
+
+        public static int DownSample_Rate = 30;     // Only use a percentage of the samples (from probability distribution map)
     }
 }

@@ -39,6 +39,7 @@ namespace IPPA
         private RtwMatrix mModes;
         private PathPlanningRequest curRequest;
         private int N;
+        private int GCount = ProjectConstants.Max_N;
         private RtwMatrix mDist;
         private RtwMatrix mDiff;
         private RtwMatrix mRealMap;
@@ -61,6 +62,17 @@ namespace IPPA
         }
         public MapModes(int _ModeCount, RtwMatrix _mModes, PathPlanningRequest _curRequest, RtwMatrix _mDist, RtwMatrix _mDiff)
         {
+            mDist = _mDist;
+            mDiff = _mDiff;
+            ModeCount = _ModeCount;
+            mModes = _mModes;
+            curRequest = _curRequest;
+            N = curRequest.TopN;
+            FindTopNModes();
+        }
+        public MapModes(int _GCount, int _ModeCount, RtwMatrix _mModes, PathPlanningRequest _curRequest, RtwMatrix _mDist, RtwMatrix _mDiff)
+        {
+            GCount = _GCount;
             mDist = _mDist;
             mDiff = _mDiff;
             ModeCount = _ModeCount;
@@ -182,9 +194,9 @@ namespace IPPA
             // Use no more than Max_N (which is 5 I believe)
             int n = lstCentroids.Count;     // find as many Gaussians as modes. Later find topN Gaussians as Hiariarchical Search
             // Don't do too many Gaussians because it will take a long time and perform poorly
-            if (n > ProjectConstants.Max_N)
+            if (n > GCount)
             {
-                n = ProjectConstants.Max_N;
+                n = GCount;
             }
 
             // Multiple dist map and diff map if necessary
@@ -194,12 +206,7 @@ namespace IPPA
             //TimeSpan duration = stopTime - startTime;
             //double RunTime = duration.TotalSeconds;
             //System.Windows.Forms.MessageBox.Show("ComputeRealMap Run time " + RunTime + " seconds!");
-
-            #region Using MATLAB for GMM
-
-            //startTime = DateTime.Now;
-            double[,] arrSamplesR;
-            double[,] arrSamplesI;
+            
             // Allocate memory for output matrices
             Array arrModes = new double[n];
             Array arrMUs = new double[n, 2];
@@ -207,27 +214,30 @@ namespace IPPA
             Array junkModes = new double[n];
             Array junkMUs = new double[n, 2];
             Array junkSigmaXSigmaY = new double[n];
+            
+            #region Using MATLAB for GMM
 
-            if (!curRequest.UseHierarchy)
-            {
-                // Generate samples from map to get ready to perform mixed Gaussian fitting
-                PrepareSamples(out arrSamplesR, out arrSamplesI);
-                //stopTime = DateTime.Now;
-                //duration = stopTime - startTime;
-                //RunTime = duration.TotalSeconds;
-                //System.Windows.Forms.MessageBox.Show("PrepareSamples Run time " + RunTime + " seconds!");
+            ////startTime = DateTime.Now;
+            //double[,] arrSamplesR;
+            //double[,] arrSamplesI;
 
-                // Perform mixed Gaussian fitting and get parameters
-                //startTime = DateTime.Now;            
-                // Using MATLAB to do GMM
-                GaussianFitting(n, arrSamplesR, arrSamplesI, ref arrModes, ref arrMUs, ref arrSigmaXSigmaY, ref junkModes, ref junkMUs, ref junkSigmaXSigmaY);
-                //stopTime = DateTime.Now;
-                //duration = stopTime - startTime;
-                //RunTime = duration.TotalSeconds;
-                //System.Windows.Forms.MessageBox.Show("GaussianFitting Run time " + RunTime + " seconds!");
-                //Debug
-                curRequest.SetLog("\nMATLAB GMM results\n");
-            }
+            //// Generate samples from map to get ready to perform mixed Gaussian fitting
+            //PrepareSamples(out arrSamplesR, out arrSamplesI);
+            ////stopTime = DateTime.Now;
+            ////duration = stopTime - startTime;
+            ////RunTime = duration.TotalSeconds;
+            ////System.Windows.Forms.MessageBox.Show("PrepareSamples Run time " + RunTime + " seconds!");
+
+            //// Perform mixed Gaussian fitting and get parameters
+            ////startTime = DateTime.Now;            
+            //// Using MATLAB to do GMM
+            //GaussianFitting(n, arrSamplesR, arrSamplesI, ref arrModes, ref arrMUs, ref arrSigmaXSigmaY, ref junkModes, ref junkMUs, ref junkSigmaXSigmaY);
+            ////stopTime = DateTime.Now;
+            ////duration = stopTime - startTime;
+            ////RunTime = duration.TotalSeconds;
+            ////System.Windows.Forms.MessageBox.Show("GaussianFitting Run time " + RunTime + " seconds!");
+            //// Debug
+            //// curRequest.SetLog("\nMATLAB GMM results\n");
 
             #endregion
 
@@ -236,15 +246,15 @@ namespace IPPA
             // Prepare samples into the format needed
             double[][] arrSamples;
 
-            if (curRequest.UseHierarchy)
+            // Generate samples from map to get ready to perform mixed Gaussian fitting
+            PrepareSamplesAccord(out arrSamples);
+
+            // Using Accord.net library to do GMM
+            GaussianMixtureModel gmm = new GaussianMixtureModel(n);
+
+            try
             {
-                // Generate samples from map to get ready to perform mixed Gaussian fitting
-                PrepareSamplesAccord(out arrSamples);
-
-                // Using Accord.net library to do GMM
-                GaussianMixtureModel gmm = new GaussianMixtureModel(n);
                 gmm.Compute(arrSamples, 10);
-
                 // Getting arrays ready                
                 for (int i = 0; i < n; i++)
                 {
@@ -254,33 +264,37 @@ namespace IPPA
                     // Area
                     DenseMatrix m = new DenseMatrix(gmm.Gaussians[i].Covariance);
                     System.Numerics.Complex[] d = m.Evd().EigenValues().ToArray();
-                    double SigmaXSigmaY = Math.Sqrt(d[0].Real)*Math.Sqrt(d[1].Real);
+                    double SigmaXSigmaY = Math.Sqrt(d[0].Real) * Math.Sqrt(d[1].Real);
                     arrSigmaXSigmaY.SetValue(SigmaXSigmaY, i);
                     // Modes
                     arrModes.SetValue(gmm.Gaussians[i].GetDistribution().ProbabilityDensityFunction(gmm.Gaussians[i].Mean), i);
                 }
-                //Debug
-                curRequest.SetLog("\nAccord GMM results\n");
+                // Debug
+                // curRequest.SetLog("\nAccord GMM results\n");
             }
-
+            catch
+            {
+                System.Windows.Forms.MessageBox.Show("Something went wrong with Accord.net library.");
+            }
+            
             #endregion
 
-            //Debug code
-            for (int i = 0; i < arrMUs.Length / 2; i++)
-            {
-                curRequest.SetLog(arrMUs.GetValue(i, 0) + "," + arrMUs.GetValue(i, 1) + "  ");
-            }
-            curRequest.SetLog("\n");
-            for (int i = 0; i < arrSigmaXSigmaY.Length; i++)
-            {
-                curRequest.SetLog(arrSigmaXSigmaY.GetValue(i) + "  ");
-            }
-            curRequest.SetLog("\n");
-            for (int i=0; i< arrModes.Length; i++)
-            {
-                curRequest.SetLog(arrModes.GetValue(i) + " ");
-            }
-            curRequest.SetLog("\n");
+            ////Debug code
+            //for (int i = 0; i < arrMUs.Length / 2; i++)
+            //{
+            //    curRequest.SetLog(arrMUs.GetValue(i, 0) + "," + arrMUs.GetValue(i, 1) + "  ");
+            //}
+            //curRequest.SetLog("\n");
+            //for (int i = 0; i < arrSigmaXSigmaY.Length; i++)
+            //{
+            //    curRequest.SetLog(arrSigmaXSigmaY.GetValue(i) + "  ");
+            //}
+            //curRequest.SetLog("\n");
+            //for (int i=0; i< arrModes.Length; i++)
+            //{
+            //    curRequest.SetLog(arrModes.GetValue(i) + " ");
+            //}
+            //curRequest.SetLog("\n");
 
             //startTime = DateTime.Now;
             // Match centroids to Gaussians
@@ -302,11 +316,11 @@ namespace IPPA
             // Find top N modes
             lstGaussians.Sort();
             lstGaussians.Reverse();
-            //Debug
-            for (int i = 0; i < n; i++)
-            {
-                curRequest.SetLog("Mode (x,y): " + lstGaussians[i].Mode.X + "," + lstGaussians[i].Mode.Y + " MGR:" + lstGaussians[i].GoodnessRating + "\n");
-            }            
+            ////Debug
+            //for (int i = 0; i < n; i++)
+            //{
+            //    curRequest.SetLog("Mode (x,y): " + lstGaussians[i].Mode.X + "," + lstGaussians[i].Mode.Y + " MGR:" + lstGaussians[i].GoodnessRating + "\n");
+            //}            
             lstGaussians.RemoveRange(N, lstGaussians.Count - N);
 
             // Rebuild lstCentroids
@@ -378,7 +392,7 @@ namespace IPPA
             {
                 for (int j = 0; j < mRealMap.Columns; j++)
                 {
-                    for (int k = 0; k < Convert.ToInt16(System.Math.Round(mRealMap[i, j])) / 30; k++)
+                    for (int k = 0; k < Convert.ToInt16(System.Math.Round(mRealMap[i, j])) / ProjectConstants.DownSample_Rate; k++)
                     {
                         double[] sample = new double[2];
                         sample[0] = i;
@@ -511,8 +525,8 @@ namespace IPPA
             double d_ratio = ComputeDistRatio(lstGaussians, i);
             // Compute scale
             double scale = mRealMap[lstGaussians[i].Mode.Y, lstGaussians[i].Mode.X] / Convert.ToDouble(arrModes.GetValue(i));
-            //Debug
-            curRequest.SetLog("Scale: " + scale + "\n");
+            // Debug
+            // curRequest.SetLog("Scale: " + scale + "\n");
             
             double goodness = d_ratio * scale / Convert.ToDouble(arrSigmaXSigmaY.GetValue(i));
 
