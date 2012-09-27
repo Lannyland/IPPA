@@ -141,9 +141,6 @@ namespace IPPA
             }
             // Get real CDF
             CDF = GetTrueCDF(Path);
-
-            // Print out CDF Graph
-            // PrintCDFGraph();
         }
 
         // Create permutation
@@ -218,11 +215,11 @@ namespace IPPA
             Point newEnd = new Point(0, 0);
             RtwMatrix mDistAfterSegFirstSegLast = mDist.Clone();
             // Plan first seg
-            StraightToClosestCentroid(Start, allCentroids, ref newStart, ref remainingT, ref SegFirst, mDistAfterSegFirstSegLast);
+            StraightToClosestCentroid(Start, allCentroids, ref newStart, ref remainingT, ref SegFirst, ref mDistAfterSegFirstSegLast);
             if(curRequest.UseEndPoint)
             {
                 // Plan last seg
-                StraightToClosestCentroid(End, allCentroids, ref newEnd, ref remainingT, ref SegLast, mDistAfterSegFirstSegLast);
+                StraightToClosestCentroid(End, allCentroids, ref newEnd, ref remainingT, ref SegLast, ref mDistAfterSegFirstSegLast);
             }
 
             // Plan middle segments of the path
@@ -230,195 +227,12 @@ namespace IPPA
             PlanMidPathSegments(MidSegments, newStart, newEnd, allCentroids, mDistAfterSegFirstSegLast, remainingT);
 
             //TODO Join path segments
-            JoinPathSegments(MidSegments);
-        }
-
-        // Join path segments together into one path
-        private void JoinPathSegments(List<List<Point>> MidSegments)
-        {
-            //TODO Plan LHC to join them.
-            //TODO Deal with flying backwards
-
-            // First join
-            List<Point> SegFirstPath = SegFirst.GetPath();
-            Point p1 = SegFirstPath[SegFirstPath.Count-1];
-            Point p2 = MidSegments[0][0];
-            if (p1.X == p2.X && p1.Y == p2.Y)
-            {
-                Path.AddRange(SegFirstPath);
-                Path.RemoveAt(Path.Count - 1);
-                Path.AddRange(MidSegments[0]);
-            }
-            else
-            {
-                // Something is wrong!
-                System.Windows.Forms.MessageBox.Show("Seg1 and Seg2 don't connect.");
-                return;
-            }
-            // Find out path index order in MidSegments
-            List<int> FinalRealOrder = new List<int>();
-            for (int i = 0; i < FinalPerm.Count; i++)
-            {
-                bool swap = false;
-                if (FinalPerm2 != null)
-                {
-                    for (int j = 0; j < FinalPerm2.Count; j++)
-                    {
-                        if (FinalPerm[i] == FinalPerm2[j])
-                        {
-                            swap = true;
-                            break;
-                        }
-                    }
-                }
-                if (swap)
-                {
-                    FinalRealOrder.Add(FinalPerm[i] * 2 + 3);
-                    FinalRealOrder.Add(FinalPerm[i] * 2 + 2);
-                }
-                else
-                {
-                    FinalRealOrder.Add(FinalPerm[i] * 2 + 2);
-                    FinalRealOrder.Add(FinalPerm[i] * 2 + 3);                    
-                }
-            }
-            // 0 1-2 3-4 5-6 ...
-            FinalRealOrder.Insert(0, 0);
-
-            //// Sanity Check:
-            //int testDist = 0;
-            //int d = 0;
-            //d = MISCLib.ManhattanDistance(
-            //    MidSegments[FinalRealOrder[0]][MidSegments[FinalRealOrder[0]].Count - 1],
-            //    MidSegments[FinalRealOrder[1]][MidSegments[FinalRealOrder[1]].Count - 1]);
-            //Console.Write(" 0-3: " + (d - 1));
-            //if (d > 0)
-            //{
-            //    testDist = testDist + d + 1 - 2;
-            //}
-            //d = MISCLib.ManhattanDistance(
-            //    MidSegments[FinalRealOrder[2]][MidSegments[FinalRealOrder[2]].Count - 1],
-            //    MidSegments[FinalRealOrder[3]][MidSegments[FinalRealOrder[3]].Count - 1]);
-            //Console.Write(" 2-7: " + (d - 1));
-            //if (d > 0)
-            //{
-            //    testDist = testDist + d + 1 - 2;
-            //}
-            //d = MISCLib.ManhattanDistance(
-            //    MidSegments[FinalRealOrder[4]][MidSegments[FinalRealOrder[4]].Count - 1],
-            //    MidSegments[FinalRealOrder[5]][MidSegments[FinalRealOrder[5]].Count - 1]);
-            //Console.Write(" 6-4: " + (d - 1));
-            //if (d > 0)
-            //{
-            //    testDist = testDist + d + 1 - 2;
-            //}
-            //d = MISCLib.ManhattanDistance(
-            //    MidSegments[FinalRealOrder[6]][MidSegments[FinalRealOrder[6]].Count - 1],
-            //    MidSegments[1][MidSegments[1].Count - 1]);
-            //Console.Write(" 5-1: " + (d - 1));
-            //if (d > 0)
-            //{
-            //    testDist = testDist + d + 1 - 2;
-            //}
-
-            // Mid Joins
-            for (int i = 0; i < FinalRealOrder.Count - 1; i = i + 2)
-            {
-                p1 = MidSegments[FinalRealOrder[i]][MidSegments[FinalRealOrder[i]].Count - 1];
-                p2 = MidSegments[FinalRealOrder[i + 1]][MidSegments[FinalRealOrder[i + 1]].Count - 1];
-                if ((p1.X == p2.X && p1.Y == p2.Y) ||
-                    (p1.X == p2.X && Math.Abs(p1.Y - p2.Y) == 1) ||
-                    (Math.Abs(p1.X - p2.X) == 1 && p1.Y == p2.Y))
-                {
-                    // Two paths are already connected
-                    Path.AddRange(MidSegments[FinalRealOrder[i + 1]]);
-                }
-                else
-                {
-                    // Need to connect two segments
-                    PathPlanningRequest newRequest = curRequest.Clone();
-                    newRequest.UseEndPoint = true;
-                    newRequest.pStart = new DistPoint(p1.Y, p1.X);
-                    newRequest.pEnd = new DistPoint(p2.Y, p2.X);
-                    newRequest.T = MISCLib.ManhattanDistance(p1, p2);
-                    newRequest.AlgToUse = AlgType.LHCGWCONV;
-                    AlgLHCGWCONV curSeg = new AlgLHCGWCONV(newRequest, mCurDist, mDiff, Efficiency_UB, 3);
-                    curSeg.PlanPath();
-                    mCurDist = curSeg.GetmCurDist();
-                    Path.RemoveAt(Path.Count - 1);
-                    Path.AddRange(curSeg.GetPath());
-                    Path.RemoveAt(Path.Count - 1);
-                    List<Point> reversePath = MidSegments[FinalRealOrder[i + 1]];
-                    reversePath.Reverse();
-                    Path.AddRange(reversePath);
-                    curSeg = null;
-                    Path.AddRange(MidSegments[FinalRealOrder[i + 2]]);
-                }
-            }
-            // Last join
-            if (curRequest.UseEndPoint)
-            {
-                p1 = MidSegments[FinalRealOrder[FinalRealOrder.Count - 1]][MidSegments[FinalRealOrder[FinalRealOrder.Count - 1]].Count - 1];                
-                p2 = MidSegments[1][MidSegments[1].Count - 1];
-                List<Point> reversePath = MidSegments[1];
-                reversePath.Reverse();
-                if ((p1.X == p2.X && p1.Y == p2.Y) ||
-                    (p1.X == p2.X && Math.Abs(p1.Y - p2.Y) == 1) ||
-                    (Math.Abs(p1.X - p2.X) == 1 && p1.Y == p2.Y))
-                {
-                    // Two paths are already connected
-                    Path.AddRange(reversePath);
-                }
-                else
-                {
-                    // Need to connect two segments
-                    PathPlanningRequest newRequest = curRequest.Clone();
-                    newRequest.UseEndPoint = true;
-                    newRequest.pStart = new DistPoint(p1.Y, p1.X);
-                    newRequest.pEnd = new DistPoint(p2.Y, p2.X);
-                    newRequest.T = MISCLib.ManhattanDistance(p1, p2);
-                    newRequest.AlgToUse = AlgType.LHCGWCONV;
-                    AlgLHCGWCONV curSeg = new AlgLHCGWCONV(newRequest, mCurDist, mDiff, Efficiency_UB, 3);
-                    curSeg.PlanPath();
-                    mCurDist = curSeg.GetmCurDist();
-                    Path.RemoveAt(Path.Count - 1);
-                    Path.AddRange(curSeg.GetPath());
-                    Path.RemoveAt(Path.Count - 1);
-                    Path.AddRange(reversePath);
-                    curSeg = null;
-                }
-                Path.RemoveAt(Path.Count - 1);
-                                
-                List<Point> SegLastPath = SegLast.GetPath();
-                SegLastPath.Reverse();
-                p1 = MidSegments[1][MidSegments[1].Count - 1];      // Already reversed from previous step
-                p2 = SegLastPath[0];
-                if (p1.X == p2.X && p1.Y == p2.Y)
-                {
-                    Path.AddRange(SegLastPath);
-                }
-                else
-                {
-                    // Something is wrong!
-                    System.Windows.Forms.MessageBox.Show("SegLast and the one before it don't connect.");
-                    return;
-                }
-            }
-
-            // In case distance from start to end is odd but T is even (or vise versa) for copter
-            if (curRequest.VehicleType == UAVType.Copter)
-            {
-                if (Path.Count == curRequest.T)
-                {
-                    // Just hover at end point
-                    Path.Add(Path[Path.Count - 1]);
-                }
-            }
+            JoinPathSegments(MidSegments, allCentroids);
         }
 
         // Plan first or last path segment
         private void StraightToClosestCentroid(Point StartOrEnd, List<Point> allCentroids, ref Point newPoint,
-            ref int remainingT, ref AlgLHCGWCONV SegFirstLast, RtwMatrix mDistAfterSegFirstSegLast)
+            ref int remainingT, ref AlgLHCGWCONV SegFirstLast, ref RtwMatrix mDistAfterSegFirstSegLast)
         {
             // Find centroid closest to start
             int closestCentroidIndex = -1;
@@ -544,6 +358,11 @@ namespace IPPA
                     else
                     {
                         Point bestNeighbor = FindBestNeighbor(MidSegments[i][MidSegments[i].Count - 1]);
+                        if (i == 0)
+                        {
+                            bestPoint = bestNeighbor;
+                            bestIndex = i;
+                        }
                         float curP = GetPartialDetection(bestNeighbor);
                         if (curP > maxP)
                         {
@@ -553,7 +372,11 @@ namespace IPPA
                         }
                     }
                 }
+                // Fly the best point
+                // Add to mid path segment
                 MidSegments[bestIndex].Add(bestPoint);
+
+                // update loose ends pairs
                 if (bestIndex > 1)
                 {
                     if (bestIndex % 2 == 0)
@@ -565,68 +388,241 @@ namespace IPPA
                         AllLooseEndsPairs[(bestIndex - 2) / 2][1] = bestPoint;
                     }
                 }
+                // Vacuum probability
                 mCurDist[bestPoint.Y, bestPoint.X] = VacuumProbability(bestPoint);
-
-                // Keep a counter of worst distance among all endpoints of path segments
+                
+                // Increasing path by one point means worst comes to worst, it takes two time steps to recover when joining segmengs
                 thresholdT += 2;
-                if (thresholdT >= remainingT - (t + 1) - 1)         // t+1 to compensate 0-based t. -1 to compensate hover for 1 step in order to land on end point
+
+                int result = EnoughTimeLeftToConnect(MidSegments, allCentroids, remainingT, ref thresholdT, t);
+                if (result == 0)
                 {
-                    // Console.Write("\nthresholdT=" + thresholdT + " remainingT-t-1=" + (remainingT - t - 1));
-                    // Check if there's enough time to join everything together.                    
-                    // Create permuatation
-                    List<List<int>> allPerms = Permute(allCentroids, allCentroids.Count);
-                    for (int j = 0; j < allPerms.Count; j++)
+                    System.Windows.Forms.MessageBox.Show("Something went wrong with EnoughTimeLeftToConnect method!");
+                    break;
+                }
+                else if (result == 1)
+                {
+                    // Just enough time to connect all loose ends in the remembered perm. Remember the perm.                    
+                    Console.WriteLine("result = 1");
+                    break;
+                }
+                else if (result == 3)
+                {
+                    // Hover at one of the end points (the one with the best vacuum)
+                    HoverAtOneEndPoint(MidSegments);
+                    Console.WriteLine("result = 3");
+                    break;
+                }
+
+                // Console.Write("\n");
+
+                // Show path planning process
+                if (curRequest.DrawPath)
+                {
+                    map.setPointColor(bestPoint, mCurDist[bestPoint.Y, bestPoint.X]);
+                    map.Refresh();
+                }                
+            }
+        }
+
+        // When remaining time is only one more than the shortest distance of connecting all points
+        // Then we need to hover at one of the end points. Add that to the right segment.
+        private void HoverAtOneEndPoint(List<List<Point>> MidSegments)
+        {
+            // Find all ending points
+            List<LHCNode> LooseEnds = new List<LHCNode>();
+            for (int i = 0; i < MidSegments.Count; i++)
+            {
+                if (MidSegments[i].Count > 0)
+                {
+                    Point me = MidSegments[i][MidSegments[i].Count - 1];
+                    LHCNode node = new LHCNode();
+                    node.Loc = me;
+                    node.p = GetPartialDetection(me);
+                    LooseEnds.Add(node);
+                }
+            }
+
+            // Decide which one is the best.
+            int indexOfnext = 0;
+            Point p = new Point();
+            if (LooseEnds.Count > 1)
+            {
+                FindNodeToGoTo(p, ref LooseEnds, ref indexOfnext);
+            }
+
+            // Add node to path and then collect probability (zero it out)
+            Point bestPoint = LooseEnds[indexOfnext].Loc;
+            for (int i = 0; i < MidSegments.Count; i++)
+            {
+                if (MidSegments[i].Count > 0)
+                {
+                    Point me = MidSegments[i][MidSegments[i].Count - 1];
+                    if (me.X == bestPoint.X && me.Y == bestPoint.Y)
                     {
-                        List<int> curPerm = allPerms[j];
-                        int totalDist = ComputeTotalDistances(curPerm, MidSegments, AllLooseEndsPairs);
-                        // Console.Write(" totalDist=" + totalDist);
-                        if (totalDist < remainingT - (t + 1) - 1)
+                        MidSegments[i].Add(bestPoint);
+                        break;
+                    }
+                }
+            }
+            mCurDist[bestPoint.Y, bestPoint.X] = VacuumProbability(bestPoint);
+        }
+
+        // Check to see if remaining time is enough to join all segments (loose points)
+        private int EnoughTimeLeftToConnect(List<List<Point>> MidSegments, List<Point> allCentroids, int remainingT, ref int thresholdT, int t)
+        {
+            // Code for results
+            int isEnough = 0;   // 0: not enough  1: just enough 2: more than enough 3: just one more, so need to hover
+
+            // Variable used to remember minimum total distances for current set of segments
+            int minDist = curRequest.T + 1;
+            
+            // Keep a counter of worst distance among all endpoints of path segments
+            // Don't check every time. Only check when worst case
+            // Console.Write("remainingT - (t + 1) = " + (remainingT - (t + 1)) + " ");
+            
+            //// Debug code
+            //int counter = 0;
+            // ComputeMinDist(allCentroids, MidSegments);
+
+            if (thresholdT < remainingT - (t + 1) - 1)         // t+1 to compensate 0-based t. -1 to compensate hover for 1 step in order to land on end point
+            {
+                // There must be plenty of time. No need to check
+                isEnough = 2;
+                minDist = 0;
+            }
+            else
+            {
+                // Check if there's enough time to join everything together.                    
+                // Debug
+                // Console.Write("\nthresholdT=" + thresholdT + " remainingT-t-1=" + (remainingT - t - 1));
+                // Console.Write(" totalDist=" + totalDist);
+
+                // Create permuatation
+                List<List<int>> allPerms = Permute(allCentroids, allCentroids.Count);
+                // Try each permutation. Break when a good one (enough) is found
+                for (int j = 0; j < allPerms.Count; j++)
+                {
+                    // For current permutation
+                    List<int> curPerm = allPerms[j];
+                    int totalDist = ComputeTotalDistances(curPerm, MidSegments, AllLooseEndsPairs);
+                    // Console.Write("totalDist = " + totalDist + " ");
+                    if (totalDist < remainingT - (t + 1) - 1)
+                    {
+                        // Stil enough time, no need to check further.
+                        thresholdT = totalDist;
+                        isEnough = 2;
+                        minDist = 0;
+                        break;
+                    }
+                    else
+                    {
+                        // As soon as we find a permutation that's much more than remaining time, we break;
+                        // Console.Write("minDist before = " + minDist + " ");
+                        // Remember min distance
+                        if (minDist > totalDist)
                         {
-                            // Stil enough time, no need to check further.
-                            thresholdT = totalDist;
-                            FinalPerm = null;
-                            FinalPerm2 = null;
-                            break;
+                            minDist = totalDist;
+                            FinalPerm = curPerm;
+                            // Console.Write("minDist after = " + minDist + " ");
                         }
-                        else
+
+                        // If total distance is just 1 less than remaining time, we have to hover, better remember this.
+                        if (totalDist == remainingT - (t + 1) - 1)
                         {
-                            if (totalDist == remainingT - (t + 1) || totalDist == remainingT - (t + 1) - 1)
+                            // Remember current permutation and min total distance
+                            isEnough = 3;
+                            FinalPerm = curPerm;
+                            FinalPerm2 = null;
+                        }
+                        // If total distance is perfect for the permutation, remember it.
+                        if (totalDist == remainingT - (t + 1))
+                        {
+                            // Remember current permutation and min total distance
+                            isEnough = 1;
+                            FinalPerm = curPerm;
+                            FinalPerm2 = null;
+                        }
+                        //// Something wrong?
+                        //if (totalDist > remainingT - (t + 1))
+                        //{
+                        //    if (minDist > remainingT - (t + 1))
+                        //    {
+                        //        // We better have a permutation that will make this false.
+                        //        Console.Write(" Fail! ");
+                        //    }
+                        //}
+
+                        // Have to permute again to switch end pairs.
+                        // Console.Write("Now switching end pairs. ");
+                        for (int k = 1; k < allCentroids.Count + 1; k++)
+                        {
+                            // Choose 1,2,3,... pairs to switch
+                            List<List<int>> allPerms2 = Permute(allCentroids, k);
+                            for (int l = 0; l < allPerms2.Count; l++)
                             {
-                                FinalPerm = curPerm;
-                            }
-                            // Have to permute again to switch end pairs.
-                            for (int k = 1; k < allCentroids.Count + 1; k++)
-                            {
-                                List<List<int>> allPerms2 = Permute(allCentroids, k);
-                                for (int l = 0; l < allPerms2.Count; l++)
+                                // counter++;
+                                List<int> curPerm2 = allPerms2[l];
+                                // Clone AllLooseEndsPairs
+                                List<List<Point>> PairsClone = PairListClone(AllLooseEndsPairs);
+                                // Perform switch(es)
+                                for (int ii = 0; ii < curPerm2.Count; ii++)
                                 {
-                                    List<int> curPerm2 = allPerms2[l];
-                                    // Clone AllLooseEndsPairs
-                                    List<List<Point>> PairsClone = PairListClone(AllLooseEndsPairs);
-                                    // Perform switch(es)
-                                    for (int ii = 0; ii < curPerm2.Count; ii++)
-                                    {
-                                        Point ptemp;
-                                        ptemp = PairsClone[curPerm2[ii]][0];
-                                        PairsClone[curPerm2[ii]][0] = PairsClone[curPerm2[ii]][1];
-                                        PairsClone[curPerm2[ii]][1] = ptemp;
-                                    }
-                                    // Check if total distance is enough to connect all loose ends.
-                                    totalDist = ComputeTotalDistances(curPerm, MidSegments, PairsClone);
-                                    // Console.Write(" totalDist=" + totalDist);                                 
+                                    Point ptemp;
+                                    ptemp = PairsClone[curPerm2[ii]][0];
+                                    PairsClone[curPerm2[ii]][0] = PairsClone[curPerm2[ii]][1];
+                                    PairsClone[curPerm2[ii]][1] = ptemp;
+                                }
+
+                                // Check if total distance is enough to connect all loose ends.
+                                totalDist = ComputeTotalDistances(curPerm, MidSegments, PairsClone);
+                                // Console.Write("After switch, totalDist = " + totalDist + " ");
+                                // Console.Write("minDist before = " + minDist + " ");
+
+                                // Compare to current min distance
+                                if (minDist <= totalDist)
+                                {
+                                    // No need to check, because there's already a permutation that has shorter distance 
+                                    thresholdT = minDist;
+                                }
+                                else
+                                {
+                                    // This one is better
+                                    minDist = totalDist;
+                                    // Console.Write("minDist after = " + minDist + " ");
+                                    FinalPerm = curPerm;
+                                    FinalPerm2 = curPerm2;
+
                                     if (totalDist < remainingT - (t + 1) - 1)
                                     {
+                                        // Even if the current permutation is not the shortest distance, remaining time is still enough. No need to check further.
                                         thresholdT = totalDist;
                                         l = allPerms2.Count;
                                         k = allCentroids.Count;
                                         j = allPerms.Count;
-                                        FinalPerm = null;
-                                        FinalPerm2 = null;
+                                        isEnough = 2;
+                                        minDist = 0;
                                     }
-                                    if (totalDist == remainingT - (t + 1) || totalDist == remainingT - (t + 1) - 1)
+                                    else
                                     {
-                                        FinalPerm = curPerm;
-                                        FinalPerm2 = curPerm2;
+                                        // Remember current permutations
+                                        if (totalDist == remainingT - (t + 1) - 1)
+                                        {
+                                            // At least remember current permutations if it's better
+                                            isEnough = 3;
+                                            FinalPerm = curPerm;
+                                            FinalPerm2 = curPerm2;
+                                        }
+                                        if (totalDist == remainingT - (t + 1))
+                                        {
+                                            // Remember current permutation and min total distance
+                                            isEnough = 1;
+                                            FinalPerm = curPerm;
+                                            FinalPerm2 = curPerm2;
+                                        }
+
+                                        // But continue the permutation in case there's something better.
+
                                         //// Debug code
                                         //Console.Write(" curPerm=");
                                         //for (int xx = 0; xx < curPerm.Count; xx++)
@@ -664,32 +660,373 @@ namespace IPPA
                                 }
                             }
                         }
+                        // Console.WriteLine("minDist = " + minDist + ", remainingT = " + remainingT);
                     }
                 }
-                if (FinalPerm != null)
+                if (minDist == remainingT - (t + 1) - 1)
                 {
-                    // Just enough time to connect all loose ends in the remembered perm. Remember the perm.                    
-                    break;
+                    // Console.Write("Final minDist = " + minDist + " ");
+                    isEnough = 3;
                 }
-                //// After this if still not enough time, then something went wrong.
-                //if (totalDist < remainingT - t - 1)
-                //{
-                //    System.Windows.Forms.MessageBox.Show("Something wrong. Don't have enough time left to connect all loose ends");
-                //    return;
-                //}
-                
-                // Show path planning process
-                if (curRequest.DrawPath)
+                if (minDist == remainingT - (t + 1))
                 {
-                    map.setPointColor(bestPoint, mCurDist[bestPoint.Y, bestPoint.X]);
-                    map.Refresh();
+                    // Console.Write("Final minDist = " + minDist + " ");
+                    isEnough = 1;
                 }
             }
-            int ttt = 0;
-            if (FinalPerm == null)
+            
+            //// Debug code
+            //Console.Write("counter = " + counter + " ");
+            //ComputeMinDist(allCentroids, MidSegments);
+
+            if (isEnough == 0)
             {
-                ttt++;
+                // Not enough time
+                Console.WriteLine("isEnough = 0, Something is wrong?");
             }
+            else if (isEnough == 2)
+            {
+                // Plenty of time;
+                minDist = 0;
+                FinalPerm = null;
+                FinalPerm2 = null;
+            }
+            else if (isEnough == 1)
+            {
+                if (FinalPerm == null)
+                {
+                    Console.WriteLine("isEnough = 1, Something is wrong?");
+                }
+            }
+            else
+            {
+                if (FinalPerm == null)
+                {
+                    Console.WriteLine("isEnough = 3, Something is wrong?");
+                }
+            }
+
+            if (minDist > remainingT - (t + 1))
+            {
+                // Not enough time
+                Console.WriteLine("minDist is longer. Something is wrong?");
+            }
+
+            if (minDist > 0)
+            {
+                if (minDist != ComputeMinDist(allCentroids, MidSegments))
+                {
+                    Console.Write("Permutations choosen: ");
+                    // Debug code
+                    if (FinalPerm2 != null)
+                    {
+                        Console.Write("FinalPerm=");
+                        for (int xx = 0; xx < FinalPerm.Count; xx++)
+                        {
+                            Console.Write(FinalPerm[xx] + ",");
+                        }
+                    }
+                    if (FinalPerm2 != null)
+                    {
+                        Console.Write(" FinalPerm2=");
+                        for (int xx = 0; xx < FinalPerm2.Count; xx++)
+                        {
+                            Console.Write(FinalPerm2[xx] + ",");
+                        }
+                    }
+                    if (FinalPerm != null)
+                    {
+                        Console.Write("\n");
+                    }
+
+                    Console.Write("isEnough = " + isEnough + " ");
+                }
+            }
+
+            return isEnough;
+        }
+
+        private int ComputeMinDist(List<Point> allCentroids, List<List<Point>> MidSegments)
+        {
+            List<int> FinalPerm = null;
+            List<int> FinalPerm2 = null;
+            
+            int counter = 0;
+            int  minDist = curRequest.T + 1;
+
+            // Create permuatation
+            List<List<int>> allPerms = Permute(allCentroids, allCentroids.Count);
+                
+            // Try each permutation. Break when a good one (enough) is found
+            for (int j = 0; j < allPerms.Count; j++)
+            {
+                // For current permutation
+                List<int> curPerm = allPerms[j];
+                int totalDist = ComputeTotalDistances(curPerm, MidSegments, AllLooseEndsPairs);
+                if (minDist > totalDist)
+                {
+                    // Remember min distance
+                    minDist = totalDist;
+                    FinalPerm = curPerm;
+                }
+
+                // Have to permute again to switch end pairs.
+                for (int k = 1; k < allCentroids.Count + 1; k++)
+                {
+                    // Choose 1,2,3,... pairs to switch
+                    List<List<int>> allPerms2 = Permute(allCentroids, k);
+                    for (int l = 0; l < allPerms2.Count; l++)
+                    {
+                        counter++;
+                        List<int> curPerm2 = allPerms2[l];
+                        // Clone AllLooseEndsPairs
+                        List<List<Point>> PairsClone = PairListClone(AllLooseEndsPairs);
+                        // Perform switch(es)
+                        for (int ii = 0; ii < curPerm2.Count; ii++)
+                        {
+                            Point ptemp;
+                            ptemp = PairsClone[curPerm2[ii]][0];
+                            PairsClone[curPerm2[ii]][0] = PairsClone[curPerm2[ii]][1];
+                            PairsClone[curPerm2[ii]][1] = ptemp;
+                        }
+
+                        // Check if total distance is enough to connect all loose ends.
+                        totalDist = ComputeTotalDistances(curPerm, MidSegments, PairsClone);
+
+                        // Compare to current min distance
+                        if (minDist > totalDist)
+                        {
+                            // This one is better
+                            minDist = totalDist;
+                            FinalPerm = curPerm;
+                            FinalPerm2 = curPerm2;
+                        }
+                    }
+                }
+            }
+            Console.Write("The real minDist is " + minDist + " counter = " + counter + " ");
+
+            // Debug code
+            if (FinalPerm2 != null)
+            {
+                Console.Write("FinalPerm=");
+                for (int xx = 0; xx < FinalPerm.Count; xx++)
+                {
+                    Console.Write(FinalPerm[xx] + ",");
+                }
+            }
+            if (FinalPerm2 != null)
+            {
+                Console.Write(" FinalPerm2=");
+                for (int xx = 0; xx < FinalPerm2.Count; xx++)
+                {
+                    Console.Write(FinalPerm2[xx] + ",");
+                }
+            }
+
+            return minDist;
+        }
+
+        // Join path segments together into one path
+        private void JoinPathSegments(List<List<Point>> MidSegments, List<Point> allCentroids)
+        {
+            //TODO Deal with flying backwards
+
+            // First join
+            List<Point> SegFirstPath = SegFirst.GetPath();
+            Point p1 = SegFirstPath[SegFirstPath.Count - 1];
+            Point p2 = MidSegments[0][0];
+            if (p1.X == p2.X && p1.Y == p2.Y)
+            {
+                Path.AddRange(SegFirstPath);
+                Path.RemoveAt(Path.Count - 1);
+                Path.AddRange(MidSegments[0]);
+            }
+            else
+            {
+                // Something is wrong!
+                System.Windows.Forms.MessageBox.Show("Seg1 and Seg2 don't connect.");
+                return;
+            }
+            // Find out path index order in MidSegments
+            List<int> FinalRealOrder = new List<int>();
+            for (int i = 0; i < FinalPerm.Count; i++)
+            {
+                bool swap = false;
+                if (FinalPerm2 != null)
+                {
+                    for (int j = 0; j < FinalPerm2.Count; j++)
+                    {
+                        if (FinalPerm[i] == FinalPerm2[j])
+                        {
+                            swap = true;
+                            break;
+                        }
+                    }
+                }
+                if (swap)
+                {
+                    FinalRealOrder.Add(FinalPerm[i] * 2 + 3);
+                    FinalRealOrder.Add(FinalPerm[i] * 2 + 2);
+                }
+                else
+                {
+                    FinalRealOrder.Add(FinalPerm[i] * 2 + 2);
+                    FinalRealOrder.Add(FinalPerm[i] * 2 + 3);
+                }
+            }
+            // 0 1-2 3-4 5-6 ...
+            FinalRealOrder.Insert(0, 0);
+
+            //// Sanity Check:
+            //int testDist = 0;
+            //int d = 0;
+            //d = MISCLib.ManhattanDistance(
+            //    MidSegments[FinalRealOrder[0]][MidSegments[FinalRealOrder[0]].Count - 1],
+            //    MidSegments[FinalRealOrder[1]][MidSegments[FinalRealOrder[1]].Count - 1]);
+            //Console.Write(" 0-3: " + (d - 1));
+            //if (d > 0)
+            //{
+            //    testDist = testDist + d + 1 - 2;
+            //}
+            //d = MISCLib.ManhattanDistance(
+            //    MidSegments[FinalRealOrder[2]][MidSegments[FinalRealOrder[2]].Count - 1],
+            //    MidSegments[FinalRealOrder[3]][MidSegments[FinalRealOrder[3]].Count - 1]);
+            //Console.Write(" 2-7: " + (d - 1));
+            //if (d > 0)
+            //{
+            //    testDist = testDist + d + 1 - 2;
+            //}
+            //d = MISCLib.ManhattanDistance(
+            //    MidSegments[FinalRealOrder[4]][MidSegments[FinalRealOrder[4]].Count - 1],
+            //    MidSegments[FinalRealOrder[5]][MidSegments[FinalRealOrder[5]].Count - 1]);
+            //Console.Write(" 6-4: " + (d - 1));
+            //if (d > 0)
+            //{
+            //    testDist = testDist + d + 1 - 2;
+            //}
+            //d = MISCLib.ManhattanDistance(
+            //    MidSegments[FinalRealOrder[6]][MidSegments[FinalRealOrder[6]].Count - 1],
+            //    MidSegments[1][MidSegments[1].Count - 1]);
+            //Console.Write(" 5-1: " + (d - 1));
+            //if (d > 0)
+            //{
+            //    testDist = testDist + d + 1 - 2;
+            //}
+
+            // Mid Joins
+            for (int i = 0; i < FinalRealOrder.Count - 1; i = i + 2)
+            {
+                p1 = MidSegments[FinalRealOrder[i]][MidSegments[FinalRealOrder[i]].Count - 1];
+                p2 = MidSegments[FinalRealOrder[i + 1]][MidSegments[FinalRealOrder[i + 1]].Count - 1];
+                if ((p1.X == p2.X && p1.Y == p2.Y) ||
+                    (p1.X == p2.X && Math.Abs(p1.Y - p2.Y) == 1) ||
+                    (Math.Abs(p1.X - p2.X) == 1 && p1.Y == p2.Y))
+                {
+                    // The two paths are already connected.
+                    // No need to plan path to connect to points.
+                }
+                else
+                {
+                    // Need to connect two segments
+                    PathPlanningRequest newRequest = curRequest.Clone();
+                    newRequest.UseEndPoint = true;
+                    newRequest.pStart = new DistPoint(p1.Y, p1.X);
+                    newRequest.pEnd = new DistPoint(p2.Y, p2.X);
+                    newRequest.T = MISCLib.ManhattanDistance(p1, p2);
+                    newRequest.AlgToUse = AlgType.LHCGWCONV;
+                    AlgLHCGWCONV curSeg = new AlgLHCGWCONV(newRequest, mCurDist, mDiff, Efficiency_UB, 3);
+                    curSeg.PlanPath();
+                    mCurDist = curSeg.GetmCurDist();
+                    Path.RemoveAt(Path.Count - 1);
+                    Path.AddRange(curSeg.GetPath());
+                    Path.RemoveAt(Path.Count - 1);
+                    curSeg = null;
+                }
+                List<Point> reversePath = MidSegments[FinalRealOrder[i + 1]];
+                reversePath.Reverse();
+                Path.AddRange(reversePath);
+                Path.AddRange(MidSegments[FinalRealOrder[i + 2]]);
+            }
+            // Last join
+            if (curRequest.UseEndPoint)
+            {
+                p1 = MidSegments[FinalRealOrder[FinalRealOrder.Count - 1]][MidSegments[FinalRealOrder[FinalRealOrder.Count - 1]].Count - 1];
+                p2 = MidSegments[1][MidSegments[1].Count - 1];
+                List<Point> reversePath = MidSegments[1];
+                reversePath.Reverse();
+                if ((p1.X == p2.X && p1.Y == p2.Y) ||
+                    (p1.X == p2.X && Math.Abs(p1.Y - p2.Y) == 1) ||
+                    (Math.Abs(p1.X - p2.X) == 1 && p1.Y == p2.Y))
+                {
+                    // Two paths are already connected
+                    // No need to reverse
+                    Path.AddRange(reversePath);
+                }
+                else
+                {
+                    // Need to connect two segments
+                    PathPlanningRequest newRequest = curRequest.Clone();
+                    newRequest.UseEndPoint = true;
+                    newRequest.pStart = new DistPoint(p1.Y, p1.X);
+                    newRequest.pEnd = new DistPoint(p2.Y, p2.X);
+                    newRequest.T = MISCLib.ManhattanDistance(p1, p2);
+                    newRequest.AlgToUse = AlgType.LHCGWCONV;
+                    AlgLHCGWCONV curSeg = new AlgLHCGWCONV(newRequest, mCurDist, mDiff, Efficiency_UB, 3);
+                    curSeg.PlanPath();
+                    mCurDist = curSeg.GetmCurDist();
+                    Path.RemoveAt(Path.Count - 1);
+                    Path.AddRange(curSeg.GetPath());
+                    Path.RemoveAt(Path.Count - 1);
+                    Path.AddRange(reversePath);
+                    curSeg = null;
+                }
+                Path.RemoveAt(Path.Count - 1);
+
+                List<Point> SegLastPath = SegLast.GetPath();
+                SegLastPath.Reverse();
+                p1 = MidSegments[1][MidSegments[1].Count - 1];      // Already reversed from previous step
+                p2 = SegLastPath[0];
+                if (p1.X == p2.X && p1.Y == p2.Y)
+                {
+                    Path.AddRange(SegLastPath);
+                }
+                else
+                {
+                    // Something is wrong!
+                    System.Windows.Forms.MessageBox.Show("SegLast and the one before it don't connect.");
+                    return;
+                }
+            }
+
+            // In case distance from start to end is odd but T is even (or vise versa) for copter
+            if (curRequest.VehicleType == UAVType.Copter)
+            {
+                if (Path.Count == curRequest.T)
+                {
+                    // Just hover at end point
+                    Path.Add(Path[Path.Count - 1]);
+                }
+            }
+
+            // Debug code
+            // Sanity Check
+            for (int i = 0; i < 900; i++)
+            {
+                if (MISCLib.ManhattanDistance(Path[i], Path[i + 1]) > 1)
+                {
+                    Console.Write("Path is disconnected!");
+                    System.Windows.Forms.MessageBox.Show("Path is disconnected!");
+                }
+            }
+
+            if (Path.Count != 901)
+            {
+                Console.Write("Something is wrong with path length!\n");
+                ComputeMinDist(allCentroids, MidSegments);
+                System.Windows.Forms.MessageBox.Show("Something is wrong with path length!");
+            }
+
         }
 
         // Clone AllLooseEndsPairs
@@ -805,7 +1142,6 @@ namespace IPPA
                 ln.p = TieBreaker(me, ln.Loc); ;
                 ln.oldindex = neighbors[i].oldindex;
                 NewList.Add(ln);
-                // Console.Write("(" + ln.Loc.X + "," + ln.Loc.Y + ")conv=" + ln.p + " ");
             }
             // Sort so best convolution value nodes at top
             NewList.Sort();
@@ -824,7 +1160,6 @@ namespace IPPA
             {
                 // Randomly pick a node if have same conv vlaues
                 int i = r.Next(0, identical);
-                // Console.Write("random i=" + i + " ");
                 index = NewList[i].oldindex;
             }
 

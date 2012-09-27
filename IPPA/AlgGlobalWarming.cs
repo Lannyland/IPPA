@@ -106,7 +106,7 @@ namespace IPPA
             }
         }
 
-        // Search without Global Warning
+        // Search without Global Warming
         private void NoGWSearch()
         {
             // Make copy of map
@@ -150,9 +150,6 @@ namespace IPPA
 
             // Cleaning up                        
             mGW = null;
-
-            // Print out CDF Graph
-            // PrintCDFGraph();
         }
 
         // Search GW intelligently
@@ -299,9 +296,6 @@ namespace IPPA
 
             // Cleaning up                        
             mGW = null;
-
-            // Print out CDF Graph
-            // PrintCDFGraph();
 
             // Spawn threads to plan path
             SpawnThreads();

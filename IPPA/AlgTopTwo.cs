@@ -111,13 +111,6 @@ namespace IPPA
         // Method to perform the path planning
         protected override void DoPathPlanning()
         {
-            //// Print out teleport path CDF Graph
-            //Console.WriteLine("Next line is CDF Grpha for TeleportPath:");
-            //ComputeEfficiencyUB myELB = new ComputeEfficiencyUB(curRequest, mDist, mDiff);
-            //List<Point> TeleportPath = myELB.GetTeleportPath();
-            //PrintCDFGraph(TeleportPath, mDist);
-            //myELB = null;
-
             // Sanity check: Don't do this when there is no mode or just 1 mode
             if (myModes.GetModeCount() < 2)
             {
@@ -133,9 +126,6 @@ namespace IPPA
 
             // Get real CDF
             CDF = GetTrueCDF(Path);
-
-            // Print out CDF Graph
-            // PrintCDFGraph();
         }
 
         // Method to figure our all points

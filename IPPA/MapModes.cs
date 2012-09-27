@@ -209,6 +209,7 @@ namespace IPPA
             
             // Allocate memory for output matrices
             Array arrModes = new double[n];
+            Array arrProportions = new double[n];
             Array arrMUs = new double[n, 2];
             Array arrSigmaXSigmaY = new double[n];
             Array junkModes = new double[n];
@@ -252,29 +253,37 @@ namespace IPPA
             // Using Accord.net library to do GMM
             GaussianMixtureModel gmm = new GaussianMixtureModel(n);
 
-            try
+            // If Accord.net library fails, try it again up to 3 times
+            for (int ii = 0; ii < ProjectConstants.MaxAccordRun; ii++)
             {
-                gmm.Compute(arrSamples, 10);
-                // Getting arrays ready                
-                for (int i = 0; i < n; i++)
+                try
                 {
-                    // Means
-                    arrMUs.SetValue(gmm.Gaussians[i].Mean[0], i, 0);
-                    arrMUs.SetValue(gmm.Gaussians[i].Mean[1], i, 1);
-                    // Area
-                    DenseMatrix m = new DenseMatrix(gmm.Gaussians[i].Covariance);
-                    System.Numerics.Complex[] d = m.Evd().EigenValues().ToArray();
-                    double SigmaXSigmaY = Math.Sqrt(d[0].Real) * Math.Sqrt(d[1].Real);
-                    arrSigmaXSigmaY.SetValue(SigmaXSigmaY, i);
-                    // Modes
-                    arrModes.SetValue(gmm.Gaussians[i].GetDistribution().ProbabilityDensityFunction(gmm.Gaussians[i].Mean), i);
+                    gmm.Compute(arrSamples, 10);
+                    // Getting arrays ready                
+                    for (int i = 0; i < n; i++)
+                    {
+                        // Means
+                        arrMUs.SetValue(gmm.Gaussians[i].Mean[0], i, 0);
+                        arrMUs.SetValue(gmm.Gaussians[i].Mean[1], i, 1);
+                        // Area
+                        DenseMatrix m = new DenseMatrix(gmm.Gaussians[i].Covariance);
+                        System.Numerics.Complex[] d = m.Evd().EigenValues().ToArray();
+                        double SigmaXSigmaY = Math.Sqrt(d[0].Real) * Math.Sqrt(d[1].Real);
+                        arrSigmaXSigmaY.SetValue(SigmaXSigmaY, i);
+                        // Modes
+                        arrModes.SetValue(gmm.Gaussians[i].GetDistribution().ProbabilityDensityFunction(gmm.Gaussians[i].Mean), i);
+                        // Scales
+                        arrProportions.SetValue(gmm.Gaussians[i].Proportion, i);
+                        ii = ProjectConstants.MaxAccordRun;
+                    }
+                    // Debug
+                    // curRequest.SetLog("\nAccord GMM results\n");
                 }
-                // Debug
-                // curRequest.SetLog("\nAccord GMM results\n");
-            }
-            catch
-            {
-                System.Windows.Forms.MessageBox.Show("Something went wrong with Accord.net library.");
+                catch
+                {
+                    Console.WriteLine("Something went wrong with Accord.net library.");
+                    // System.Windows.Forms.MessageBox.Show("Something went wrong with Accord.net library.");
+                }
             }
             
             #endregion
@@ -307,7 +316,7 @@ namespace IPPA
 
             //startTime = DateTime.Now;
             // Evaluate Goodness Rating
-            EvaluateGoodnessRatings(arrModes, arrSigmaXSigmaY, lstGaussians);
+            EvaluateGoodnessRatings(arrModes, arrSigmaXSigmaY, lstGaussians, arrProportions);
             //stopTime = DateTime.Now;
             //duration = stopTime - startTime;
             //RunTime = duration.TotalSeconds;
@@ -499,15 +508,15 @@ namespace IPPA
         }
 
         // Compute goodness rating for each Gaussian
-        private void EvaluateGoodnessRatings(Array arrModes, Array arrSigmaXSigmaY, List<MapMode> lstGaussians)
+        private void EvaluateGoodnessRatings(Array arrModes, Array arrSigmaXSigmaY, List<MapMode> lstGaussians, Array arrProportions)
         {
             // Compute the common denominator (based on mode 1)
-            double denom = ComputeGoodness(lstGaussians, arrModes, arrSigmaXSigmaY, 0);
+            double denom = ComputeGoodness(lstGaussians, arrModes, arrSigmaXSigmaY, 0, arrProportions);
             // Make first MapMode goodness ratio 1
             lstGaussians[0].GoodnessRating = 1;
             for (int i = 1; i < lstGaussians.Count; i++)
             {
-                lstGaussians[i].GoodnessRating = ComputeGoodness(lstGaussians, arrModes, arrSigmaXSigmaY, i) / denom;
+                lstGaussians[i].GoodnessRating = ComputeGoodness(lstGaussians, arrModes, arrSigmaXSigmaY, i, arrProportions) / denom;
             }
 
             //// Debug code
@@ -519,12 +528,20 @@ namespace IPPA
         }
 
         // Compute the numerator or denominator of the goodness rating formula
-        private double ComputeGoodness(List<MapMode> lstGaussians, Array arrModes, Array arrSigmaXSigmaY, int i)
+        private double ComputeGoodness(List<MapMode> lstGaussians, Array arrModes, Array arrSigmaXSigmaY, int i, Array arrProportions)
         {
             // Compute distance ratio            
             double d_ratio = ComputeDistRatio(lstGaussians, i);
             // Compute scale
-            double scale = mRealMap[lstGaussians[i].Mode.Y, lstGaussians[i].Mode.X] / Convert.ToDouble(arrModes.GetValue(i));
+            double scale = 0;
+            if (ProjectConstants.UseAccordProportions)
+            {
+                scale = Convert.ToDouble(arrProportions.GetValue(i));
+            }
+            else
+            {
+                scale = mRealMap[lstGaussians[i].Mode.Y, lstGaussians[i].Mode.X] / Convert.ToDouble(arrModes.GetValue(i));
+            }
             // Debug
             // curRequest.SetLog("Scale: " + scale + "\n");
             
@@ -548,8 +565,14 @@ namespace IPPA
             {
                 d_mi += MISCLib.ManhattanDistance(lstGaussians[i].Mode, new Point(curRequest.pEnd.column, curRequest.pEnd.row)); // Distance to End
             }
-            return Math.Log((curRequest.T / (d_mi + 1)), 10);
-            // return curRequest.T / (d_mi + 1);
+            if (ProjectConstants.LogDistanceRatio)
+            {
+                return Math.Log((curRequest.T / (d_mi + 1)), 10);
+            }
+            else
+            {
+                return curRequest.T / (d_mi + 1);
+            }
         }
 
         // Getters

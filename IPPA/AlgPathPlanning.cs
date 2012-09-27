@@ -80,7 +80,13 @@ namespace IPPA
                 // Compute Efficiency
                 Efficiency = CDF / Efficiency_UB;
 
-                #region Debug Code
+                // Print out CDF Graph
+                if (ProjectConstants.GraphCDF)
+                {
+                    PrintCDFGraph();
+                }
+
+            #region Debug Code
                 //// Debug code, show actual path
                 //if (curRequest.DrawPath)
                 //{

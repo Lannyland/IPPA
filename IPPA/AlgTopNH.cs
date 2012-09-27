@@ -53,13 +53,6 @@ namespace IPPA
         // Method to perform the path planning
         protected override void DoPathPlanning()
         {
-            //// Print out teleport path CDF Graph
-            //Console.WriteLine("Next line is CDF Grpha for TeleportPath:");
-            //ComputeEfficiencyUB myELB = new ComputeEfficiencyUB(curRequest, mDist, mDiff);
-            //List<Point> TeleportPath = myELB.GetTeleportPath();
-            //PrintCDFGraph(TeleportPath, mDist);
-            //myELB = null;
-
             // Sanity check: Don't do this when there is no mode or just 1 mode
             if (ModeCount < 3)
             {
@@ -76,9 +69,9 @@ namespace IPPA
 
             // Loop through Gaussian Counts
             int counter = 0;
-            for (int i = GCount; i > 2; i--)
+            for (int i = GCount; i > 1; i--)
             {
-                for (int j = i; j > 2; j--)
+                for (int j = i; j > 1; j--)
                 {
                     // Clone things for each search
                     PathPlanningRequest curRequestCopy = curRequest.DeepClone();
@@ -93,7 +86,7 @@ namespace IPPA
                     curRequestCopy.UseHierarchy = true;
                     curRequestCopy.UseParallelProcessing = true;
                     curRequestCopy.TopN = j;
-                    MapModes curModes = new MapModes(i, ModeCount, mModes, curRequest, mDist, mDiff);
+                    MapModes curModes = new MapModes(i, ModeCount, mModes, curRequestCopy, mDist, mDiff);
                     // Create path planning object
                     AlgTopN curAlg = new AlgTopN(curModes, curRequestCopy, ModeCount, mModes, mDistCopy, mDiffCopy, Efficiency_UB);
                     curAlg.index = counter;
@@ -115,9 +108,6 @@ namespace IPPA
                 ExtensiveSearch();
                 FindBestPath();
             }
-
-            // Print out CDF Graph
-            // PrintCDFGraph();
         }
 
         // Method to perform extensive search in the T space
@@ -126,9 +116,6 @@ namespace IPPA
             for (int i = 0; i < lstThreads.Count; i++)
             {
                 AlgTopN alg = lstThreads[i];
-
-                // Plan path
-                alg.PlanPath();
 
                 // Remember if true CDF is better
                 StoreResults(i);

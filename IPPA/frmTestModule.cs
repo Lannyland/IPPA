@@ -954,7 +954,7 @@ namespace IPPA
             double Efficiency = CDF / Efficiency_UB;
 
             // Compute CDF for graph
-            Console.WriteLine("Print Teleport Path CDF Graph:");
+            Console.WriteLine("Print Existing Path CDF Graph:");
             curAlg.PrintCDFGraph(TeleportPath, newRequest.DistMap);
             Console.WriteLine("Print BAPath CDF Graph:");
             curAlg.PrintCDFGraph(Path, newRequest.DistMap);
