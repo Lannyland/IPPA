@@ -342,7 +342,7 @@ namespace IPPA
             remainingT -= allCentroids.Count * 2;
             
             // Loop through remaining flight time.
-            int thresholdT = 0;
+            int thresholdT = remainingT;
             for (int t = 0; t < remainingT; t++)
             {
                 // Each start node find best neighbor and then choose best one to add to path
@@ -403,14 +403,14 @@ namespace IPPA
                 else if (result == 1)
                 {
                     // Just enough time to connect all loose ends in the remembered perm. Remember the perm.                    
-                    Console.WriteLine("result = 1");
+                    // Console.WriteLine("result = 1");
                     break;
                 }
                 else if (result == 3)
                 {
                     // Hover at one of the end points (the one with the best vacuum)
                     HoverAtOneEndPoint(MidSegments);
-                    Console.WriteLine("result = 3");
+                    // Console.WriteLine("result = 3");
                     break;
                 }
 
@@ -480,10 +480,11 @@ namespace IPPA
             // Keep a counter of worst distance among all endpoints of path segments
             // Don't check every time. Only check when worst case
             // Console.Write("remainingT - (t + 1) = " + (remainingT - (t + 1)) + " ");
-            
+            // Console.Write("\nthresholdT=" + thresholdT + " ");
+
             //// Debug code
             //int counter = 0;
-            // ComputeMinDist(allCentroids, MidSegments);
+            //ComputeMinDist(allCentroids, MidSegments);
 
             if (thresholdT < remainingT - (t + 1) - 1)         // t+1 to compensate 0-based t. -1 to compensate hover for 1 step in order to land on end point
             {
@@ -496,7 +497,6 @@ namespace IPPA
                 // Check if there's enough time to join everything together.                    
                 // Debug
                 // Console.Write("\nthresholdT=" + thresholdT + " remainingT-t-1=" + (remainingT - t - 1));
-                // Console.Write(" totalDist=" + totalDist);
 
                 // Create permuatation
                 List<List<int>> allPerms = Permute(allCentroids, allCentroids.Count);
@@ -525,34 +525,34 @@ namespace IPPA
                             minDist = totalDist;
                             FinalPerm = curPerm;
                             // Console.Write("minDist after = " + minDist + " ");
-                        }
 
-                        // If total distance is just 1 less than remaining time, we have to hover, better remember this.
-                        if (totalDist == remainingT - (t + 1) - 1)
-                        {
-                            // Remember current permutation and min total distance
-                            isEnough = 3;
-                            FinalPerm = curPerm;
-                            FinalPerm2 = null;
-                        }
-                        // If total distance is perfect for the permutation, remember it.
-                        if (totalDist == remainingT - (t + 1))
-                        {
-                            // Remember current permutation and min total distance
-                            isEnough = 1;
-                            FinalPerm = curPerm;
-                            FinalPerm2 = null;
-                        }
-                        //// Something wrong?
-                        //if (totalDist > remainingT - (t + 1))
-                        //{
-                        //    if (minDist > remainingT - (t + 1))
-                        //    {
-                        //        // We better have a permutation that will make this false.
-                        //        Console.Write(" Fail! ");
-                        //    }
-                        //}
 
+                            // If total distance is just 1 less than remaining time, we have to hover, better remember this.
+                            if (totalDist == remainingT - (t + 1) - 1)
+                            {
+                                // Remember current permutation and min total distance
+                                isEnough = 3;
+                                FinalPerm = curPerm;
+                                FinalPerm2 = null;
+                            }
+                            // If total distance is perfect for the permutation, remember it.
+                            if (totalDist == remainingT - (t + 1))
+                            {
+                                // Remember current permutation and min total distance
+                                isEnough = 1;
+                                FinalPerm = curPerm;
+                                FinalPerm2 = null;
+                            }
+                            //// Something wrong?
+                            //if (totalDist > remainingT - (t + 1))
+                            //{
+                            //    if (minDist > remainingT - (t + 1))
+                            //    {
+                            //        // We better have a permutation that will make this false.
+                            //        Console.Write(" Fail! ");
+                            //    }
+                            //}
+                        }
                         // Have to permute again to switch end pairs.
                         // Console.Write("Now switching end pairs. ");
                         for (int k = 1; k < allCentroids.Count + 1; k++)
@@ -677,7 +677,7 @@ namespace IPPA
             
             //// Debug code
             //Console.Write("counter = " + counter + " ");
-            //ComputeMinDist(allCentroids, MidSegments);
+            // ComputeMinDist(allCentroids, MidSegments);
 
             if (isEnough == 0)
             {
@@ -693,63 +693,67 @@ namespace IPPA
             }
             else if (isEnough == 1)
             {
+                // Just enough time.
+                // Console.Write("isEnough = " + isEnough + " ");
                 if (FinalPerm == null)
                 {
                     Console.WriteLine("isEnough = 1, Something is wrong?");
                 }
+                // ComputeMinDist(allCentroids, MidSegments);
             }
             else
             {
+                // isEnough = 3
+                // Just enough time plus hover once.
+                // Console.Write("isEnough = " + isEnough + " ");
                 if (FinalPerm == null)
                 {
                     Console.WriteLine("isEnough = 3, Something is wrong?");
                 }
             }
 
-            if (minDist > remainingT - (t + 1))
-            {
-                // Not enough time
-                Console.WriteLine("minDist is longer. Something is wrong?");
-            }
+            //if (minDist > remainingT - (t + 1))
+            //{
+            //    // Not enough time
+            //    Console.WriteLine("minDist is longer. Something is wrong?");
+            //}
 
-            if (minDist > 0)
-            {
-                if (minDist != ComputeMinDist(allCentroids, MidSegments))
-                {
-                    Console.Write("Permutations choosen: ");
-                    // Debug code
-                    if (FinalPerm2 != null)
-                    {
-                        Console.Write("FinalPerm=");
-                        for (int xx = 0; xx < FinalPerm.Count; xx++)
-                        {
-                            Console.Write(FinalPerm[xx] + ",");
-                        }
-                    }
-                    if (FinalPerm2 != null)
-                    {
-                        Console.Write(" FinalPerm2=");
-                        for (int xx = 0; xx < FinalPerm2.Count; xx++)
-                        {
-                            Console.Write(FinalPerm2[xx] + ",");
-                        }
-                    }
-                    if (FinalPerm != null)
-                    {
-                        Console.Write("\n");
-                    }
-
-                    Console.Write("isEnough = " + isEnough + " ");
-                }
-            }
+            //if (minDist > 0)
+            //{
+            //    if (minDist != ComputeMinDist(allCentroids, MidSegments))
+            //    {
+            //        Console.Write("Permutations choosen: ");
+            //        // Debug code
+            //        if (FinalPerm2 != null)
+            //        {
+            //            Console.Write("FinalPerm=");
+            //            for (int xx = 0; xx < FinalPerm.Count; xx++)
+            //            {
+            //                Console.Write(FinalPerm[xx] + ",");
+            //            }
+            //        }
+            //        if (FinalPerm2 != null)
+            //        {
+            //            Console.Write(" FinalPerm2=");
+            //            for (int xx = 0; xx < FinalPerm2.Count; xx++)
+            //            {
+            //                Console.Write(FinalPerm2[xx] + ",");
+            //            }
+            //        }
+            //        if (FinalPerm != null)
+            //        {
+            //            Console.Write("\n");
+            //        }
+            //    }
+            //}
 
             return isEnough;
         }
 
         private int ComputeMinDist(List<Point> allCentroids, List<List<Point>> MidSegments)
         {
-            List<int> FinalPerm = null;
-            List<int> FinalPerm2 = null;
+            List<int> _FinalPerm = null;
+            List<int> _FinalPerm2 = null;
             
             int counter = 0;
             int  minDist = curRequest.T + 1;
@@ -767,7 +771,8 @@ namespace IPPA
                 {
                     // Remember min distance
                     minDist = totalDist;
-                    FinalPerm = curPerm;
+                    _FinalPerm = curPerm;
+                    _FinalPerm2 = null;
                 }
 
                 // Have to permute again to switch end pairs.
@@ -798,31 +803,61 @@ namespace IPPA
                         {
                             // This one is better
                             minDist = totalDist;
-                            FinalPerm = curPerm;
-                            FinalPerm2 = curPerm2;
+                            _FinalPerm = curPerm;
+                            _FinalPerm2 = curPerm2;
                         }
                     }
                 }
             }
             Console.Write("The real minDist is " + minDist + " counter = " + counter + " ");
 
-            // Debug code
-            if (FinalPerm2 != null)
-            {
-                Console.Write("FinalPerm=");
-                for (int xx = 0; xx < FinalPerm.Count; xx++)
-                {
-                    Console.Write(FinalPerm[xx] + ",");
-                }
-            }
-            if (FinalPerm2 != null)
-            {
-                Console.Write(" FinalPerm2=");
-                for (int xx = 0; xx < FinalPerm2.Count; xx++)
-                {
-                    Console.Write(FinalPerm2[xx] + ",");
-                }
-            }
+            //// Debug code
+            //// Compare this two permutations to the permutations chosen. They should be identical
+            //bool identical = true;
+            //if (_FinalPerm2 != null)
+            //{
+            //    Console.Write("_FinalPerm=");
+            //    for (int xx = 0; xx < _FinalPerm.Count; xx++)
+            //    {
+            //        Console.Write(_FinalPerm[xx] + ",");
+            //        if (FinalPerm[xx] != _FinalPerm[xx])
+            //        {
+            //            identical = false;
+            //        }
+            //    }
+            //}
+            //if (_FinalPerm2 != null)
+            //{
+            //    Console.Write(" _FinalPerm2=");
+            //    for (int xx = 0; xx < _FinalPerm2.Count; xx++)
+            //    {
+            //        Console.Write(_FinalPerm2[xx] + ",");
+            //        if (FinalPerm2[xx] != _FinalPerm2[xx])
+            //        {
+            //            identical = false;
+            //        }
+            //    }
+            //}
+            //if (!identical)
+            //{
+            //    if (FinalPerm2 != null)
+            //    {
+            //        Console.Write("FinalPerm=");
+            //        for (int xx = 0; xx < FinalPerm.Count; xx++)
+            //        {
+            //            Console.Write(FinalPerm[xx] + ",");
+            //        }
+            //    }
+            //    if (FinalPerm2 != null)
+            //    {
+            //        Console.Write(" FinalPerm2=");
+            //        for (int xx = 0; xx < FinalPerm2.Count; xx++)
+            //        {
+            //            Console.Write(FinalPerm2[xx] + ",");
+            //        }
+            //    }
+            //}
+
 
             return minDist;
         }
@@ -1009,23 +1044,23 @@ namespace IPPA
                 }
             }
 
-            // Debug code
-            // Sanity Check
-            for (int i = 0; i < 900; i++)
-            {
-                if (MISCLib.ManhattanDistance(Path[i], Path[i + 1]) > 1)
-                {
-                    Console.Write("Path is disconnected!");
-                    System.Windows.Forms.MessageBox.Show("Path is disconnected!");
-                }
-            }
+            //// Debug code
+            //// Sanity Check
+            //for (int i = 0; i < 900; i++)
+            //{
+            //    if (MISCLib.ManhattanDistance(Path[i], Path[i + 1]) > 1)
+            //    {
+            //        Console.Write("Path is disconnected!");
+            //        System.Windows.Forms.MessageBox.Show("Path is disconnected!");
+            //    }
+            //}
 
-            if (Path.Count != 901)
-            {
-                Console.Write("Something is wrong with path length!\n");
-                ComputeMinDist(allCentroids, MidSegments);
-                System.Windows.Forms.MessageBox.Show("Something is wrong with path length!");
-            }
+            //if (Path.Count != 901)
+            //{
+            //    Console.Write("Something is wrong with path length!\n");
+            //    ComputeMinDist(allCentroids, MidSegments);
+            //    System.Windows.Forms.MessageBox.Show("Something is wrong with path length!");
+            //}
 
         }
 
@@ -1230,8 +1265,6 @@ namespace IPPA
             }
             return dist;
         }
-
-
 
         // Debugging shouts
         public override void Shout()

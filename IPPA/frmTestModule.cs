@@ -78,8 +78,10 @@ namespace IPPA
 
             ntxtSX.Minimum = 0;
             ntxtSX.Maximum = ProjectConstants.DefaultDimension - 1;
+            ntxtSX.Value = ProjectConstants.DefaultStartX;
             ntxtSY.Minimum = 0;
             ntxtSY.Maximum = ProjectConstants.DefaultDimension - 1;
+            ntxtSY.Value = ProjectConstants.DefaultStartY;
             trbFlightTime.Minimum = ProjectConstants.MinFlightTime;
             trbFlightTime.Maximum = ProjectConstants.MaxFlightTime;
             trbFlightTime.Value = ProjectConstants.DefaultFlightTime;

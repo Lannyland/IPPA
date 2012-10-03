@@ -18,13 +18,17 @@ namespace IPPA
         public static int DefaultHeight = 60;
         public static int MinFlightTime = 10;
         public static int MaxFlightTime = 3600;
-        public static int DefaultFlightTime = 900;
+        public static int DefaultFlightTime = 300;
         public static string MapsDir = @"C:\Lanny\MAMI\IPPA\Maps";
         // public static string DefaultDistMap = @"C:\Lanny\MAMI\IPPA\Maps\DistMaps\Simple_BimodalFar.csv";
         // public static string DefaultDistMap = @"C:\Lanny\MAMI\IPPA\Maps\DistMaps\TestDistMap.csv";
-        public static string DefaultDistMap = @"C:\Lanny\MAMI\IPPA\Maps\DistMaps\Smoothed_Small_HikerPaulDist.csv";
+        // public static string DefaultDistMap = @"C:\Lanny\MAMI\IPPA\Maps\DistMaps\Smoothed_Small_HikerPaulDist.csv";
+        public static string DefaultDistMap = @"C:\Lanny\MAMI\IPPA\Maps\DistMaps\Smoothed_Small_NewYork53Dist.csv";
         // public static string DefaultDiffMap = @"C:\Lanny\MAMI\IPPA\Maps\DiffMaps\TestDiffMap.csv";
-        public static string DefaultDiffMap = @"C:\Lanny\MAMI\IPPA\Maps\DiffMaps\Small_HikerPaulDiff.csv";
+        // public static string DefaultDiffMap = @"C:\Lanny\MAMI\IPPA\Maps\DiffMaps\Small_HikerPaulDiff.csv";
+        public static string DefaultDiffMap = @"C:\Lanny\MAMI\IPPA\Maps\DiffMaps\Small_NewYork53Diff.csv";
+        public static int DefaultStartX = 50;
+        public static int DefaultStartY = 50;
         
         // Down sample scale in CountDistModes class
         public static int DownSampleScale = 1;
@@ -74,6 +78,7 @@ namespace IPPA
         public static int CTFTTLevelCount = 6;      // How many coarse-to-fine levels to search for
         public static bool LogDistanceRatio = true; // Whether to use Log for distance ratio when identifying top regions
         public static bool UseAccordProportions = true; // Whether to use the proportions values generated from Accord.NET GMM
+        public static bool UseAreaInHeuristic = true;  // Whether to use area in Mode Goodness Ratio heuristic.
 
         // TopN parameters
         public static int TopNCount = 3;            // Default N

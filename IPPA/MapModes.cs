@@ -252,6 +252,7 @@ namespace IPPA
 
             // Using Accord.net library to do GMM
             GaussianMixtureModel gmm = new GaussianMixtureModel(n);
+            List<MapMode> lstGaussians = new List<MapMode>();           // Results stored in a list of MapModes for sorting
 
             // If Accord.net library fails, try it again up to 3 times
             for (int ii = 0; ii < ProjectConstants.MaxAccordRun; ii++)
@@ -274,10 +275,35 @@ namespace IPPA
                         arrModes.SetValue(gmm.Gaussians[i].GetDistribution().ProbabilityDensityFunction(gmm.Gaussians[i].Mean), i);
                         // Scales
                         arrProportions.SetValue(gmm.Gaussians[i].Proportion, i);
-                        ii = ProjectConstants.MaxAccordRun;
                     }
                     // Debug
                     // curRequest.SetLog("\nAccord GMM results\n");
+
+                    ////Debug code
+                    //for (int i = 0; i < arrMUs.Length / 2; i++)
+                    //{
+                    //    curRequest.SetLog(arrMUs.GetValue(i, 0) + "," + arrMUs.GetValue(i, 1) + "  ");
+                    //}
+                    //curRequest.SetLog("\n");
+                    //for (int i = 0; i < arrSigmaXSigmaY.Length; i++)
+                    //{
+                    //    curRequest.SetLog(arrSigmaXSigmaY.GetValue(i) + "  ");
+                    //}
+                    //curRequest.SetLog("\n");
+                    //for (int i=0; i< arrModes.Length; i++)
+                    //{
+                    //    curRequest.SetLog(arrModes.GetValue(i) + " ");
+                    //}
+                    //curRequest.SetLog("\n");
+
+                    //startTime = DateTime.Now;
+                    // Match centroids to Gaussians
+                    MatchCentroidsToGaussians(arrMUs, lstGaussians);
+                    //stopTime = DateTime.Now;
+                    //duration = stopTime - startTime;
+                    //RunTime = duration.TotalSeconds;
+                    //System.Windows.Forms.MessageBox.Show("MatchCentroidsToGaussians Run time " + RunTime + " seconds!");
+                    ii = ProjectConstants.MaxAccordRun;
                 }
                 catch
                 {
@@ -285,34 +311,8 @@ namespace IPPA
                     // System.Windows.Forms.MessageBox.Show("Something went wrong with Accord.net library.");
                 }
             }
-            
+
             #endregion
-
-            ////Debug code
-            //for (int i = 0; i < arrMUs.Length / 2; i++)
-            //{
-            //    curRequest.SetLog(arrMUs.GetValue(i, 0) + "," + arrMUs.GetValue(i, 1) + "  ");
-            //}
-            //curRequest.SetLog("\n");
-            //for (int i = 0; i < arrSigmaXSigmaY.Length; i++)
-            //{
-            //    curRequest.SetLog(arrSigmaXSigmaY.GetValue(i) + "  ");
-            //}
-            //curRequest.SetLog("\n");
-            //for (int i=0; i< arrModes.Length; i++)
-            //{
-            //    curRequest.SetLog(arrModes.GetValue(i) + " ");
-            //}
-            //curRequest.SetLog("\n");
-
-            //startTime = DateTime.Now;
-            // Match centroids to Gaussians
-            List<MapMode> lstGaussians = new List<MapMode>();           // Results stored in a list of MapModes for sorting
-            MatchCentroidsToGaussians(arrMUs, lstGaussians);
-            //stopTime = DateTime.Now;
-            //duration = stopTime - startTime;
-            //RunTime = duration.TotalSeconds;
-            //System.Windows.Forms.MessageBox.Show("MatchCentroidsToGaussians Run time " + RunTime + " seconds!");
 
             //startTime = DateTime.Now;
             // Evaluate Goodness Rating
@@ -545,7 +545,16 @@ namespace IPPA
             // Debug
             // curRequest.SetLog("Scale: " + scale + "\n");
             
-            double goodness = d_ratio * scale / Convert.ToDouble(arrSigmaXSigmaY.GetValue(i));
+            double goodness = 0;
+
+            if (ProjectConstants.UseAreaInHeuristic)
+            {
+                goodness = d_ratio * scale / Convert.ToDouble(arrSigmaXSigmaY.GetValue(i));
+            }
+            else
+            {
+                goodness = d_ratio * scale;
+            }
 
             //// Debug code
             //Console.WriteLine("i = " + i);
