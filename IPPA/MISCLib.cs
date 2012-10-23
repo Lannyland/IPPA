@@ -58,7 +58,7 @@ namespace IPPA
             Bitmap bitmap = new Bitmap(width, height);
             Graphics bitmapGraphics = Graphics.FromImage(bitmap);
             Pen p = new Pen(Color.Red);
-            SolidBrush sb = new SolidBrush(Color.Gray);
+            SolidBrush sb = new SolidBrush(Color.LightGray);
 
             //
             // Draw Board background

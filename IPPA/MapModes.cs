@@ -192,7 +192,7 @@ namespace IPPA
         private void ComputeModeGoodnessRatio()
         {
             // Use no more than Max_N (which is 5 I believe)
-            int n = lstCentroids.Count;     // find as many Gaussians as modes. Later find topN Gaussians as Hiariarchical Search
+            int n = lstCentroids.Count;     // find as many Gaussians as modes.
             // Don't do too many Gaussians because it will take a long time and perform poorly
             if (n > GCount)
             {
