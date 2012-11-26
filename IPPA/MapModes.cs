@@ -260,7 +260,24 @@ namespace IPPA
                 try
                 {
                     gmm.Compute(arrSamples, 10);
-                    // Getting arrays ready                
+
+                    //// Debug code
+                    //// Print out means and covariances and proportions so we can plot
+                    //Console.WriteLine("Accord.net run number " + ii);
+                    //for (int i = 0; i < n; i++)
+                    //{
+                    //    Console.WriteLine("Gaussian number " + i);
+                    //    // Means
+                    //    Console.Write("Mean: (" + gmm.Gaussians[i].Mean[0] + " " + gmm.Gaussians[i].Mean[1] + ") ");
+                    //    // Area
+                    //    Console.Write("Covariance Matrix [" + gmm.Gaussians[i].Covariance[0, 0] + " "
+                    //        + gmm.Gaussians[i].Covariance[0, 1] + "; "
+                    //        + gmm.Gaussians[i].Covariance[1, 0] + " "
+                    //        + gmm.Gaussians[i].Covariance[1, 1] + "] ");
+                    //    Console.Write("Proportion: " + gmm.Gaussians[i].Proportion + "\n");
+                    //}
+                    
+                    // Getting arrays ready      
                     for (int i = 0; i < n; i++)
                     {
                         // Means
@@ -321,6 +338,15 @@ namespace IPPA
             //duration = stopTime - startTime;
             //RunTime = duration.TotalSeconds;
             //System.Windows.Forms.MessageBox.Show("EvaluateGoodnessRatings Run time " + RunTime + " seconds!");
+
+            //// Debug code
+            //// Print out all Gaussians found
+            //Console.WriteLine("Goodness Ratio:");
+            //for (int ii = 0; ii < lstGaussians.Count; ii++)
+            //{
+            //    Console.Write("Gaussian number " + ii + ": " + lstGaussians[ii].GoodnessRating + ", ");
+            //}
+            //Console.Write("\n");
 
             // Find top N modes
             lstGaussians.Sort();

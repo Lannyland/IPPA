@@ -18,7 +18,7 @@ namespace IPPA
         public static int DefaultHeight = 60;
         public static int MinFlightTime = 10;
         public static int MaxFlightTime = 3600;
-        public static int DefaultFlightTime = 300;
+        public static int DefaultFlightTime = 900;
         public static string MapsDir = @"C:\Lanny\MAMI\IPPA\Maps";
         // public static string DefaultDistMap = @"C:\Lanny\MAMI\IPPA\Maps\DistMaps\Simple_BimodalFar.csv";
         // public static string DefaultDistMap = @"C:\Lanny\MAMI\IPPA\Maps\DistMaps\TestDistMap.csv";
