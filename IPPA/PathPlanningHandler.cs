@@ -124,13 +124,16 @@ namespace IPPA
             StdEfficiency = ComputeStDev(AllEfficiencies, AvgEfficiency);
             
             // Log path planning activities
-            curRequest.SetLog("----------------------------------------------\n");
-            curRequest.SetLog("Average run time: " + AvgRunTime.ToString() + "\n");
-            curRequest.SetLog("Standard deviation: " + StdRunTime.ToString() + "\n");
-            curRequest.SetLog("Average efficiency: " + AvgEfficiency.ToString() + "\n");
-            curRequest.SetLog("Standard deviation: " + StdEfficiency.ToString() + "\n");
-            curRequest.SetLog("----------------------------------------------");
-            curRequest.SetLog("----------------------------------------------\n");
+            if (ProjectConstants.DebugMode)
+            {
+                curRequest.SetLog("----------------------------------------------\n");
+                curRequest.SetLog("Average run time: " + AvgRunTime.ToString() + "\n");
+                curRequest.SetLog("Standard deviation: " + StdRunTime.ToString() + "\n");
+                curRequest.SetLog("Average efficiency: " + AvgEfficiency.ToString() + "\n");
+                curRequest.SetLog("Standard deviation: " + StdEfficiency.ToString() + "\n");
+                curRequest.SetLog("----------------------------------------------");
+                curRequest.SetLog("----------------------------------------------\n");
+            }
         }
 
         // Compute the reachable area and might as well compute distance to closest non-zero node

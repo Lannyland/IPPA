@@ -102,7 +102,10 @@ namespace IPPA
                     }
                 }
 
-                curRequest.SetLog("Running a total of " + lstThreads.Count + " path planning tasks.\n");
+                if (ProjectConstants.DebugMode)
+                {
+                    curRequest.SetLog("Running a total of " + lstThreads.Count + " path planning tasks.\n");
+                }
                 SpawnThreads();
             }
             else
@@ -152,7 +155,10 @@ namespace IPPA
             DateTime stopTime2 = DateTime.Now;
             TimeSpan duration2 = stopTime2 - startTime2;
             double RunTime2 = duration2.TotalSeconds;
-            curRequest.SetLog(lstThreads[index].GetCurRequest().AlgToUse + " took " + RunTime2 + " seconds.\n");
+            if (ProjectConstants.DebugMode)
+            {
+                curRequest.SetLog(lstThreads[index].GetCurRequest().AlgToUse + " took " + RunTime2 + " seconds.\n");
+            }
         }
 
         // Find best path in parallel version

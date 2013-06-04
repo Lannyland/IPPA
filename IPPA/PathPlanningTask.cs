@@ -224,9 +224,12 @@ namespace IPPA
             }
 
             // Log results
-            curRequest.SetLog("Run time: " + curAlg.GetRunTime() + "\n");
-            curRequest.SetLog("Best CDF: " + curAlg.GetCDF() + "\n");
-            curRequest.SetLog("Best Efficiency: " + curAlg.GetEfficiency() + "\n");
+            if (ProjectConstants.DebugMode)
+            {
+                curRequest.SetLog("Run time: " + curAlg.GetRunTime() + "\n");
+                curRequest.SetLog("Best CDF: " + curAlg.GetCDF() + "\n");
+                curRequest.SetLog("Best Efficiency: " + curAlg.GetEfficiency() + "\n");
+            }
 
             //// Log Path
             //for (int i = 0; i < curAlg.GetPath().Count; i++)

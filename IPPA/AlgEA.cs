@@ -80,8 +80,10 @@ namespace IPPA
             DateTime stopTime2 = DateTime.Now;
             TimeSpan duration2 = stopTime2 - startTime2;
             double RunTime2 = duration2.TotalSeconds;
-            curRequest.SetLog("CreatePopulation took " + RunTime2 + " seconds.\n");
-
+            if (ProjectConstants.DebugMode)
+            {
+                curRequest.SetLog("CreatePopulation took " + RunTime2 + " seconds.\n");
+            }
 
             // Sort based on CDF. Best at the end.
             CurGeneration.Sort();
@@ -196,21 +198,28 @@ namespace IPPA
             Path.AddRange(CurGeneration[CurGeneration.Count - 1].Path);
 
             // Report how many iterations
-            curRequest.SetLog("Algorithm ran " + count.ToString() + " iterations.\n");
+            if (ProjectConstants.DebugMode)
+            {
+                curRequest.SetLog("Algorithm ran " + count.ToString() + " iterations.\n");
+            }
 
             // Record EA time
             stopTime2 = DateTime.Now;
             duration2 = stopTime2 - startTime2;
             RunTime2 = duration2.TotalSeconds;
-            curRequest.SetLog("EA took " + RunTime2 + " seconds.\n");                
 
-            // Print out improvement log
-            curRequest.SetLog("Improvement: \n");
-            for (int i = 0; i < Improvement.Count; i++)
+            if (ProjectConstants.DebugMode)
             {
-                curRequest.SetLog(Improvement[i].ToString() + " ");
+                curRequest.SetLog("EA took " + RunTime2 + " seconds.\n");
+
+                // Print out improvement log
+                curRequest.SetLog("Improvement: \n");
+                for (int i = 0; i < Improvement.Count; i++)
+                {
+                    curRequest.SetLog(Improvement[i].ToString() + " ");
+                }
+                curRequest.SetLog("\n");
             }
-            curRequest.SetLog("\n");
 
             // Cleaning up
             Improvement.Clear();
@@ -386,7 +395,10 @@ namespace IPPA
                 DateTime stopTime2 = DateTime.Now;
                 TimeSpan duration2 = stopTime2 - startTime2;
                 double RunTime2 = duration2.TotalSeconds;
-                curRequest.SetLog("Algorithm " + newRequest.AlgToUse + " took " + RunTime2 + " seconds.\n");                
+                if (ProjectConstants.DebugMode)
+                {
+                    curRequest.SetLog("Algorithm " + newRequest.AlgToUse + " took " + RunTime2 + " seconds.\n");
+                }
                 
                 EAPath eap = new EAPath();
                 eap.CDF = myAlg.GetCDF();

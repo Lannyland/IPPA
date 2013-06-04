@@ -216,11 +216,14 @@ namespace IPPA
                 }                
 
                 // Debug: log
-                for (int k = 0; k < CDFs.Length; k++)
+                if (ProjectConstants.DebugMode)
                 {
-                    curRequest.SetLog(CDFs[k].ToString() + ", ");
+                    for (int k = 0; k < CDFs.Length; k++)
+                    {
+                        curRequest.SetLog(CDFs[k].ToString() + ", ");
+                    }
+                    curRequest.SetLog("\n");
                 }
-                curRequest.SetLog("\n");
 
                 // No need to do this again in the last level
                 if (i < CTFGWLevelCount - 1)
@@ -365,11 +368,14 @@ namespace IPPA
                 SpawnThreads();
 
                 // Debug: log
-                for (int k = 0; k < CDFs.Length; k++)
+                if (ProjectConstants.DebugMode)
                 {
-                    curRequest.SetLog(CDFs[k].ToString() + ", ");
+                    for (int k = 0; k < CDFs.Length; k++)
+                    {
+                        curRequest.SetLog(CDFs[k].ToString() + ", ");
+                    }
+                    curRequest.SetLog("\n");
                 }
-                curRequest.SetLog("\n");
 
                 // Since we never compute the middle again, what if middle is better than the other 6x3?
                 if (CDFs[sideSearch] >= CDF)

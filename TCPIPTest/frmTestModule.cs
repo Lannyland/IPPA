@@ -52,14 +52,15 @@ namespace TCPIPTest
         private void frmTestModule_Load(object sender, EventArgs e)
         {
             chkUseDist.Checked = true;
-            chkUseDiff.Checked = false;
-            chkCoaseToFine.Checked = false;
-            chkParallel.Checked = false;
-            rbtnFixWing.Checked = true;
-            rbtnCopter.Checked = false;
+            chkUseDiff.Checked = true;
+            chkHierarchy.Checked = true;
+            chkCoaseToFine.Checked = true;
+            chkParallel.Checked = true;
+            rbtnFixWing.Checked = false;
+            rbtnCopter.Checked = true;
             rbtnFixedAmount.Checked = false;
-            rbtnFixedAmountPercent.Checked = true;
-            rbtnFixedPercent.Checked = false;
+            rbtnFixedAmountPercent.Checked = false;
+            rbtnFixedPercent.Checked = true;
             ntxtDetectionRate.Value = 1;
 
             txtFileName1.Text = ProjectConstants.DefaultDistMap;
@@ -90,8 +91,11 @@ namespace TCPIPTest
             lstAlg.Items.Add("PF");
             lstAlg.Items.Add("TopTwo");
             lstAlg.Items.Add("TopN");
+            lstAlg.Items.Add("TopTwoH");
+            lstAlg.Items.Add("TopNH");
             lstAlg.Items.Add("EA-Path");
-
+            lstAlg.Items.Add("RealTime");
+            
             lvQueue.Clear();
             lvQueue.View = View.Details;
             lvQueue.LabelEdit = false;
@@ -600,8 +604,17 @@ namespace TCPIPTest
                     case "TopN":
                         newRequest.AlgToUse = AlgType.TopN_E;
                         break;
+                    case "TopTwoH":
+                        newRequest.AlgToUse = AlgType.TopTwoH_E;
+                        break;
+                    case "TopNH":
+                        newRequest.AlgToUse = AlgType.TopNH_E;
+                        break;
                     case "EA":
                         newRequest.AlgToUse = AlgType.EA_E;
+                        break;
+                    case "RealTime":
+                        newRequest.AlgToUse = AlgType.RealTime_E;
                         break;
                 }
             }
@@ -636,8 +649,17 @@ namespace TCPIPTest
                     case "TopN":
                         newRequest.AlgToUse = AlgType.TopN;
                         break;
+                    case "TopTwoH":
+                        newRequest.AlgToUse = AlgType.TopTwoH;
+                        break;
+                    case "TopNH":
+                        newRequest.AlgToUse = AlgType.TopNH;
+                        break;
                     case "EA":
                         newRequest.AlgToUse = AlgType.EA;
+                        break;
+                    case "RealTime":
+                        newRequest.AlgToUse = AlgType.RealTime;
                         break;
                 }
             }

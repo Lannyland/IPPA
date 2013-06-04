@@ -174,7 +174,10 @@ namespace IPPA
             {
                 if (arrResponses[i] != null)
                 {
-                    curRequest.SetLog("Path " + (i + 1) + ": CDF = " + arrResponses[i].CDF + "\n");
+                    if (ProjectConstants.DebugMode)
+                    {
+                        curRequest.SetLog("Path " + (i + 1) + ": CDF = " + arrResponses[i].CDF + "\n");
+                    }
                     if (bestCDF < arrResponses[i].CDF)
                     {
                         bestCDF = arrResponses[i].CDF;

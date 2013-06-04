@@ -209,9 +209,12 @@ namespace IPPA
            
             // Log activity
             Log("New path planning request queued...\n");
-            Log("----------------------------------------------");
-            Log("----------------------------------------------\n");
-            Log(GetRequestDetail(lstRequestQueue.Count-1)+"\n\n");
+            if (ProjectConstants.DebugMode)
+            {
+                Log("----------------------------------------------");
+                Log("----------------------------------------------\n");
+                Log(GetRequestDetail(lstRequestQueue.Count - 1) + "\n\n");
+            }
         }
 
         // Function to remove top item from queue
