@@ -537,7 +537,7 @@ namespace TCPIPTest
             ListViewItem item = lvQueue.Items[0];
             newRequest.UseDistributionMap = chkUseDist.Checked;
             newRequest.UseTaskDifficultyMap = chkUseDiff.Checked;
-            newRequest.UseHiararchy = chkHiararchy.Checked;
+            newRequest.UseHierarchy = chkHierarchy.Checked;
             newRequest.UseCoarseToFineSearch = chkCoaseToFine.Checked;
             newRequest.UseParallelProcessing = chkParallel.Checked;
             if (rbtnFixWing.Checked)
@@ -688,7 +688,7 @@ namespace TCPIPTest
             ProtoBuffer.PathPlanningRequest.Builder newPBRequest = ProtoBuffer.PathPlanningRequest.CreateBuilder();
             newPBRequest.SetUseDistributionMap(newRequest.UseDistributionMap)
                       .SetUseTaskDifficultyMap(newRequest.UseTaskDifficultyMap)
-                      .SetUseHiararchy(newRequest.UseHiararchy)
+                      .SetUseHierarchy(newRequest.UseHierarchy)
                       .SetUseCoarseToFineSearch(newRequest.UseCoarseToFineSearch)
                       .SetUseParallelProcessing(newRequest.UseParallelProcessing)
                       .SetVehicleType((ProtoBuffer.PathPlanningRequest.Types.UAVType)newRequest.VehicleType)

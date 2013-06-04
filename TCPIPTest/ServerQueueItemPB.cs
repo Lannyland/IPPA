@@ -38,46 +38,47 @@ namespace ProtoBuffer {
     static ServerQueueItemPB() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           "CiB0dXRvcmlhbC9TZXJ2ZXJRdWV1ZUl0ZW1QQi5wcm90bxILUHJvdG9CdWZm" + 
-          "ZXIi5woKE1BhdGhQbGFubmluZ1JlcXVlc3QSIAoSVXNlRGlzdHJpYnV0aW9u" + 
-          "TWFwGAEgASgIOgR0cnVlEiMKFFVzZVRhc2tEaWZmaWN1bHR5TWFwGAIgASgI" + 
-          "OgVmYWxzZRIbCgxVc2VIaWFyYXJjaHkYAyABKAg6BWZhbHNlEiQKFVVzZUNv" + 
-          "YXJzZVRvRmluZVNlYXJjaBgEIAEoCDoFZmFsc2USJAoVVXNlUGFyYWxsZWxQ" + 
-          "cm9jZXNzaW5nGAUgASgIOgVmYWxzZRJFCgtWZWhpY2xlVHlwZRgGIAEoDjIo" + 
-          "LlByb3RvQnVmZmVyLlBhdGhQbGFubmluZ1JlcXVlc3QuVUFWVHlwZToGQ29w" + 
-          "dGVyElQKDURldGVjdGlvblR5cGUYByABKA4yJi5Qcm90b0J1ZmZlci5QYXRo" + 
-          "UGxhbm5pbmdSZXF1ZXN0LkRUeXBlOhVGaXhBbW91bnRJblBlcmNlbnRhZ2US" + 
-          "GAoNRGV0ZWN0aW9uUmF0ZRgIIAEoAToBMRI4CgdEaXN0TWFwGAkgASgLMicu" + 
-          "UHJvdG9CdWZmZXIuUGF0aFBsYW5uaW5nUmVxdWVzdC5NYXRyaXgSOAoHRGlm" + 
-          "Zk1hcBgKIAEoCzInLlByb3RvQnVmZmVyLlBhdGhQbGFubmluZ1JlcXVlc3Qu" + 
-          "TWF0cml4EhoKC1VzZUVuZFBvaW50GAsgASgIOgVmYWxzZRIOCgFUGAwgASgF" + 
-          "OgM2MDASOgoGcFN0YXJ0GA0gASgLMiouUHJvdG9CdWZmZXIuUGF0aFBsYW5u" + 
-          "aW5nUmVxdWVzdC5EaXN0UG9pbnQSOAoEcEVuZBgOIAEoCzIqLlByb3RvQnVm" + 
-          "ZmVyLlBhdGhQbGFubmluZ1JlcXVlc3QuRGlzdFBvaW50EkUKCEFsZ1RvVXNl" + 
-          "GA8gASgOMiguUHJvdG9CdWZmZXIuUGF0aFBsYW5uaW5nUmVxdWVzdC5BbGdU" + 
-          "eXBlOglMSENHV0NPTlYSFwoIQmF0Y2hSdW4YECABKAg6BWZhbHNlEhQKCFJ1" + 
-          "blRpbWVzGBEgASgFOgIxMBIYCg1NYXhEaWZmaWN1bHR5GBIgASgFOgEzEhAK" + 
-          "CERpZmZSYXRlGBMgAygBEhcKCERyYXdQYXRoGBQgASgIOgVmYWxzZRIMCgFk" + 
-          "GBUgASgFOgEwEhQKCVRvcE5Db3VudBgWIAEoBToBMxoZCglNYXRyaXhSb3cS" + 
-          "DAoEY2VsbBgBIAMoAhpBCgZNYXRyaXgSNwoDcm93GAEgAygLMiouUHJvdG9C" + 
-          "dWZmZXIuUGF0aFBsYW5uaW5nUmVxdWVzdC5NYXRyaXhSb3caLgoJRGlzdFBv" + 
-          "aW50Eg4KA3JvdxgBIAEoBToBMBIRCgZjb2x1bW4YAiABKAU6ATAiIgoHVUFW" + 
-          "VHlwZRILCgdGaXhXaW5nEAASCgoGQ29wdGVyEAEiRAoFRFR5cGUSDQoJRml4" + 
-          "QW1vdW50EAASGQoVRml4QW1vdW50SW5QZXJjZW50YWdlEAESEQoNRml4UGVy" + 
-          "Y2VudGFnZRACIvsBCgdBbGdUeXBlEgYKAkNDEAASCAoEQ0NfRRABEg0KCUxI" + 
-          "Q0dXQ09OVhACEg8KC0xIQ0dXQ09OVl9FEAMSCwoHTEhDR1dQRhAEEg0KCUxI" + 
-          "Q0dXUEZfRRAFEg0KCUxIQ1JhbmRvbRAGEg8KC0xIQ1JhbmRvbV9FEAcSCgoG" + 
-          "UmFuZG9tEAgSDAoIUmFuZG9tX0UQCRIICgRDT05WEAoSCgoGQ09OVl9FEAsS" + 
-          "BgoCUEYQDBIICgRQRl9FEA0SCgoGVG9wVHdvEA4SDAoIVG9wVHdvX0UQDxII" + 
-          "CgRUb3BOEBASCgoGVG9wTl9FEBESBgoCRUEQEhIICgRFQV9FEBMiZAoPU2Vy" + 
-          "dmVyUXVldWVJdGVtEhsKCENhbGxlcklQGAEgASgJOgkxMjcuMC4wLjESNAoK" + 
-          "Y3VyUmVxdWVzdBgCIAEoCzIgLlByb3RvQnVmZmVyLlBhdGhQbGFubmluZ1Jl" + 
-          "cXVlc3RCAkgB");
+          "ZXIitAsKE1BhdGhQbGFubmluZ1JlcXVlc3QSIAoSVXNlRGlzdHJpYnV0aW9u" + 
+          "TWFwGAEgASgIOgR0cnVlEiIKFFVzZVRhc2tEaWZmaWN1bHR5TWFwGAIgASgI" + 
+          "OgR0cnVlEhoKDFVzZUhpZXJhcmNoeRgDIAEoCDoEdHJ1ZRIjChVVc2VDb2Fy" + 
+          "c2VUb0ZpbmVTZWFyY2gYBCABKAg6BHRydWUSIwoVVXNlUGFyYWxsZWxQcm9j" + 
+          "ZXNzaW5nGAUgASgIOgR0cnVlEkUKC1ZlaGljbGVUeXBlGAYgASgOMiguUHJv" + 
+          "dG9CdWZmZXIuUGF0aFBsYW5uaW5nUmVxdWVzdC5VQVZUeXBlOgZDb3B0ZXIS" + 
+          "VAoNRGV0ZWN0aW9uVHlwZRgHIAEoDjImLlByb3RvQnVmZmVyLlBhdGhQbGFu" + 
+          "bmluZ1JlcXVlc3QuRFR5cGU6FUZpeEFtb3VudEluUGVyY2VudGFnZRIYCg1E" + 
+          "ZXRlY3Rpb25SYXRlGAggASgBOgExEjgKB0Rpc3RNYXAYCSABKAsyJy5Qcm90" + 
+          "b0J1ZmZlci5QYXRoUGxhbm5pbmdSZXF1ZXN0Lk1hdHJpeBI4CgdEaWZmTWFw" + 
+          "GAogASgLMicuUHJvdG9CdWZmZXIuUGF0aFBsYW5uaW5nUmVxdWVzdC5NYXRy" + 
+          "aXgSGgoLVXNlRW5kUG9pbnQYCyABKAg6BWZhbHNlEg4KAVQYDCABKAU6AzYw" + 
+          "MBI6CgZwU3RhcnQYDSABKAsyKi5Qcm90b0J1ZmZlci5QYXRoUGxhbm5pbmdS" + 
+          "ZXF1ZXN0LkRpc3RQb2ludBI4CgRwRW5kGA4gASgLMiouUHJvdG9CdWZmZXIu" + 
+          "UGF0aFBsYW5uaW5nUmVxdWVzdC5EaXN0UG9pbnQSRAoIQWxnVG9Vc2UYDyAB" + 
+          "KA4yKC5Qcm90b0J1ZmZlci5QYXRoUGxhbm5pbmdSZXF1ZXN0LkFsZ1R5cGU6" + 
+          "CFJFQUxUSU1FEhcKCEJhdGNoUnVuGBAgASgIOgVmYWxzZRIUCghSdW5UaW1l" + 
+          "cxgRIAEoBToCMTASGAoNTWF4RGlmZmljdWx0eRgSIAEoBToBMxIQCghEaWZm" + 
+          "UmF0ZRgTIAMoARIXCghEcmF3UGF0aBgUIAEoCDoFZmFsc2USDAoBZBgVIAEo" + 
+          "BToBMBIUCglUb3BOQ291bnQYFiABKAU6ATMaGQoJTWF0cml4Um93EgwKBGNl" + 
+          "bGwYASADKAIaQQoGTWF0cml4EjcKA3JvdxgBIAMoCzIqLlByb3RvQnVmZmVy" + 
+          "LlBhdGhQbGFubmluZ1JlcXVlc3QuTWF0cml4Um93Gi4KCURpc3RQb2ludBIO" + 
+          "CgNyb3cYASABKAU6ATASEQoGY29sdW1uGAIgASgFOgEwIiIKB1VBVlR5cGUS" + 
+          "CwoHRml4V2luZxAAEgoKBkNvcHRlchABIkQKBURUeXBlEg0KCUZpeEFtb3Vu" + 
+          "dBAAEhkKFUZpeEFtb3VudEluUGVyY2VudGFnZRABEhEKDUZpeFBlcmNlbnRh" + 
+          "Z2UQAiLNAgoHQWxnVHlwZRIGCgJDQxAAEggKBENDX0UQARINCglMSENHV0NP" + 
+          "TlYQAhIPCgtMSENHV0NPTlZfRRADEgsKB0xIQ0dXUEYQBBINCglMSENHV1BG" + 
+          "X0UQBRINCglMSENSYW5kb20QBhIPCgtMSENSYW5kb21fRRAHEgoKBlJhbmRv" + 
+          "bRAIEgwKCFJhbmRvbV9FEAkSCAoEQ09OVhAKEgoKBkNPTlZfRRALEgYKAlBG" + 
+          "EAwSCAoEUEZfRRANEgoKBlRvcFR3bxAOEgwKCFRvcFR3b19FEA8SCAoEVG9w" + 
+          "ThAQEgoKBlRvcE5fRRAREgsKB1RvcFR3b0gQEhINCglUb3BUd29IX0UQExIJ" + 
+          "CgVUb3BOSBAUEgsKB1RvcE5IX0UQFRIGCgJFQRAWEggKBEVBX0UQFxIMCghS" + 
+          "RUFMVElNRRAYEg4KClJFQUxUSU1FX0UQGSJkCg9TZXJ2ZXJRdWV1ZUl0ZW0S" + 
+          "GwoIQ2FsbGVySVAYASABKAk6CTEyNy4wLjAuMRI0CgpjdXJSZXF1ZXN0GAIg" + 
+          "ASgLMiAuUHJvdG9CdWZmZXIuUGF0aFBsYW5uaW5nUmVxdWVzdEICSAE=");
       pbd::FileDescriptor.InternalDescriptorAssigner assigner = delegate(pbd::FileDescriptor root) {
         descriptor = root;
         internal__static_ProtoBuffer_PathPlanningRequest__Descriptor = Descriptor.MessageTypes[0];
         internal__static_ProtoBuffer_PathPlanningRequest__FieldAccessorTable = 
             new pb::FieldAccess.FieldAccessorTable<global::ProtoBuffer.PathPlanningRequest, global::ProtoBuffer.PathPlanningRequest.Builder>(internal__static_ProtoBuffer_PathPlanningRequest__Descriptor,
-                new string[] { "UseDistributionMap", "UseTaskDifficultyMap", "UseHiararchy", "UseCoarseToFineSearch", "UseParallelProcessing", "VehicleType", "DetectionType", "DetectionRate", "DistMap", "DiffMap", "UseEndPoint", "T", "PStart", "PEnd", "AlgToUse", "BatchRun", "RunTimes", "MaxDifficulty", "DiffRate", "DrawPath", "D", "TopNCount", });
+                new string[] { "UseDistributionMap", "UseTaskDifficultyMap", "UseHierarchy", "UseCoarseToFineSearch", "UseParallelProcessing", "VehicleType", "DetectionType", "DetectionRate", "DistMap", "DiffMap", "UseEndPoint", "T", "PStart", "PEnd", "AlgToUse", "BatchRun", "RunTimes", "MaxDifficulty", "DiffRate", "DrawPath", "D", "TopNCount", });
         internal__static_ProtoBuffer_PathPlanningRequest_MatrixRow__Descriptor = internal__static_ProtoBuffer_PathPlanningRequest__Descriptor.NestedTypes[0];
         internal__static_ProtoBuffer_PathPlanningRequest_MatrixRow__FieldAccessorTable = 
             new pb::FieldAccess.FieldAccessorTable<global::ProtoBuffer.PathPlanningRequest.Types.MatrixRow, global::ProtoBuffer.PathPlanningRequest.Types.MatrixRow.Builder>(internal__static_ProtoBuffer_PathPlanningRequest_MatrixRow__Descriptor,
@@ -110,7 +111,7 @@ namespace ProtoBuffer {
   public sealed partial class PathPlanningRequest : pb::GeneratedMessage<PathPlanningRequest, PathPlanningRequest.Builder> {
     private PathPlanningRequest() { }
     private static readonly PathPlanningRequest defaultInstance = new PathPlanningRequest().MakeReadOnly();
-    private static readonly string[] _pathPlanningRequestFieldNames = new string[] { "AlgToUse", "BatchRun", "DetectionRate", "DetectionType", "DiffMap", "DiffRate", "DistMap", "DrawPath", "MaxDifficulty", "RunTimes", "T", "TopNCount", "UseCoarseToFineSearch", "UseDistributionMap", "UseEndPoint", "UseHiararchy", "UseParallelProcessing", "UseTaskDifficultyMap", "VehicleType", "d", "pEnd", "pStart" };
+    private static readonly string[] _pathPlanningRequestFieldNames = new string[] { "AlgToUse", "BatchRun", "DetectionRate", "DetectionType", "DiffMap", "DiffRate", "DistMap", "DrawPath", "MaxDifficulty", "RunTimes", "T", "TopNCount", "UseCoarseToFineSearch", "UseDistributionMap", "UseEndPoint", "UseHierarchy", "UseParallelProcessing", "UseTaskDifficultyMap", "VehicleType", "d", "pEnd", "pStart" };
     private static readonly uint[] _pathPlanningRequestFieldTags = new uint[] { 120, 128, 65, 56, 82, 153, 74, 160, 144, 136, 96, 176, 32, 8, 88, 24, 40, 16, 48, 168, 114, 106 };
     public static PathPlanningRequest DefaultInstance {
       get { return defaultInstance; }
@@ -173,8 +174,14 @@ namespace ProtoBuffer {
         TopTwo_E = 15,
         TopN = 16,
         TopN_E = 17,
-        EA = 18,
-        EA_E = 19,
+        TopTwoH = 18,
+        TopTwoH_E = 19,
+        TopNH = 20,
+        TopNH_E = 21,
+        EA = 22,
+        EA_E = 23,
+        REALTIME = 24,
+        REALTIME_E = 25,
       }
       
       [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1101,7 +1108,7 @@ namespace ProtoBuffer {
     
     public const int UseTaskDifficultyMapFieldNumber = 2;
     private bool hasUseTaskDifficultyMap;
-    private bool useTaskDifficultyMap_;
+    private bool useTaskDifficultyMap_ = true;
     public bool HasUseTaskDifficultyMap {
       get { return hasUseTaskDifficultyMap; }
     }
@@ -1109,19 +1116,19 @@ namespace ProtoBuffer {
       get { return useTaskDifficultyMap_; }
     }
     
-    public const int UseHiararchyFieldNumber = 3;
-    private bool hasUseHiararchy;
-    private bool useHiararchy_;
-    public bool HasUseHiararchy {
-      get { return hasUseHiararchy; }
+    public const int UseHierarchyFieldNumber = 3;
+    private bool hasUseHierarchy;
+    private bool useHierarchy_ = true;
+    public bool HasUseHierarchy {
+      get { return hasUseHierarchy; }
     }
-    public bool UseHiararchy {
-      get { return useHiararchy_; }
+    public bool UseHierarchy {
+      get { return useHierarchy_; }
     }
     
     public const int UseCoarseToFineSearchFieldNumber = 4;
     private bool hasUseCoarseToFineSearch;
-    private bool useCoarseToFineSearch_;
+    private bool useCoarseToFineSearch_ = true;
     public bool HasUseCoarseToFineSearch {
       get { return hasUseCoarseToFineSearch; }
     }
@@ -1131,7 +1138,7 @@ namespace ProtoBuffer {
     
     public const int UseParallelProcessingFieldNumber = 5;
     private bool hasUseParallelProcessing;
-    private bool useParallelProcessing_;
+    private bool useParallelProcessing_ = true;
     public bool HasUseParallelProcessing {
       get { return hasUseParallelProcessing; }
     }
@@ -1231,7 +1238,7 @@ namespace ProtoBuffer {
     
     public const int AlgToUseFieldNumber = 15;
     private bool hasAlgToUse;
-    private global::ProtoBuffer.PathPlanningRequest.Types.AlgType algToUse_ = global::ProtoBuffer.PathPlanningRequest.Types.AlgType.LHCGWCONV;
+    private global::ProtoBuffer.PathPlanningRequest.Types.AlgType algToUse_ = global::ProtoBuffer.PathPlanningRequest.Types.AlgType.REALTIME;
     public bool HasAlgToUse {
       get { return hasAlgToUse; }
     }
@@ -1326,8 +1333,8 @@ namespace ProtoBuffer {
       if (hasUseTaskDifficultyMap) {
         output.WriteBool(2, field_names[17], UseTaskDifficultyMap);
       }
-      if (hasUseHiararchy) {
-        output.WriteBool(3, field_names[15], UseHiararchy);
+      if (hasUseHierarchy) {
+        output.WriteBool(3, field_names[15], UseHierarchy);
       }
       if (hasUseCoarseToFineSearch) {
         output.WriteBool(4, field_names[12], UseCoarseToFineSearch);
@@ -1402,8 +1409,8 @@ namespace ProtoBuffer {
         if (hasUseTaskDifficultyMap) {
           size += pb::CodedOutputStream.ComputeBoolSize(2, UseTaskDifficultyMap);
         }
-        if (hasUseHiararchy) {
-          size += pb::CodedOutputStream.ComputeBoolSize(3, UseHiararchy);
+        if (hasUseHierarchy) {
+          size += pb::CodedOutputStream.ComputeBoolSize(3, UseHierarchy);
         }
         if (hasUseCoarseToFineSearch) {
           size += pb::CodedOutputStream.ComputeBoolSize(4, UseCoarseToFineSearch);
@@ -1598,8 +1605,8 @@ namespace ProtoBuffer {
         if (other.HasUseTaskDifficultyMap) {
           UseTaskDifficultyMap = other.UseTaskDifficultyMap;
         }
-        if (other.HasUseHiararchy) {
-          UseHiararchy = other.UseHiararchy;
+        if (other.HasUseHierarchy) {
+          UseHierarchy = other.UseHierarchy;
         }
         if (other.HasUseCoarseToFineSearch) {
           UseCoarseToFineSearch = other.UseCoarseToFineSearch;
@@ -1710,7 +1717,7 @@ namespace ProtoBuffer {
               break;
             }
             case 24: {
-              result.hasUseHiararchy = input.ReadBool(ref result.useHiararchy_);
+              result.hasUseHierarchy = input.ReadBool(ref result.useHierarchy_);
               break;
             }
             case 32: {
@@ -1880,27 +1887,27 @@ namespace ProtoBuffer {
       public Builder ClearUseTaskDifficultyMap() {
         PrepareBuilder();
         result.hasUseTaskDifficultyMap = false;
-        result.useTaskDifficultyMap_ = false;
+        result.useTaskDifficultyMap_ = true;
         return this;
       }
       
-      public bool HasUseHiararchy {
-        get { return result.hasUseHiararchy; }
+      public bool HasUseHierarchy {
+        get { return result.hasUseHierarchy; }
       }
-      public bool UseHiararchy {
-        get { return result.UseHiararchy; }
-        set { SetUseHiararchy(value); }
+      public bool UseHierarchy {
+        get { return result.UseHierarchy; }
+        set { SetUseHierarchy(value); }
       }
-      public Builder SetUseHiararchy(bool value) {
+      public Builder SetUseHierarchy(bool value) {
         PrepareBuilder();
-        result.hasUseHiararchy = true;
-        result.useHiararchy_ = value;
+        result.hasUseHierarchy = true;
+        result.useHierarchy_ = value;
         return this;
       }
-      public Builder ClearUseHiararchy() {
+      public Builder ClearUseHierarchy() {
         PrepareBuilder();
-        result.hasUseHiararchy = false;
-        result.useHiararchy_ = false;
+        result.hasUseHierarchy = false;
+        result.useHierarchy_ = true;
         return this;
       }
       
@@ -1920,7 +1927,7 @@ namespace ProtoBuffer {
       public Builder ClearUseCoarseToFineSearch() {
         PrepareBuilder();
         result.hasUseCoarseToFineSearch = false;
-        result.useCoarseToFineSearch_ = false;
+        result.useCoarseToFineSearch_ = true;
         return this;
       }
       
@@ -1940,7 +1947,7 @@ namespace ProtoBuffer {
       public Builder ClearUseParallelProcessing() {
         PrepareBuilder();
         result.hasUseParallelProcessing = false;
-        result.useParallelProcessing_ = false;
+        result.useParallelProcessing_ = true;
         return this;
       }
       
@@ -2220,7 +2227,7 @@ namespace ProtoBuffer {
       public Builder ClearAlgToUse() {
         PrepareBuilder();
         result.hasAlgToUse = false;
-        result.algToUse_ = global::ProtoBuffer.PathPlanningRequest.Types.AlgType.LHCGWCONV;
+        result.algToUse_ = global::ProtoBuffer.PathPlanningRequest.Types.AlgType.REALTIME;
         return this;
       }
       

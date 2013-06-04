@@ -86,7 +86,7 @@
             this.chkParallel = new System.Windows.Forms.CheckBox();
             this.chkCoaseToFine = new System.Windows.Forms.CheckBox();
             this.chkUseDiff = new System.Windows.Forms.CheckBox();
-            this.chkHiararchy = new System.Windows.Forms.CheckBox();
+            this.chkHierarchy = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             ((System.ComponentModel.ISupportInitialize)(this.ntxtEY)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ntxtEX)).BeginInit();
@@ -750,19 +750,19 @@
             this.chkUseDiff.Text = "Load task-difficulty map";
             this.chkUseDiff.UseVisualStyleBackColor = true;
             // 
-            // chkHiararchy
+            // chkHierarchy
             // 
-            this.chkHiararchy.AutoSize = true;
-            this.chkHiararchy.Location = new System.Drawing.Point(12, 69);
-            this.chkHiararchy.Name = "chkHiararchy";
-            this.chkHiararchy.Size = new System.Drawing.Size(151, 17);
-            this.chkHiararchy.TabIndex = 2;
-            this.chkHiararchy.Text = "Enable hiararchical search";
-            this.chkHiararchy.UseVisualStyleBackColor = true;
+            this.chkHierarchy.AutoSize = true;
+            this.chkHierarchy.Location = new System.Drawing.Point(12, 69);
+            this.chkHierarchy.Name = "chkHierarchy";
+            this.chkHierarchy.Size = new System.Drawing.Size(151, 17);
+            this.chkHierarchy.TabIndex = 2;
+            this.chkHierarchy.Text = "Enable hiararchical search";
+            this.chkHierarchy.UseVisualStyleBackColor = true;
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.chkHiararchy);
+            this.groupBox1.Controls.Add(this.chkHierarchy);
             this.groupBox1.Controls.Add(this.groupBox6);
             this.groupBox1.Controls.Add(this.gboxDetectionType);
             this.groupBox1.Controls.Add(this.gboxUAVType);
@@ -872,7 +872,7 @@
         private System.Windows.Forms.CheckBox chkParallel;
         private System.Windows.Forms.CheckBox chkCoaseToFine;
         private System.Windows.Forms.CheckBox chkUseDiff;
-        private System.Windows.Forms.CheckBox chkHiararchy;
+        private System.Windows.Forms.CheckBox chkHierarchy;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.NumericUpDown ntxtTopNCount;

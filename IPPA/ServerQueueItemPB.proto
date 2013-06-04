@@ -4,10 +4,10 @@ option optimize_for = SPEED;
 
 message PathPlanningRequest {
   optional bool UseDistributionMap = 1 [default = true]; 
-  optional bool UseTaskDifficultyMap = 2 [default = false];
-  optional bool UseHierarchy = 3 [default = false];
-  optional bool UseCoarseToFineSearch = 4 [default = false];
-  optional bool UseParallelProcessing = 5 [default = false];
+  optional bool UseTaskDifficultyMap = 2 [default = true];
+  optional bool UseHierarchy = 3 [default = true];
+  optional bool UseCoarseToFineSearch = 4 [default = true];
+  optional bool UseParallelProcessing = 5 [default = true];
   optional UAVType VehicleType = 6 [default = Copter];
   optional DType DetectionType = 7 [default = FixAmountInPercentage];
   optional double DetectionRate = 8 [default = 1];
@@ -56,10 +56,14 @@ message PathPlanningRequest {
     TopTwo_E = 15;
     TopN = 16;
     TopN_E = 17;
-    EA = 18;
-    EA_E = 19;
-	REALTIME = 20;
-	REALTIME_E = 21;
+    TopTwoH = 18;
+	TopTwoH_E = 19;
+	TopNH = 20;
+	TopNH_E = 21;
+	EA = 22;
+    EA_E = 23;
+	REALTIME = 24;
+	REALTIME_E = 25;
   }
   
   message MatrixRow {
