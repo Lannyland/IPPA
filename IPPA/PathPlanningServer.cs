@@ -114,8 +114,8 @@ namespace IPPA
             {
                 // Blocks until a client sends a message
                 Console.WriteLine("clientThread: working...");
-                try
-                {
+                //try
+                //{
                     // Get data over TCP
                     byte[] byteTrimmed = ProtoBuffer.TCPHandler.RecieveData(clientSocket, clientStream);
 
@@ -166,14 +166,14 @@ namespace IPPA
                     theForm.Invoke(theForm.dLogCallBack, new object[] { "Path planning result sent back to client.\n\n" });
 
                     break;
-                }
-                catch (Exception e)
-                {
-                    // A socket error has occured
-                    // theForm.Log(e.Message);
-                    System.Windows.Forms.MessageBox.Show(e.Message);
-                    break;
-                }
+                //}
+                //catch (Exception e)
+                //{
+                //    // A socket error has occured
+                //    // theForm.Log(e.Message);
+                //    System.Windows.Forms.MessageBox.Show(e.Message);
+                //    break;
+                //}
             }
 
             clientStream.Close();
