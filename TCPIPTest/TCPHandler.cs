@@ -77,7 +77,7 @@ namespace ProtoBuffer
                     }
 
                     // When data is ready to be read, read as much as possible (up to buffer size)
-                    byteRead = clientStream.Read(bytesFrom, 0, bufferSize);
+                    byteRead = clientStream.Read(bytesFrom, 0, 8192);
                     Console.WriteLine("Read " + byteRead + " bytes this time.");
 
                     // First time also get the data size
