@@ -63,14 +63,14 @@ namespace ProtoBuffer
                 {
                     // See if data is available to read. If not, then wait. 
                     int smallCounter = 0;
-                    while (!clientStream.DataAvailable && smallCounter < 10)
+                    while (!clientStream.DataAvailable && smallCounter < IPPA.ProjectConstants.MaxWaitTime + 1)
                     {
                         Console.WriteLine("Data not available, wait...");
                         Thread.Sleep(10);
                         smallCounter++;
                         Console.WriteLine(clientStream.DataAvailable);
                     }
-                    if (smallCounter > 20)
+                    if (smallCounter > IPPA.ProjectConstants.MaxWaitTime)
                     {
                         Exception ex = new SocketException();
                         throw ex;

@@ -65,5 +65,9 @@ namespace TCPIPTest
         public static int TopNCount = 3;            // Default N
         public static int Kernel_Size = 5;          // What size kenel for convolution       
         public static int Max_N = 5;                // Maximum number of Gaussians to fit 
+
+        // Max wait time (*10)
+        public static int MaxWaitTime = 1500;            // 15000 milisecond, so 15 seconds.
+
     }
 }

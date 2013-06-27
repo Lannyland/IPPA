@@ -88,6 +88,11 @@ namespace IPPA
         public static int Kernel_Size = 5;          // What size kenel for convolution       
         public static int Max_N = 5;                // Maximum number of Gaussians to fit 
 
-        public static int DownSample_Rate = 30;     // Only use a percentage of the samples (from probability distribution map)
+        // When called from self, because scale to 255, so set to 25.
+        // When called from PathPlanner Unity, because scale to 4, so set to 0.4;
+        public static float DownSample_Rate = 0.4f;     // Only use a percentage of the samples (from probability distribution map)
+
+        // Max wait time (*10)
+        public static int MaxWaitTime = 1500;            // 15000 milisecond, so 15 seconds.
     }
 }

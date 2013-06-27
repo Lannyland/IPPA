@@ -235,7 +235,7 @@ namespace IPPA
                 {
                     // Depending on the current position, decide which direction to go
                     // Do the following as long as there's still time or if I return back to boxstart
-                    while (((CurPoint.X != boxstart.X || CurPoint.Y != boxstart.Y) && RealT <= curRequest.T) || AtBoxStart)
+                    while (((CurPoint.X != boxstart.X || CurPoint.Y != boxstart.Y) && RealT < curRequest.T) || AtBoxStart)
                     {
                         // Don't add boxstart, but add future nodes
                         if (!AtBoxStart)

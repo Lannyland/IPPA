@@ -103,6 +103,10 @@ namespace IPPA
             double Efficiency_UB = myELB.GetEfficiency_UB();
             myELB = null;
 
+            // Set sample rate based on max value in mdistReachable.
+            float max = mDistReachable.MinMaxValue()[1];
+            ProjectConstants.DownSample_Rate = max / 10f;
+
             // Do the batch run of Path Planning
             List<double> AllRunTimes = new List<double>();
             List<double> AllEfficiencies = new List<double>();

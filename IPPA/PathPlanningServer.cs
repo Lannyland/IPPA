@@ -163,7 +163,7 @@ namespace IPPA
                     clientStream.Write(outStream, 0, outStream.Length);
                     clientStream.Flush();
 
-                    theForm.Invoke(theForm.dLogCallBack, new object[] { "Path planning result sent back to client.\n\n" });
+                    theForm.Invoke(theForm.dLogCallBack, new object[] { "Path length " + curPath.Count + " planning result sent back to client.\n\n" });
 
                     break;
                 //}
