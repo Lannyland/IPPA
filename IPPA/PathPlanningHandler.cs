@@ -177,7 +177,7 @@ namespace IPPA
                     return false;
                 }
 
-                if (curRequest.T % 2 != dist % 2)
+                if (curRequest.VehicleType == UAVType.FixWing && curRequest.T % 2 != dist % 2)
                 {
                     // Impossible to get from A to B in the exact allowed flight time
                     System.Windows.Forms.MessageBox.Show("Impossible to reach end point at time T! Add 1 or minus 1!");
