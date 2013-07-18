@@ -34,7 +34,7 @@ namespace IPPA
             if (theForm.blnServerRunning)
             {
                 // Setup a listener at all network cards, port 8888
-                this.serverSocket = new TcpListener(IPAddress.Any, 8888);
+                this.serverSocket = new TcpListener(IPAddress.Any, 80);
                 this.listenThread = new Thread(new ThreadStart(ListenForClients));
                 this.listenThread.Name = "listenThread";
                 this.listenThread.Start();
