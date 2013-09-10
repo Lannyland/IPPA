@@ -23,7 +23,7 @@ namespace IPPA
         private int CTFGWCoraseLevel;
         private int CTFGWLevelCount;
         private int PFCount;
-        private static Mutex mut = new Mutex();
+        // private static Mutex mut = new Mutex();
 
         // Variabes used for threads
         private PathPlanningResponse[] arrResponses = null;
@@ -640,11 +640,11 @@ namespace IPPA
         // Store path planning results to array
         private void StoreResults(int index)
         {
-            // Wait until it is safe to enter.
-            mut.WaitOne();
+            //// Wait until it is safe to enter.
+            //mut.WaitOne();
 
-            Console.WriteLine("{0} has entered the protected area",
-                Thread.CurrentThread.Name);
+            //Console.WriteLine("{0} has entered the protected area",
+            //    Thread.CurrentThread.Name);
 
             // Plan path
             lstThreads[index].PlanPath();
@@ -657,20 +657,12 @@ namespace IPPA
                                     lstThreads[index].GetRunTime(),
                                     lstThreads[index].GetEfficiency(),
                                     lstThreads[index].GetPath());
-            
-                        //arrResponses[index] = new PathPlanningResponse(
-                        //            lstThreads[index].index,
-                        //            1000,
-                        //            10000,
-                        //            10000,
-                        //            lstThreads[index].GetPath());
 
+            //Console.WriteLine("{0} is leaving the protected area\r\n",
+            //            Thread.CurrentThread.Name);
 
-            Console.WriteLine("{0} is leaving the protected area\r\n",
-                        Thread.CurrentThread.Name);
-
-            // Release the Mutex.
-            mut.ReleaseMutex();
+            //// Release the Mutex.
+            //mut.ReleaseMutex();
         }
 
         // Find best path in parallel version
