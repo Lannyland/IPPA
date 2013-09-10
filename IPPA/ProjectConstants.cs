@@ -7,7 +7,7 @@ namespace IPPA
     class ProjectConstants
     {
         // Whether to print debug iformation to server activity log
-        public static bool DebugMode = false;
+        public static bool DebugMode = true;
         
         // Whether to print out CDF for graphs and charts
         public static bool GraphCDF = false;
