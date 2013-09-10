@@ -23,6 +23,7 @@ namespace IPPA
         private int CTFGWCoraseLevel;
         private int CTFGWLevelCount;
         private int PFCount;
+        private static Mutex mut = new Mutex();
 
         // Variabes used for threads
         private PathPlanningResponse[] arrResponses = null;
@@ -73,6 +74,11 @@ namespace IPPA
                 {
                     // Uniform distribution or unimodal distribution or path distribution (possibly with splits)
                     NoGWSearch();
+                    if (curRequest.UseParallelProcessing)
+                    {
+                        // Spawn threads to plan path
+                        SpawnThreads();
+                    }
                     return;
                 }
             }
@@ -433,6 +439,7 @@ namespace IPPA
         // At current GW do LHC
         private bool PlanPathAtCurrentGW(RtwMatrix mGW, int index)
         {
+            #region Deal with LHCGWCONV and LHCGWCONV_E algorithms
             // Console.WriteLine("Doing PlanPathAtCurrentGW once!");
             if (curRequest.AlgToUse == AlgType.LHCGWCONV || curRequest.AlgToUse == AlgType.LHCGWCONV_E)
             {
@@ -476,6 +483,9 @@ namespace IPPA
                 //// Print one GW per line (3 conv each line)
                 //curRequest.SetLog("\n");
             }
+            #endregion
+
+            #region Deal with LHCGWPF and LHCGWPF_E algorithms
             if (curRequest.AlgToUse == AlgType.LHCGWPF || curRequest.AlgToUse == AlgType.LHCGWPF_E)
             {
                 // If LHCGWPF, search three convolution kernal sizes
@@ -520,6 +530,9 @@ namespace IPPA
                 // Print one GW per line (3 conv each line)
                 //curRequest.SetLog("\n");
             }
+            #endregion
+
+            #region Deal with CONV and CONV_E algorithms
             if (curRequest.AlgToUse == AlgType.CONV || curRequest.AlgToUse == AlgType.CONV_E)
             {
                 // If CONV, search multiple convolution kernal sizes
@@ -562,6 +575,20 @@ namespace IPPA
                 //// Print one GW per line (3 conv each line)
                 //curRequest.SetLog("\n");
             }
+            #endregion
+
+            //// Debug code:
+            //arrResponses = new PathPlanningResponse[lstThreads.Count];
+
+            //for (int i = 0; i < lstThreads.Count; i++)
+            //{
+            //    int cur_i = i;
+            //    StoreResults(cur_i);
+            //}
+            //// Now that all threads/tasks are done, find the best one
+            //FindBestPath();
+
+
             return false;
         }
 
@@ -578,8 +605,14 @@ namespace IPPA
 
             //// Log RealCDF for each GW run
             //curRequest.SetLog(RealCDF.ToString() + ", ");
-
             if (CDF < RealCDF)
+            {
+                CDF = RealCDF;
+                Path = myAlg.GetPath();
+            }
+
+            // In case RealCDF is 0;
+            if (RealCDF - 0 < 0.0001)
             {
                 CDF = RealCDF;
                 Path = myAlg.GetPath();
@@ -607,6 +640,12 @@ namespace IPPA
         // Store path planning results to array
         private void StoreResults(int index)
         {
+            // Wait until it is safe to enter.
+            mut.WaitOne();
+
+            Console.WriteLine("{0} has entered the protected area",
+                Thread.CurrentThread.Name);
+
             // Plan path
             lstThreads[index].PlanPath();
             // I am recalculating BestCDF because the Global Warming effect lowered the probabilities
@@ -618,6 +657,20 @@ namespace IPPA
                                     lstThreads[index].GetRunTime(),
                                     lstThreads[index].GetEfficiency(),
                                     lstThreads[index].GetPath());
+            
+                        //arrResponses[index] = new PathPlanningResponse(
+                        //            lstThreads[index].index,
+                        //            1000,
+                        //            10000,
+                        //            10000,
+                        //            lstThreads[index].GetPath());
+
+
+            Console.WriteLine("{0} is leaving the protected area\r\n",
+                        Thread.CurrentThread.Name);
+
+            // Release the Mutex.
+            mut.ReleaseMutex();
         }
 
         // Find best path in parallel version
@@ -641,6 +694,7 @@ namespace IPPA
             CDF = arrResponses[bestIndex].CDF;
             Path = arrResponses[bestIndex].Path;
             bestThreadIndex = arrResponses[bestIndex].index;
+            Console.WriteLine("I was here!");
         }
 
         // Getters and Setters

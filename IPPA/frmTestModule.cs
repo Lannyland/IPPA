@@ -222,6 +222,7 @@ namespace IPPA
             frmDiffMap.Show();
 
             // Set dimensions for controls
+            // BUG: if distmap is not loaded, this crashes.
             ProjectConstants.DefaultHeight = CurDistMap.Rows;
             ProjectConstants.DefaultWidth = CurDistMap.Columns;
             ntxtSX.Maximum = ProjectConstants.DefaultWidth;
@@ -953,7 +954,15 @@ namespace IPPA
             float CDF = curAlg.GetTrueCDF(Path);
 
             // Compute efficiency
-            double Efficiency = CDF / Efficiency_UB;
+            double Efficiency = 0;
+            if (Efficiency_UB == 0)
+            {
+                Efficiency = 1;
+            }
+            else
+            {
+                Efficiency = CDF / Efficiency_UB;
+            }
 
             // Compute CDF for graph
             Console.WriteLine("Print Existing Path CDF Graph:");

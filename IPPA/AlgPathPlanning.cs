@@ -78,7 +78,14 @@ namespace IPPA
                 RunTime = duration.TotalSeconds;
 
                 // Compute Efficiency
-                Efficiency = CDF / Efficiency_UB;
+                if (Efficiency_UB == 0)
+                {
+                    Efficiency = 1;
+                }
+                else
+                {
+                    Efficiency = CDF / Efficiency_UB;
+                }
 
                 // Print out CDF Graph
                 if (ProjectConstants.GraphCDF)
