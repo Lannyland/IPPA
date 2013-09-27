@@ -69,10 +69,11 @@ namespace IPPA
         // Algorithm specific implementation of the path planning
         protected override void DoPathPlanning()
         {
-            if (HiararchicalSearch())
-            {
-                return;
-            }
+            // Disabled hiararchical decision making in EA. Since EA should have plenty of time.
+            //if (HiararchicalSearch())
+            //{
+            //    return;
+            //}
 
             DateTime startTime2 = DateTime.Now;
             // Generate initial population
@@ -315,22 +316,22 @@ namespace IPPA
                 return AllPaths;
             }
 
-            newRequest.AlgToUse = AlgType.TopTwo;
-            if (GenerateSeeds(AllPaths, newRequest, myAlg, Math.Min(ProjectConstants.Count_TopTwo, 1)))
+            newRequest.AlgToUse = AlgType.TopTwoH;
+            if (GenerateSeeds(AllPaths, newRequest, myAlg, ProjectConstants.Count_TopTwoH))
             {
                 return AllPaths;
             }
             // Simply create n copies to save time.
-            CreateEAPathCopies(AllPaths, ProjectConstants.Count_TopTwo - 1);
+            // CreateEAPathCopies(AllPaths, ProjectConstants.Count_TopTwoH - 1);
 
 
-            newRequest.AlgToUse = AlgType.TopN;
-            if (GenerateSeeds(AllPaths, newRequest, myAlg, Math.Min(ProjectConstants.Count_TopN, 1)))
+            newRequest.AlgToUse = AlgType.TopNH;
+            if (GenerateSeeds(AllPaths, newRequest, myAlg, ProjectConstants.Count_TopNH))
             {
                 return AllPaths;
             }
             // Simply create n copies to save time.
-            CreateEAPathCopies(AllPaths, ProjectConstants.Count_TopN - 1);
+            // CreateEAPathCopies(AllPaths, ProjectConstants.Count_TopNH - 1);
 
             
             // Fill the rest of the population with random
@@ -380,10 +381,10 @@ namespace IPPA
                     case AlgType.Random:
                         myAlg = new AlgRandom(newRequest, mDist, mDiff, Efficiency_UB);
                         break;
-                    case AlgType.TopTwo:
+                    case AlgType.TopTwoH:
                         myAlg = new AlgTopTwo(newRequest, ModeCount, mModes, mDist, mDiff, Efficiency_UB);
                         break;
-                    case AlgType.TopN:
+                    case AlgType.TopNH:
                         myAlg = new AlgTopTwo(newRequest, ModeCount, mModes, mDist, mDiff, Efficiency_UB);
                         break;
                     default:

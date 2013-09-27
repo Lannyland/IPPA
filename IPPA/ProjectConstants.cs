@@ -7,7 +7,7 @@ namespace IPPA
     class ProjectConstants
     {
         // Whether to print debug iformation to server activity log
-        public static bool DebugMode = false;
+        public static bool DebugMode = true;
         
         // Whether to print out CDF for graphs and charts
         public static bool GraphCDF = false;
@@ -21,19 +21,23 @@ namespace IPPA
         public static int DefaultHeight = 100;
         public static int MinFlightTime = 10;
         public static int MaxFlightTime = 3600;
-        public static int DefaultFlightTime = 150;
+        public static int DefaultFlightTime = 1800;
         public static string MapsDir = @"C:\Lanny\MAMI\IPPA\Maps";
         // public static string DefaultDistMap = @"C:\Lanny\MAMI\IPPA\Maps\DistMaps\Simple_BimodalFar.csv";
         // public static string DefaultDistMap = @"C:\Lanny\MAMI\IPPA\Maps\DistMaps\TestDistMap.csv";
         // public static string DefaultDistMap = @"C:\Lanny\MAMI\IPPA\Maps\DistMaps\Smoothed_Small_HikerPaulDist.csv";
         // public static string DefaultDistMap = @"C:\Lanny\MAMI\IPPA\Maps\DistMaps\Smoothed_Small_NewYork53Dist.csv";
-        public static string DefaultDistMap = @"C:\Lanny\MAMI\IPPA\Maps\DistMaps\TestDistMap100.csv";
+        // public static string DefaultDistMap = @"C:\Lanny\MAMI\IPPA\Maps\DistMaps\TestDistMap100.csv";
+        public static string DefaultDistMap = @"C:\Lanny\MAMI\PathPlanner\PathPlanner\UserStudyData\TestDistMap1.csv";
+
         // public static string DefaultDiffMap = @"C:\Lanny\MAMI\IPPA\Maps\DiffMaps\TestDiffMap.csv";
         // public static string DefaultDiffMap = @"C:\Lanny\MAMI\IPPA\Maps\DiffMaps\Small_HikerPaulDiff.csv";
         // public static string DefaultDiffMap = @"C:\Lanny\MAMI\IPPA\Maps\DiffMaps\Small_NewYork53Diff.csv";
-        public static string DefaultDiffMap = @"C:\Lanny\MAMI\IPPA\Maps\DiffMaps\TestDiffMap100_012.csv";
-        public static int DefaultStartX = 99;
-        public static int DefaultStartY = 99;
+        // public static string DefaultDiffMap = @"C:\Lanny\MAMI\IPPA\Maps\DiffMaps\TestDiffMap100_012.csv";
+        public static string DefaultDiffMap = @"C:\Lanny\MAMI\PathPlanner\PathPlanner\UserStudyData\TestDiffMap1.csv";
+        
+        public static int DefaultStartX = 50;
+        public static int DefaultStartY = 50;
         
         // Down sample scale in CountDistModes class
         public static int DownSampleScale = 1;
@@ -54,8 +58,8 @@ namespace IPPA
         public static int Count_LHCGWCONV = 5;
         public static int Count_LHCGWPF = 0;
         public static int Count_LHCRandom = 10;
-        public static int Count_TopTwo = 5;
-        public static int Count_TopN = 0;
+        public static int Count_TopTwoH = 5;
+        public static int Count_TopNH = 5;
 
         public static int EA_Population = 100;
         public static float EA_ReplacementRate = 0.3f;
