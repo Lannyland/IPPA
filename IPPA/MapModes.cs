@@ -134,7 +134,7 @@ namespace IPPA
             // Sanity check: make sure we do have that many modes
             if (N > ModeCount)
             {
-                System.Windows.Forms.MessageBox.Show("You want top " + N + " modes, but there are only " + ModeCount + " modes! Reducing N to " + ModeCount + ".");
+                // System.Windows.Forms.MessageBox.Show("You want top " + N + " modes, but there are only " + ModeCount + " modes! Reducing N to " + ModeCount + ".");
                 curRequest.TopN = ModeCount;
                 N = ModeCount;
             }

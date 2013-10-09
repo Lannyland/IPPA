@@ -90,9 +90,9 @@ namespace IPPA
         public static bool UseAreaInHeuristic = true;  // Whether to use area in Mode Goodness Ratio heuristic.
 
         // TopN parameters
-        public static int TopNCount = 3;            // Default N
+        public static int TopNCount = 15;            // Default N
         public static int Kernel_Size = 5;          // What size kenel for convolution       
-        public static int Max_N = 5;                // Maximum number of Gaussians to fit 
+        public static int Max_N = 15;                // Maximum number of Gaussians to fit 
 
         // When called from self, because scale to 255, so set to 25.
         // When called from PathPlanner Unity, because scale to 4, so set to 0.4;
